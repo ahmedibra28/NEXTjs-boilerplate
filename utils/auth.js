@@ -4,7 +4,7 @@ import db from './db'
 
 export const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '2hr',
+    expiresIn: '24hr',
   })
 }
 
