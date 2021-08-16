@@ -1,0 +1,55 @@
+import nc from 'next-connect'
+import db from '../../../utils/db'
+import Group from '../../../models/Group'
+import { isAuth } from '../../../utils/auth'
+
+const handler = nc()
+handler.use(isAuth)
+
+handler.put(async (req, res) => {
+  await db.connect()
+
+  const isActive = req.body.isActive
+  const route = req.body.route
+  const updatedBy = req.user.id
+  const name = req.body.name.toLowerCase()
+  const _id = req.query.id
+
+  const obj = await Group.findById(_id)
+
+  if (obj) {
+    const exist = await Group.find({ _id: { $ne: _id }, name })
+    if (exist.length === 0) {
+      obj.name = name
+      obj.route = route
+      obj.isActive = isActive
+      obj.updatedBy = updatedBy
+      await obj.save()
+      await db.disconnect()
+      res.json({ status: 'success' })
+    } else {
+      res.status(400)
+      throw new Error(`This ${name} Group already exist`)
+    }
+  } else {
+    res.status(400)
+    throw new Error('Group not found')
+  }
+})
+
+handler.delete(async (req, res) => {
+  await db.connect()
+
+  const _id = req.query.id
+  const obj = await Group.findById(_id)
+  if (!obj) {
+    res.status(400)
+    throw new Error('Group not found')
+  } else {
+    await obj.remove()
+    await db.disconnect()
+    res.json({ status: 'success' })
+  }
+})
+
+export default handler
