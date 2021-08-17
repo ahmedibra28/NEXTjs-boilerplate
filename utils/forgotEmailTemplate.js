@@ -1,6 +1,6 @@
 export const forgotMessage = (resetUrl, user) => {
   return `
-    <body
+    <body 
       style="
         color: rgb(68, 68, 68);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
