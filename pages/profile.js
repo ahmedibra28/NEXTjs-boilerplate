@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { getUserDetails, updateUserProfile } from '../api/users'
 import { useQuery, useMutation } from 'react-query'
 import localStorageInfo from '../utils/localStorageInfo'
+import Head from 'next/head'
 
 const Profile = () => {
   const {
@@ -54,6 +55,10 @@ const Profile = () => {
 
   return (
     <FormContainer>
+      <Head>
+        <title>Profile</title>
+        <meta property='og:title' content='Profile' key='title' />
+      </Head>
       <h3 className=''>User Profile</h3>
       {isErrorUpdateProfile && (
         <Message variant='danger'>{errorUpdateProfile}</Message>

@@ -7,6 +7,7 @@ import localStorageInfo from '../../utils/localStorageInfo'
 
 import { reset as resetPassword } from '../../api/users'
 import { useMutation } from 'react-query'
+import Head from 'next/head'
 
 const Reset = () => {
   const router = useRouter()
@@ -48,6 +49,10 @@ const Reset = () => {
 
   return (
     <FormContainer>
+      <Head>
+        <title>Reset</title>
+        <meta property='og:title' content='Reset' key='title' />
+      </Head>
       <h3 className=''>Reset Password</h3>
       {isSuccess && (
         <Message variant='success'>Password Updated Successfully</Message>

@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { forgot } from '../api/users'
 import { useMutation } from 'react-query'
 import localStorageInfo from '../utils/localStorageInfo'
+import Head from 'next/head'
 
 const Forgot = () => {
   const router = useRouter()
@@ -37,6 +38,10 @@ const Forgot = () => {
   }
   return (
     <FormContainer>
+      <Head>
+        <title>Forgot</title>
+        <meta property='og:title' content='Forgot' key='title' />
+      </Head>
       <h3 className=''>Forgot Password</h3>
       {isSuccess && (
         <Message variant='success'>

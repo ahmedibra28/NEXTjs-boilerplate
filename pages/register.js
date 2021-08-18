@@ -9,6 +9,7 @@ import { useMutation } from 'react-query'
 
 import { useForm } from 'react-hook-form'
 import localStorageInfo from '../utils/localStorageInfo'
+import Head from 'next/head'
 
 const Register = () => {
   const router = useRouter()
@@ -46,6 +47,10 @@ const Register = () => {
   }
   return (
     <FormContainer>
+      <Head>
+        <title>Sign up</title>
+        <meta property='og:title' content='Signup' key='title' />
+      </Head>
       <h3 className=''>Sign Up</h3>
       {isSuccess && (
         <Message variant='success'>User has registered successfully</Message>

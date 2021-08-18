@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { login as loginFun } from '../api/users'
 import { useMutation, useQueryClient } from 'react-query'
 import localStorageInfo from '../utils/localStorageInfo'
+import Head from 'next/head'
 
 const Login = () => {
   const router = useRouter()
@@ -39,6 +40,10 @@ const Login = () => {
 
   return (
     <FormContainer>
+      <Head>
+        <title>Login</title>
+        <meta property='og:title' content='Login' key='title' />
+      </Head>
       <h3 className=''>Sign In</h3>
       {isError && <Message variant='danger'>{error}</Message>}
 
