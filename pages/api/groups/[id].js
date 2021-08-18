@@ -28,12 +28,10 @@ handler.put(async (req, res) => {
       await db.disconnect()
       res.json({ status: 'success' })
     } else {
-      res.status(400)
-      throw new Error(`This ${name} Group already exist`)
+      return res.status(400).send(`This ${name} Group already exist`)
     }
   } else {
-    res.status(400)
-    throw new Error('Group not found')
+    return res.status(404).send('Group not found')
   }
 })
 
@@ -43,8 +41,7 @@ handler.delete(async (req, res) => {
   const _id = req.query.id
   const obj = await Group.findById(_id)
   if (!obj) {
-    res.status(400)
-    throw new Error('Group not found')
+    return res.status(404).send('Group not found')
   } else {
     await obj.remove()
     await db.disconnect()

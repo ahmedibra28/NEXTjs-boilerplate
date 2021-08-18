@@ -24,8 +24,7 @@ handler.post(async (req, res) => {
 
   const exist = await Route.findOne({ path })
   if (exist) {
-    res.status(400)
-    throw new Error('Route already exist')
+    return res.status(400).send('Route already exist')
   }
   const createObj = await Route.create({
     component,
@@ -38,8 +37,7 @@ handler.post(async (req, res) => {
   if (createObj) {
     res.status(201).json({ status: 'success' })
   } else {
-    res.status(400)
-    throw new Error('Invalid data')
+    return res.status(400).send('Invalid data')
   }
 })
 

@@ -13,13 +13,13 @@ handler.post(async (req, res) => {
   const password = req.body.password
 
   const user = await User.findOne({ email })
+  await db.disconnect()
   if (user && (await user.matchPassword(password))) {
     await UserLogon.create({
       user: user._id,
     })
 
-    await db.disconnect()
-    return res.json({
+    return res.send({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -27,8 +27,7 @@ handler.post(async (req, res) => {
       token: generateToken(user._id),
     })
   } else {
-    res.status(401)
-    throw new Error('Invalid email or password')
+    return res.status(401).send('Invalid email or password')
   }
 })
 

@@ -14,8 +14,7 @@ handler.post(async (req, res) => {
   const user = await User.findOne({ email })
 
   if (!user) {
-    res.status(404)
-    throw new Error('No email could not be sent')
+    return res.status(404).send('No email could not be send')
   }
 
   const resetToken = user.getResetPasswordToken()
@@ -41,8 +40,8 @@ handler.post(async (req, res) => {
     user.resetPasswordExpire = undefined
 
     await user.save()
-    res.status(404)
-    throw new Error('Email could not be sent')
+
+    return res.status(404).send('Email could not be send')
   }
   await db.disconnect()
 })

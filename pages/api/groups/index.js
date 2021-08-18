@@ -25,8 +25,7 @@ handler.post(async (req, res) => {
 
   const exist = await Group.findOne({ name })
   if (exist) {
-    res.status(400)
-    throw new Error('Group already exist')
+    return res.status(400).send('Group already exist')
   }
   const createObj = await Group.create({
     name,
@@ -40,8 +39,7 @@ handler.post(async (req, res) => {
   if (createObj) {
     res.status(201).json({ status: 'success' })
   } else {
-    res.status(400)
-    throw new Error('Invalid data')
+    return res.status(400).send('Invalid data')
   }
 })
 

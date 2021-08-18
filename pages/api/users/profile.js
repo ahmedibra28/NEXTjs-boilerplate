@@ -17,8 +17,7 @@ handler.get(async (req, res) => {
       group: user.group,
     })
   } else {
-    res.status(404)
-    throw new Error('User can not be found!')
+    return res.status(404).send('User can not be found')
   }
 
   await db.disconnect()
@@ -47,8 +46,7 @@ handler.put(async (req, res) => {
       token: generateToken(updatedUser._id),
     })
   } else {
-    res.status(404)
-    throw new Error('Invalid user data')
+    return res.status(404).send('Invalid user data')
   }
 })
 

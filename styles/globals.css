@@ -1,16 +1,92 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow:wght@400;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=UnifrakturCook:wght@700&display=swap');
+
+:root {
+  --primary-color: #005aab;
+  --secondary-color: #a8d2ff;
+  --white-color: #ffffff;
 }
 
+button {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+input,
+select,
+textarea {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0.7rem !important;
+}
+
+.btn-primary,
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
 a {
-  color: inherit;
+  color: var(--primary-color);
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
+.modal-background,
+body {
+  font-family: 'PT Sans Narrow', sans-serif;
+  background-color: var(--secondary-color) !important;
+}
+nav {
+  background-color: var(--primary-color) !important;
+}
+.navbar-brand,
+.nav-link,
+.dropdown-item {
+  color: var(--secondary-color) !important;
+}
+
+.dropdown-item:hover,
+.navbar-brand:hover,
+.nav-link:hover {
+  color: var(--white-color) !important;
+  background-color: transparent !important;
+}
+.dropdown-menu {
+  background-color: var(--primary-color) !important;
+}
+
+label {
+  opacity: 0.5;
+}
+
+.dropdown-menu,
+.alert,
+.toast {
+  border-radius: 0 !important;
+  border: none;
+}
+
+#sidebar {
+  height: 100vh;
+  transition: 0.7s ease-in-out;
+  min-width: 10rem;
+
+  z-index: 1;
+}
+#sidebar.active {
+  margin-left: -10rem;
+}
+
+.wrapper {
+  min-width: 100%;
+}
+
+main {
+  min-height: 60vh;
+  width: 100%;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
 }

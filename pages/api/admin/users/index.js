@@ -44,8 +44,7 @@ handler.post(async (req, res) => {
   const { name, email, password, group } = req.body
   const userExist = await User.findOne({ email })
   if (userExist) {
-    res.status(400)
-    throw new Error('User already exist')
+    return res.status(400).send('User already exist')
   }
 
   const userCreate = await User.create({
@@ -65,8 +64,7 @@ handler.post(async (req, res) => {
       token: generateToken(userCreate._id),
     })
   } else {
-    res.status(400)
-    throw new Error('Invalid user data')
+    return res.status(400).send('Invalid user data')
   }
 })
 

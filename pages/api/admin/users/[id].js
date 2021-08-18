@@ -11,8 +11,7 @@ handler.get(async (req, res) => {
 
   const obj = await User.findById(req.query.id).select('-password')
   if (!obj) {
-    res.status(400)
-    throw new Error('User does not exist')
+    return res.status(400).send('User does not exist')
   }
 
   await db.disconnect()
@@ -26,8 +25,9 @@ handler.put(async (req, res) => {
   const userExist = await User.findById(req.query.id)
 
   if (req.query.id.toString() === req.user._id.toString()) {
-    res.status(400)
-    throw new Error("You can't edit your own user in the admin area.")
+    return res
+      .status(400)
+      .send("You can't edit your own user in the admin area.")
   }
 
   if (userExist) {
@@ -48,8 +48,7 @@ handler.put(async (req, res) => {
       email: updatedUser.email,
     })
   } else {
-    res.status(404)
-    throw new Error('User not found')
+    return res.status(404).send('User not found')
   }
 })
 
@@ -59,8 +58,9 @@ handler.delete(async (req, res) => {
   const user = await User.findById(req.query.id)
 
   if (req.query.id.toString() === req.user._id.toString()) {
-    res.status(400)
-    throw new Error("You can't delete your own user in the admin area.")
+    return res
+      .status(400)
+      .send("You can't delete your own user in the admin area.")
   }
 
   if (user) {
@@ -68,8 +68,7 @@ handler.delete(async (req, res) => {
     await db.disconnect()
     res.send({ message: 'User removed' })
   } else {
-    res.status(404)
-    throw new Error('User not found')
+    return res.status(404).send('User not found')
   }
 })
 

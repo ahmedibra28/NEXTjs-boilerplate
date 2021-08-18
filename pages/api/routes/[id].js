@@ -31,12 +31,10 @@ handler.put(async (req, res) => {
       await db.disconnect()
       res.send({ status: 'success' })
     } else {
-      res.status(400)
-      throw new Error(`This ${route} already exist`)
+      return res.status(400).send(`This ${route} already exist`)
     }
   } else {
-    res.status(400)
-    throw new Error('Route not found')
+    return res.status(404).send('Route not found')
   }
 })
 
@@ -46,8 +44,7 @@ handler.delete(async (req, res) => {
   const _id = req.query.id
   const obj = await Route.findById(_id)
   if (!obj) {
-    res.status(400)
-    throw new Error('Route not found')
+    return res.status(404).send('Route not found')
   } else {
     await obj.remove()
     await db.disconnect()

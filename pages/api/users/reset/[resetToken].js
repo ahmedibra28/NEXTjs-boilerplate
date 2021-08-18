@@ -19,8 +19,7 @@ handler.post(async (req, res) => {
   })
 
   if (!user) {
-    res.status(400)
-    throw new Error('Invalid Token')
+    return res.status(400).send('Invalid Token')
   } else {
     user.password = req.body.password
     user.resetPasswordToken = undefined
