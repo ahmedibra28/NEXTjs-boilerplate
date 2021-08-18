@@ -13,6 +13,7 @@ import {
 import { logout } from '../api/users'
 import { useMutation } from 'react-query'
 import { useRouter } from 'next/router'
+import localStorageInfo from '../utils/localStorageInfo'
 
 const Navigation = () => {
   const router = useRouter()
@@ -122,7 +123,8 @@ const Navigation = () => {
               data-bs-toggle='dropdown'
               aria-expanded='false'
             >
-              <FaUserCircle className='mb-1' /> Ahmed
+              <FaUserCircle className='mb-1' />{' '}
+              {localStorageInfo() && localStorageInfo().name}
             </a>
             <ul
               className='dropdown-menu border-0'

@@ -37,9 +37,11 @@ export const logout = () => {
   return typeof window !== undefined && localStorage.removeItem('userInfo')
 }
 
-export const createUser = async (user) => {
+export const registerUser = async (user) => {
   try {
-    const { data } = await axios.post(`/api/admin/users`, user, config())
+    const { data } = await axios.post(`/api/users/register`, user, config())
+    typeof window !== undefined &&
+      localStorage.setItem('userInfo', JSON.stringify(data))
     return data
   } catch (error) {
     throw error.response.data
@@ -86,7 +88,7 @@ export const updateUserProfile = async (user) => {
   }
 }
 
-export const forgotPassword = async (email) => {
+export const forgot = async (email) => {
   try {
     const { data } = await axios.post(`/api/users/forgot`, email, config())
     return data
@@ -95,7 +97,7 @@ export const forgotPassword = async (email) => {
   }
 }
 
-export const resetPassword = async (info) => {
+export const reset = async (info) => {
   try {
     const { data } = await axios.put(
       `/api/users/reset/${info.resetToken}`,

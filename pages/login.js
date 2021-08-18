@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import router from 'next/router'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Message from '../components/Message'
 import FormContainer from '../components/FormContainer'
@@ -8,7 +8,8 @@ import { login as loginFun } from '../api/users'
 import { useMutation, useQueryClient } from 'react-query'
 import localStorageInfo from '../utils/localStorageInfo'
 
-const login = () => {
+const Login = () => {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -86,15 +87,15 @@ const login = () => {
       <div className='row pt-3'>
         <div className='col'>
           <Link href='/forgot'>
-            <a>Forgot Password</a>
+            <a className='ps-1'> Forgot Password</a>
           </Link>
         </div>
       </div>
       <div className='row '>
         <div className='col'>
-          New Customer?
+          New Member?
           <Link href='/register'>
-            <a>Register</a>
+            <a className='ps-1'>Register</a>
           </Link>
         </div>
       </div>
@@ -102,4 +103,4 @@ const login = () => {
   )
 }
 
-export default login
+export default Login

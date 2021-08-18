@@ -1,10 +1,9 @@
 import nc from 'next-connect'
 import db from '../../../utils/db'
 import User from '../../../models/User'
-import { generateToken, isAuth } from '../../../utils/auth'
+import { generateToken } from '../../../utils/auth'
 
 const handler = nc()
-handler.use(isAuth)
 
 handler.post(async (req, res) => {
   await db.connect()

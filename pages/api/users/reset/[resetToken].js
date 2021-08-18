@@ -5,7 +5,7 @@ import User from '../../../../models/User'
 
 const handler = nc()
 
-handler.post(async (req, res) => {
+handler.put(async (req, res) => {
   await db.connect()
 
   const resetPasswordToken = crypto

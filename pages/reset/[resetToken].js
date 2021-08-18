@@ -1,17 +1,17 @@
 import { useEffect } from 'react'
-import Link from 'next/link'
+import Message from '../../components/Message'
+import FormContainer from '../../components/FormContainer'
+import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import Message from '../components/Message'
-import FormContainer from '../components/FormContainer'
+import localStorageInfo from '../../utils/localStorageInfo'
 
-import { registerUser } from '../api/users'
+import { reset as resetPassword } from '../../api/users'
 import { useMutation } from 'react-query'
 
-import { useForm } from 'react-hook-form'
-import localStorageInfo from '../utils/localStorageInfo'
-
-const Register = () => {
+const Reset = () => {
   const router = useRouter()
+  const { resetToken } = router.query
+
   const {
     register,
     handleSubmit,
@@ -26,13 +26,13 @@ const Register = () => {
   })
 
   const { isLoading, isError, error, isSuccess, mutateAsync } = useMutation(
-    'registerUser',
-    registerUser,
+    'resetPassword',
+    resetPassword,
     {
       retry: 0,
       onSuccess: () => {
         reset()
-        router.push('/')
+        router.push('/login')
       },
     }
   )
@@ -42,48 +42,20 @@ const Register = () => {
   }, [router])
 
   const submitHandler = (data) => {
-    mutateAsync(data)
+    const password = data.password
+    mutateAsync({ password, resetToken })
   }
+
   return (
     <FormContainer>
-      <h3 className=''>Sign Up</h3>
+      <h3 className=''>Reset Password</h3>
       {isSuccess && (
-        <Message variant='success'>User has registered successfully</Message>
+        <Message variant='success'>Password Updated Successfully</Message>
       )}
 
       {isError && <Message variant='danger'>{error}</Message>}
+
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className='mb-3'>
-          <label htmlFor='name'>Name</label>
-          <input
-            {...register('name', { required: 'Name is required' })}
-            type='text'
-            placeholder='Enter name'
-            className='form-control'
-            autoFocus
-          />
-          {errors.name && (
-            <span className='text-danger'>{errors.name.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='email'>Email Address</label>
-          <input
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.+\S+/,
-                message: 'Entered value does not match email format',
-              },
-            })}
-            type='email'
-            placeholder='Enter email'
-            className='form-control'
-          />
-          {errors.email && (
-            <span className='text-danger'>{errors.email.message}</span>
-          )}
-        </div>
         <div className='mb-3'>
           <label htmlFor='password'>Password</label>
           <input
@@ -124,25 +96,17 @@ const Register = () => {
             </span>
           )}
         </div>
+
         <button type='submit' className='btn btn-primary ' disabled={isLoading}>
           {isLoading ? (
             <span className='spinner-border spinner-border-sm' />
           ) : (
-            'Sign Up'
+            'Change'
           )}
         </button>
       </form>
-
-      <div className='row py-3'>
-        <div className='col'>
-          Have an Account?
-          <Link href='/login'>
-            <a className='ps-1'>Login </a>
-          </Link>
-        </div>
-      </div>
     </FormContainer>
   )
 }
 
-export default Register
+export default Reset
