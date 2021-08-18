@@ -31,7 +31,7 @@ handler.put(async (req, res) => {
       await db.disconnect()
       res.send({ status: 'success' })
     } else {
-      return res.status(400).send(`This ${route} already exist`)
+      return res.status(400).send(`This ${path} already exist`)
     }
   } else {
     return res.status(404).send('Route not found')

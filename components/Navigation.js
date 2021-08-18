@@ -131,7 +131,7 @@ const Navigation = () => {
               aria-labelledby='navbarDropdownMenuLink'
             >
               <li>
-                <Link href='/'>
+                <Link href='/profile'>
                   <a className='dropdown-item'>
                     <FaUserCircle className='mb-1' /> Profile
                   </a>

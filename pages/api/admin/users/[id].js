@@ -6,19 +6,6 @@ import { isAuth, isAdmin } from '../../../../utils/auth'
 const handler = nc()
 handler.use(isAuth, isAdmin)
 
-handler.get(async (req, res) => {
-  await db.connect()
-
-  const obj = await User.findById(req.query.id).select('-password')
-  if (!obj) {
-    return res.status(400).send('User does not exist')
-  }
-
-  await db.disconnect()
-
-  res.send(obj)
-})
-
 handler.put(async (req, res) => {
   await db.connect()
 

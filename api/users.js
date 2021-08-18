@@ -72,7 +72,7 @@ export const deleteUser = async (id) => {
 
 export const getUserDetails = async (id) => {
   try {
-    const { data } = await axios.get(`/api/admin/users/${id}`, config())
+    const { data } = await axios.get(`/api/users/${id}`, config())
     return data
   } catch (error) {
     throw error.response.data
@@ -82,6 +82,8 @@ export const getUserDetails = async (id) => {
 export const updateUserProfile = async (user) => {
   try {
     const { data } = await axios.put(`/api/users/profile`, user, config())
+    typeof window !== undefined &&
+      localStorage.setItem('userInfo', JSON.stringify(data))
     return data
   } catch (error) {
     throw error.response.data

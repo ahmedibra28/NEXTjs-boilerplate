@@ -1,5 +1,8 @@
 {
   "env": { "browser": true, "node": true, "es6": true },
-  "react/display-name": [true, { "ignoreTranspilerName": true }],
-  "extends": ["eslint:recommended", "next", "next/core-web-vitals"]
+  // "react/display-name": [true, { "ignoreTranspilerName": true }],
+  "extends": ["eslint:recommended", "next", "next/core-web-vitals"],
+  "rules": {
+    "react/display-name": "off"
+  }
 }

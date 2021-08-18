@@ -13,11 +13,11 @@ handler.post(async (req, res) => {
   const password = req.body.password
 
   const user = await User.findOne({ email })
-  await db.disconnect()
   if (user && (await user.matchPassword(password))) {
     await UserLogon.create({
       user: user._id,
     })
+    await db.disconnect()
 
     return res.send({
       _id: user._id,
