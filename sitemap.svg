@@ -1,0 +1,447 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1210 1066" width="1210" height="1066"><defs><style type="text/css">@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:400|Roboto:400,&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext')</style></defs><text x="605" y="69" text-anchor="middle" font-size="64px" font-family="Roboto,sans-serif" fill="#52565f">NEXT.js Boilerplate Sitemap</text><text x="1205" y="1047" text-anchor="end" font-size="14px" font-family="Roboto,sans-serif" color="#52565f">19 August 2021</text><g transform="translate(5,173)"><g><g><g transform="translate(10, 586)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="185" viewBox="0 0 180 185">
+  <defs>
+    <path id="7lfg5s9noz8-lk-a" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z"/>
+    <circle id="7lfg5s9noz8-lk-c" cx="18" cy="18" r="18"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <g transform="translate(10 26)">
+      <path fill="#58A8F7" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z" opacity=".197"/>
+      <mask id="7lfg5s9noz8-lk-b" fill="#fff">
+        <use xlink:href="#7lfg5s9noz8-lk-a"/>
+      </mask>
+      <path fill="#58A8F7" d="M123.544554,22 C147.292079,22 158.861386,29.6853933 182,40 C163.123762,40 82.3134379,40 59,40 C79.0940594,31.505618 99.7970297,22 123.544554,22 Z" mask="url(#7lfg5s9noz8-lk-b)" opacity=".197"/>
+      <path fill="#0D87FF" d="M44.5,9 C69.8826643,9 86.3055556,23.781645 109,40 C79.2231422,40 7.11330049,40 -20,40 C1.92139189,23.781645 19.1173357,9 44.5,9 Z" mask="url(#7lfg5s9noz8-lk-b)" opacity=".198"/>
+      <circle cx="94" cy="11" r="7" fill="#58A8F7" mask="url(#7lfg5s9noz8-lk-b)" opacity=".499"/>
+    </g>
+    <circle cx="18" cy="18" r="18" fill="#FFF" transform="translate(19 58)"/>
+    <g fill="#58A8F7" opacity=".499" transform="translate(60 71)">
+      <polygon points="0 0 50 0 50 5 0 5"/>
+      <polygon points="0 0 30 0 30 5 0 5" transform="translate(0 9)"/>
+    </g>
+    <g transform="translate(19 58)">
+      <mask id="7lfg5s9noz8-lk-d" fill="#fff">
+        <use xlink:href="#7lfg5s9noz8-lk-c"/>
+      </mask>
+      <use fill="#58A8F7" opacity=".197" xlink:href="#7lfg5s9noz8-lk-c"/>
+      <path fill="#0D87FF" d="M18,50.4 C9.3843579,50.4 2.4,43.4156421 2.4,34.8 C2.4,26.1843579 9.3843579,19.2 18,19.2 C26.6156421,19.2 33.6,26.1843579 33.6,34.8 C33.6,43.4156421 26.6156421,50.4 18,50.4 Z M18,16.8 C14.6862915,16.8 12,14.1137085 12,10.8 C12,7.4862915 14.6862915,4.8 18,4.8 C21.3137085,4.8 24,7.4862915 24,10.8 C24,14.1137085 21.3137085,16.8 18,16.8 Z" mask="url(#7lfg5s9noz8-lk-d)" opacity=".499"/>
+    </g>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+    <g transform="translate(10 104)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 153)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 126)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Users</text></g></g></g><g transform="translate(210, 586)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="185" viewBox="0 0 180 185">
+  <defs>
+    <path id="02uecemn8usc-lk-a" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z"/>
+    <circle id="02uecemn8usc-lk-c" cx="18" cy="18" r="18"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <g transform="translate(10 26)">
+      <path fill="#58A8F7" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z" opacity=".197"/>
+      <mask id="02uecemn8usc-lk-b" fill="#fff">
+        <use xlink:href="#02uecemn8usc-lk-a"/>
+      </mask>
+      <path fill="#58A8F7" d="M123.544554,22 C147.292079,22 158.861386,29.6853933 182,40 C163.123762,40 82.3134379,40 59,40 C79.0940594,31.505618 99.7970297,22 123.544554,22 Z" mask="url(#02uecemn8usc-lk-b)" opacity=".197"/>
+      <path fill="#0D87FF" d="M44.5,9 C69.8826643,9 86.3055556,23.781645 109,40 C79.2231422,40 7.11330049,40 -20,40 C1.92139189,23.781645 19.1173357,9 44.5,9 Z" mask="url(#02uecemn8usc-lk-b)" opacity=".198"/>
+      <circle cx="94" cy="11" r="7" fill="#58A8F7" mask="url(#02uecemn8usc-lk-b)" opacity=".499"/>
+    </g>
+    <circle cx="18" cy="18" r="18" fill="#FFF" transform="translate(19 58)"/>
+    <g fill="#58A8F7" opacity=".499" transform="translate(60 71)">
+      <polygon points="0 0 50 0 50 5 0 5"/>
+      <polygon points="0 0 30 0 30 5 0 5" transform="translate(0 9)"/>
+    </g>
+    <g transform="translate(19 58)">
+      <mask id="02uecemn8usc-lk-d" fill="#fff">
+        <use xlink:href="#02uecemn8usc-lk-c"/>
+      </mask>
+      <use fill="#58A8F7" opacity=".197" xlink:href="#02uecemn8usc-lk-c"/>
+      <path fill="#0D87FF" d="M18,50.4 C9.3843579,50.4 2.4,43.4156421 2.4,34.8 C2.4,26.1843579 9.3843579,19.2 18,19.2 C26.6156421,19.2 33.6,26.1843579 33.6,34.8 C33.6,43.4156421 26.6156421,50.4 18,50.4 Z M18,16.8 C14.6862915,16.8 12,14.1137085 12,10.8 C12,7.4862915 14.6862915,4.8 18,4.8 C21.3137085,4.8 24,7.4862915 24,10.8 C24,14.1137085 21.3137085,16.8 18,16.8 Z" mask="url(#02uecemn8usc-lk-d)" opacity=".499"/>
+    </g>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+    <g transform="translate(10 104)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 153)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 126)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Users Logon</text></g></g></g><g transform="translate(410, 586)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="185" viewBox="0 0 180 185">
+  <defs>
+    <path id="dz5z5qag6rb-lk-a" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z"/>
+    <circle id="dz5z5qag6rb-lk-c" cx="18" cy="18" r="18"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <g transform="translate(10 26)">
+      <path fill="#58A8F7" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z" opacity=".197"/>
+      <mask id="dz5z5qag6rb-lk-b" fill="#fff">
+        <use xlink:href="#dz5z5qag6rb-lk-a"/>
+      </mask>
+      <path fill="#58A8F7" d="M123.544554,22 C147.292079,22 158.861386,29.6853933 182,40 C163.123762,40 82.3134379,40 59,40 C79.0940594,31.505618 99.7970297,22 123.544554,22 Z" mask="url(#dz5z5qag6rb-lk-b)" opacity=".197"/>
+      <path fill="#0D87FF" d="M44.5,9 C69.8826643,9 86.3055556,23.781645 109,40 C79.2231422,40 7.11330049,40 -20,40 C1.92139189,23.781645 19.1173357,9 44.5,9 Z" mask="url(#dz5z5qag6rb-lk-b)" opacity=".198"/>
+      <circle cx="94" cy="11" r="7" fill="#58A8F7" mask="url(#dz5z5qag6rb-lk-b)" opacity=".499"/>
+    </g>
+    <circle cx="18" cy="18" r="18" fill="#FFF" transform="translate(19 58)"/>
+    <g fill="#58A8F7" opacity=".499" transform="translate(60 71)">
+      <polygon points="0 0 50 0 50 5 0 5"/>
+      <polygon points="0 0 30 0 30 5 0 5" transform="translate(0 9)"/>
+    </g>
+    <g transform="translate(19 58)">
+      <mask id="dz5z5qag6rb-lk-d" fill="#fff">
+        <use xlink:href="#dz5z5qag6rb-lk-c"/>
+      </mask>
+      <use fill="#58A8F7" opacity=".197" xlink:href="#dz5z5qag6rb-lk-c"/>
+      <path fill="#0D87FF" d="M18,50.4 C9.3843579,50.4 2.4,43.4156421 2.4,34.8 C2.4,26.1843579 9.3843579,19.2 18,19.2 C26.6156421,19.2 33.6,26.1843579 33.6,34.8 C33.6,43.4156421 26.6156421,50.4 18,50.4 Z M18,16.8 C14.6862915,16.8 12,14.1137085 12,10.8 C12,7.4862915 14.6862915,4.8 18,4.8 C21.3137085,4.8 24,7.4862915 24,10.8 C24,14.1137085 21.3137085,16.8 18,16.8 Z" mask="url(#dz5z5qag6rb-lk-d)" opacity=".499"/>
+    </g>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+    <g transform="translate(10 104)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 153)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 126)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Profile</text></g></g></g><g transform="translate(610, 586)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="185" viewBox="0 0 180 185">
+  <defs>
+    <rect id="tfm8euv4pa-main-a" width="160" height="82" rx="2"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <g transform="translate(10 26)">
+      <rect width="160" height="82" fill="#58A8F7" opacity=".197" rx="2"/>
+      <mask id="tfm8euv4pa-main-b" fill="#fff">
+        <use xlink:href="#tfm8euv4pa-main-a"/>
+      </mask>
+      <use fill="#58A8F7" opacity="0" xlink:href="#tfm8euv4pa-main-a"/>
+      <path fill="#58A8F7" d="M123.544554,38 C147.292079,38 158.861386,56.7865169 182,82 C163.123762,82 82.3134379,82 59,82 C79.0940594,61.2359551 99.7970297,38 123.544554,38 Z" mask="url(#tfm8euv4pa-main-b)" opacity=".197"/>
+      <path fill="#0D87FF" d="M44.5,31 C69.8826643,31 86.3055556,55.3181901 109,82 C79.2231422,82 7.11330049,82 -20,82 C1.92139189,55.3181901 19.1173357,31 44.5,31 Z" mask="url(#tfm8euv4pa-main-b)" opacity=".198"/>
+      <circle cx="87" cy="22" r="9" fill="#58A8F7" mask="url(#tfm8euv4pa-main-b)" opacity=".499"/>
+    </g>
+    <g transform="translate(26 118)">
+      <circle cx="7.5" cy="7.5" r="7.5" fill="#0D87FF" opacity=".499"/>
+      <polygon fill="#FFF" points="7.5 9.75 4.855 11.141 5.36 8.195 3.22 6.109 6.177 5.68 7.5 3 8.823 5.68 11.78 6.109 9.64 8.195 10.145 11.141"/>
+    </g>
+    <g transform="translate(140 118)">
+      <circle cx="7.5" cy="7.5" r="7.5" fill="#0D87FF" opacity=".499"/>
+      <polygon fill="#FFF" points="7.5 9.75 4.855 11.141 5.36 8.195 3.22 6.109 6.177 5.68 7.5 3 8.823 5.68 11.78 6.109 9.64 8.195 10.145 11.141"/>
+    </g>
+    <g transform="translate(83 118)">
+      <circle cx="7.5" cy="7.5" r="7.5" fill="#0D87FF" opacity=".499"/>
+      <polygon fill="#FFF" points="7.5 9.75 4.855 11.141 5.36 8.195 3.22 6.109 6.177 5.68 7.5 3 8.823 5.68 11.78 6.109 9.64 8.195 10.145 11.141"/>
+    </g>
+    <g fill="#58A8F7" transform="translate(10 139)">
+      <polygon points="0 0 26 0 26 5 0 5" opacity=".499" transform="translate(10)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 17)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 10)"/>
+      <polygon points="0 0 26 0 26 3 0 3" opacity=".197" transform="translate(10 24)"/>
+    </g>
+    <g fill="#58A8F7" transform="translate(124 139)">
+      <polygon points="0 0 26 0 26 5 0 5" opacity=".499" transform="translate(10)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 17)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 10)"/>
+      <polygon points="0 0 26 0 26 3 0 3" opacity=".197" transform="translate(10 24)"/>
+    </g>
+    <g fill="#58A8F7" transform="translate(67 139)">
+      <polygon points="0 0 26 0 26 5 0 5" opacity=".499" transform="translate(10)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 17)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 10)"/>
+      <polygon points="0 0 26 0 26 3 0 3" opacity=".197" transform="translate(10 24)"/>
+    </g>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Dashboard</text></g></g></g><g transform="translate(210, 306)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" width="180" height="185" viewBox="0 0 180 185">
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+    <path fill="#58A8F7" d="M3.8458278,-1.55376046e-16 L107.154172,1.55376046e-16 C108.49145,-9.02779573e-17 108.97638,0.139238417 109.465269,0.400699056 C109.954157,0.662159695 110.33784,1.04584256 110.599301,1.53473144 C110.860762,2.02362033 111,2.50854969 111,3.8458278 L111,81.1541722 C111,82.4914503 110.860762,82.9763797 110.599301,83.4652686 C110.33784,83.9541574 109.954157,84.3378403 109.465269,84.5993009 C108.97638,84.8607616 108.49145,85 107.154172,85 L3.8458278,85 C2.50854969,85 2.02362033,84.8607616 1.53473144,84.5993009 C1.04584256,84.3378403 0.662159695,83.9541574 0.400699056,83.4652686 C0.139238417,82.9763797 6.01853049e-17,82.4914503 -1.03584031e-16,81.1541722 L1.03584031e-16,3.8458278 C-6.01853049e-17,2.50854969 0.139238417,2.02362033 0.400699056,1.53473144 C0.662159695,1.04584256 1.04584256,0.662159695 1.53473144,0.400699056 C2.02362033,0.139238417 2.50854969,9.02779573e-17 3.8458278,-1.55376046e-16 Z" opacity=".197" transform="translate(35 54)"/>
+    <g transform="translate(45 64)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(45 91)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 20 0 20 3 0 3" opacity=".197"/>
+    </g>
+    <path fill="#0D87FF" d="M0,1.99201702 C0,0.891856397 0.900658965,0 2.00671997,0 L88.99328,0 C90.1015609,0 91,0.900176167 91,1.99201702 L91,9.00798298 C91,10.1081436 90.099341,11 88.99328,11 L2.00671997,11 C0.898439133,11 0,10.0998238 0,9.00798298 L0,1.99201702 Z" opacity=".499" transform="translate(45 118)"/>
+    <polygon fill="#58A8F7" points="0 0 50 0 50 8 0 8" opacity=".499" transform="translate(65 36)"/>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Login</text></g></g></g><g transform="translate(810, 306)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" width="180" height="185" viewBox="0 0 180 185">
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+    <path fill="#58A8F7" d="M3.8458278,-1.55376046e-16 L107.154172,1.55376046e-16 C108.49145,-9.02779573e-17 108.97638,0.139238417 109.465269,0.400699056 C109.954157,0.662159695 110.33784,1.04584256 110.599301,1.53473144 C110.860762,2.02362033 111,2.50854969 111,3.8458278 L111,108.154172 C111,109.49145 110.860762,109.97638 110.599301,110.465269 C110.33784,110.954157 109.954157,111.33784 109.465269,111.599301 C108.97638,111.860762 108.49145,112 107.154172,112 L3.8458278,112 C2.50854969,112 2.02362033,111.860762 1.53473144,111.599301 C1.04584256,111.33784 0.662159695,110.954157 0.400699056,110.465269 C0.139238417,109.97638 6.01853049e-17,109.49145 -1.03584031e-16,108.154172 L1.03584031e-16,3.8458278 C-6.01853049e-17,2.50854969 0.139238417,2.02362033 0.400699056,1.53473144 C0.662159695,1.04584256 1.04584256,0.662159695 1.53473144,0.400699056 C2.02362033,0.139238417 2.50854969,9.02779573e-17 3.8458278,-1.55376046e-16 Z" opacity=".197" transform="translate(35 54)"/>
+    <g transform="translate(45 64)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(45 91)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 20 0 20 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(45 118)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 20 0 20 3 0 3" opacity=".197"/>
+    </g>
+    <rect width="31" height="11" fill="#58A8F7" opacity=".197" rx="2" transform="translate(105 145)"/>
+    <path fill="#0D87FF" d="M0,1.99201702 C0,0.891856397 0.886195535,0 2.00630931,0 L52.9936907,0 C54.1017447,0 55,0.900176167 55,1.99201702 L55,9.00798298 C55,10.1081436 54.1138045,11 52.9936907,11 L2.00630931,11 C0.898255275,11 0,10.0998238 0,9.00798298 L0,1.99201702 Z" opacity=".499" transform="translate(45 145)"/>
+    <polygon fill="#58A8F7" points="0 0 50 0 50 8 0 8" opacity=".499" transform="translate(65 36)"/>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Signup</text></g></g></g><g transform="translate(1010, 586)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="185" viewBox="0 0 180 185">
+  <defs>
+    <path id="b59px0bn8y6-lk-a" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z"/>
+    <circle id="b59px0bn8y6-lk-c" cx="18" cy="18" r="18"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <g transform="translate(10 26)">
+      <path fill="#58A8F7" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z" opacity=".197"/>
+      <mask id="b59px0bn8y6-lk-b" fill="#fff">
+        <use xlink:href="#b59px0bn8y6-lk-a"/>
+      </mask>
+      <path fill="#58A8F7" d="M123.544554,22 C147.292079,22 158.861386,29.6853933 182,40 C163.123762,40 82.3134379,40 59,40 C79.0940594,31.505618 99.7970297,22 123.544554,22 Z" mask="url(#b59px0bn8y6-lk-b)" opacity=".197"/>
+      <path fill="#0D87FF" d="M44.5,9 C69.8826643,9 86.3055556,23.781645 109,40 C79.2231422,40 7.11330049,40 -20,40 C1.92139189,23.781645 19.1173357,9 44.5,9 Z" mask="url(#b59px0bn8y6-lk-b)" opacity=".198"/>
+      <circle cx="94" cy="11" r="7" fill="#58A8F7" mask="url(#b59px0bn8y6-lk-b)" opacity=".499"/>
+    </g>
+    <circle cx="18" cy="18" r="18" fill="#FFF" transform="translate(19 58)"/>
+    <g fill="#58A8F7" opacity=".499" transform="translate(60 71)">
+      <polygon points="0 0 50 0 50 5 0 5"/>
+      <polygon points="0 0 30 0 30 5 0 5" transform="translate(0 9)"/>
+    </g>
+    <g transform="translate(19 58)">
+      <mask id="b59px0bn8y6-lk-d" fill="#fff">
+        <use xlink:href="#b59px0bn8y6-lk-c"/>
+      </mask>
+      <use fill="#58A8F7" opacity=".197" xlink:href="#b59px0bn8y6-lk-c"/>
+      <path fill="#0D87FF" d="M18,50.4 C9.3843579,50.4 2.4,43.4156421 2.4,34.8 C2.4,26.1843579 9.3843579,19.2 18,19.2 C26.6156421,19.2 33.6,26.1843579 33.6,34.8 C33.6,43.4156421 26.6156421,50.4 18,50.4 Z M18,16.8 C14.6862915,16.8 12,14.1137085 12,10.8 C12,7.4862915 14.6862915,4.8 18,4.8 C21.3137085,4.8 24,7.4862915 24,10.8 C24,14.1137085 21.3137085,16.8 18,16.8 Z" mask="url(#b59px0bn8y6-lk-d)" opacity=".499"/>
+    </g>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+    <g transform="translate(10 104)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 153)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 126)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Reset</text></g></g></g><g transform="translate(1010, 306)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="185" viewBox="0 0 180 185">
+  <defs>
+    <path id="wl25b69o6t-lk-a" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z"/>
+    <circle id="wl25b69o6t-lk-c" cx="18" cy="18" r="18"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <g transform="translate(10 26)">
+      <path fill="#58A8F7" d="M0,1.99729162 C0,0.894217919 0.899814069,0 1.99402962,0 L158.00597,0 C159.107243,0 160,0.891539827 160,1.99729162 L160,38.0027084 C160,39.1057821 159.100186,40 158.00597,40 L1.99402962,40 C0.89275747,40 0,39.1084602 0,38.0027084 L0,1.99729162 Z" opacity=".197"/>
+      <mask id="wl25b69o6t-lk-b" fill="#fff">
+        <use xlink:href="#wl25b69o6t-lk-a"/>
+      </mask>
+      <path fill="#58A8F7" d="M123.544554,22 C147.292079,22 158.861386,29.6853933 182,40 C163.123762,40 82.3134379,40 59,40 C79.0940594,31.505618 99.7970297,22 123.544554,22 Z" mask="url(#wl25b69o6t-lk-b)" opacity=".197"/>
+      <path fill="#0D87FF" d="M44.5,9 C69.8826643,9 86.3055556,23.781645 109,40 C79.2231422,40 7.11330049,40 -20,40 C1.92139189,23.781645 19.1173357,9 44.5,9 Z" mask="url(#wl25b69o6t-lk-b)" opacity=".198"/>
+      <circle cx="94" cy="11" r="7" fill="#58A8F7" mask="url(#wl25b69o6t-lk-b)" opacity=".499"/>
+    </g>
+    <circle cx="18" cy="18" r="18" fill="#FFF" transform="translate(19 58)"/>
+    <g fill="#58A8F7" opacity=".499" transform="translate(60 71)">
+      <polygon points="0 0 50 0 50 5 0 5"/>
+      <polygon points="0 0 30 0 30 5 0 5" transform="translate(0 9)"/>
+    </g>
+    <g transform="translate(19 58)">
+      <mask id="wl25b69o6t-lk-d" fill="#fff">
+        <use xlink:href="#wl25b69o6t-lk-c"/>
+      </mask>
+      <use fill="#58A8F7" opacity=".197" xlink:href="#wl25b69o6t-lk-c"/>
+      <path fill="#0D87FF" d="M18,50.4 C9.3843579,50.4 2.4,43.4156421 2.4,34.8 C2.4,26.1843579 9.3843579,19.2 18,19.2 C26.6156421,19.2 33.6,26.1843579 33.6,34.8 C33.6,43.4156421 26.6156421,50.4 18,50.4 Z M18,16.8 C14.6862915,16.8 12,14.1137085 12,10.8 C12,7.4862915 14.6862915,4.8 18,4.8 C21.3137085,4.8 24,7.4862915 24,10.8 C24,14.1137085 21.3137085,16.8 18,16.8 Z" mask="url(#wl25b69o6t-lk-d)" opacity=".499"/>
+    </g>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+    <g transform="translate(10 104)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 153)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+    <g transform="translate(10 126)">
+      <g transform="translate(0 6)">
+        <rect width="91" height="11" fill="#58A8F7" opacity=".499" rx="2"/>
+        <rect width="89" height="9" x="1" y="1" fill="#FFF" rx="1"/>
+        <polygon fill="#58A8F7" points="0 0 53 0 53 3 0 3" opacity=".197" transform="translate(4 4)"/>
+        <polygon fill="#0D87FF" points="2.5 3 0 0 5 0" transform="translate(81 4)"/>
+      </g>
+      <polygon fill="#58A8F7" points="0 0 32 0 32 3 0 3" opacity=".197"/>
+    </g>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">forgot</text></g></g></g><g transform="translate(810, 26)"><rect x="0" y="0" rx="2" ry="2" width="180" height="228" fill="#ffffff"/><g><g><g transform="translate( 0, 0 )"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="185" viewBox="0 0 180 185">
+  <defs>
+    <rect id="4odply9ur6q-main-a" width="160" height="82" rx="2"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#58A8F7" d="M0,2.99971296 C0,1.34301724 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.34382565 180,2.99971296 L180,185 L0,185 L0,2.99971296 Z" opacity=".097"/>
+    <g transform="translate(10 26)">
+      <rect width="160" height="82" fill="#58A8F7" opacity=".197" rx="2"/>
+      <mask id="4odply9ur6q-main-b" fill="#fff">
+        <use xlink:href="#4odply9ur6q-main-a"/>
+      </mask>
+      <use fill="#58A8F7" opacity="0" xlink:href="#4odply9ur6q-main-a"/>
+      <path fill="#58A8F7" d="M123.544554,38 C147.292079,38 158.861386,56.7865169 182,82 C163.123762,82 82.3134379,82 59,82 C79.0940594,61.2359551 99.7970297,38 123.544554,38 Z" mask="url(#4odply9ur6q-main-b)" opacity=".197"/>
+      <path fill="#0D87FF" d="M44.5,31 C69.8826643,31 86.3055556,55.3181901 109,82 C79.2231422,82 7.11330049,82 -20,82 C1.92139189,55.3181901 19.1173357,31 44.5,31 Z" mask="url(#4odply9ur6q-main-b)" opacity=".198"/>
+      <circle cx="87" cy="22" r="9" fill="#58A8F7" mask="url(#4odply9ur6q-main-b)" opacity=".499"/>
+    </g>
+    <g transform="translate(26 118)">
+      <circle cx="7.5" cy="7.5" r="7.5" fill="#0D87FF" opacity=".499"/>
+      <polygon fill="#FFF" points="7.5 9.75 4.855 11.141 5.36 8.195 3.22 6.109 6.177 5.68 7.5 3 8.823 5.68 11.78 6.109 9.64 8.195 10.145 11.141"/>
+    </g>
+    <g transform="translate(140 118)">
+      <circle cx="7.5" cy="7.5" r="7.5" fill="#0D87FF" opacity=".499"/>
+      <polygon fill="#FFF" points="7.5 9.75 4.855 11.141 5.36 8.195 3.22 6.109 6.177 5.68 7.5 3 8.823 5.68 11.78 6.109 9.64 8.195 10.145 11.141"/>
+    </g>
+    <g transform="translate(83 118)">
+      <circle cx="7.5" cy="7.5" r="7.5" fill="#0D87FF" opacity=".499"/>
+      <polygon fill="#FFF" points="7.5 9.75 4.855 11.141 5.36 8.195 3.22 6.109 6.177 5.68 7.5 3 8.823 5.68 11.78 6.109 9.64 8.195 10.145 11.141"/>
+    </g>
+    <g fill="#58A8F7" transform="translate(10 139)">
+      <polygon points="0 0 26 0 26 5 0 5" opacity=".499" transform="translate(10)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 17)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 10)"/>
+      <polygon points="0 0 26 0 26 3 0 3" opacity=".197" transform="translate(10 24)"/>
+    </g>
+    <g fill="#58A8F7" transform="translate(124 139)">
+      <polygon points="0 0 26 0 26 5 0 5" opacity=".499" transform="translate(10)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 17)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 10)"/>
+      <polygon points="0 0 26 0 26 3 0 3" opacity=".197" transform="translate(10 24)"/>
+    </g>
+    <g fill="#58A8F7" transform="translate(67 139)">
+      <polygon points="0 0 26 0 26 5 0 5" opacity=".499" transform="translate(10)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 17)"/>
+      <polygon points="0 0 46 0 46 3 0 3" opacity=".197" transform="translate(0 10)"/>
+      <polygon points="0 0 26 0 26 3 0 3" opacity=".197" transform="translate(10 24)"/>
+    </g>
+    <path fill="#58A8F7" d="M0,3.00947762 C0,1.34738902 1.34537458,0 2.99263929,0 L177.007361,0 C178.66015,0 180,1.33663106 180,3.00947762 L180,16 L0,16 L0,3.00947762 Z" opacity=".197"/>
+    <path fill="#0D87FF" d="M2.5,5 C1.11928813,5 0,3.88071187 0,2.5 C0,1.11928813 1.11928813,0 2.5,0 C3.88071187,0 5,1.11928813 5,2.5 C5,3.88071187 3.88071187,5 2.5,5 Z M10.5,5 C9.11928813,5 8,3.88071187 8,2.5 C8,1.11928813 9.11928813,0 10.5,0 C11.8807119,0 13,1.11928813 13,2.5 C13,3.88071187 11.8807119,5 10.5,5 Z M18.5,5 C17.1192881,5 16,3.88071187 16,2.5 C16,1.11928813 17.1192881,0 18.5,0 C19.8807119,0 21,1.11928813 21,2.5 C21,3.88071187 19.8807119,5 18.5,5 Z" opacity=".499" transform="translate(5 6)"/>
+  </g>
+</svg></g></g></g><rect x="-1" y="-1" rx="3" ry="3" width="182" height="230" fill="none" stroke="#A2CEF9" stroke-width="2"/><g transform="translate(0,206)"><g><text x="90" y="4" text-anchor="middle" font-family="Roboto,sans-serif" font-size="14px" fill="#52565f">Main</text></g></g></g></g><g><g><g><path d="M 270,560L 70,560Q60,560 60,570L 60,586" stroke="#4d9ef6" stroke-width="2" fill="none"/><path d="M 260,534L 260,560L 260,586" stroke="#4d9ef6" stroke-width="2" fill="none"/><path d="M 250,560L 450,560Q460,560 460,570L 460,586" stroke="#4d9ef6" stroke-width="2" fill="none"/><path d="M 450,560L 650,560Q660,560 660,570L 660,586" stroke="#4d9ef6" stroke-width="2" fill="none"/></g><g><g transform="translate( 250,524 )"><circle cx="10" cy="10" r="9" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M10 7L13 12L7 12Z" fill="#58A8F7"/></g><g transform="translate( 54,580 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g><g transform="translate( 254,580 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g><g transform="translate( 454,580 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g><g transform="translate( 654,580 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g></g></g><g><g><path d="M 1060,534L 1060,560L 1060,586" stroke="#4d9ef6" stroke-width="2" fill="none"/></g><g><g transform="translate( 1050,524 )"><circle cx="10" cy="10" r="9" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M10 7L13 12L7 12Z" fill="#58A8F7"/></g><g transform="translate( 1054,580 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g></g></g><g><g><path d="M 870,280L 270,280Q260,280 260,290L 260,306" stroke="#4d9ef6" stroke-width="2" fill="none"/><path d="M 860,254L 860,280L 860,306" stroke="#4d9ef6" stroke-width="2" fill="none"/><path d="M 850,280L 1050,280Q1060,280 1060,290L 1060,306" stroke="#4d9ef6" stroke-width="2" fill="none"/></g><g><g transform="translate( 850,244 )"><circle cx="10" cy="10" r="9" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M10 7L13 12L7 12Z" fill="#58A8F7"/></g><g transform="translate( 254,300 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g><g transform="translate( 854,300 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g><g transform="translate( 1054,300 )"><circle cx="6" cy="6" r="5" stroke-width="2" stroke="#A2CEF9" fill="#ffffff"/><path d="M6 8L4 5L8 5Z" fill="#58A8F7"/></g></g></g></g></g></g></svg>

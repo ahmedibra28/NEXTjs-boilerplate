@@ -1,6 +1,6 @@
 # NEXT.js Boilerplate
 
-![Boilerplate Screenshots](./screenshot.png)
+![Boilerplate Sitemap](./sitemap.svg)
 
 ## Features
 
