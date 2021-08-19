@@ -4,7 +4,7 @@ import { config } from '../utils/localStorageInfo'
 export const getUsersLog = async (page) => {
   try {
     const { data } = await axios.get(
-      `/api/admin/users/logs?page=${page}`,
+      `/api/admin/users/logon?page=${page}`,
       config()
     )
     return data
@@ -40,6 +40,21 @@ export const logout = () => {
 export const registerUser = async (user) => {
   try {
     const { data } = await axios.post(`/api/users/register`, user, config())
+    typeof window !== undefined &&
+      localStorage.setItem('userInfo', JSON.stringify(data))
+    return data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+export const createUser = async (user) => {
+  try {
+    const { data } = await axios.post(
+      `/api/admin/users/register`,
+      user,
+      config()
+    )
     typeof window !== undefined &&
       localStorage.setItem('userInfo', JSON.stringify(data))
     return data

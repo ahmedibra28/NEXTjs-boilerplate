@@ -4,7 +4,6 @@ import styles from '../styles/404.module.css'
 
 export default function Custom40s4() {
   const router = useRouter()
-  console.log()
   return (
     <>
       <Head>

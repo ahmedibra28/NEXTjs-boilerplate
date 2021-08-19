@@ -58,7 +58,7 @@ const Navigation = () => {
   const authItems = () => {
     return (
       <>
-        <ul className='navbar-nav me-auto'>
+        {/* <ul className='navbar-nav me-auto'>
           <li className='nav-item'>
             <Link href='/about'>
               <a className='nav-link active' aria-current='page'>
@@ -66,7 +66,7 @@ const Navigation = () => {
               </a>
             </Link>
           </li>
-        </ul>
+        </ul> */}
         <ul className='navbar-nav ms-auto'>
           <li className='nav-item dropdown'>
             <a
@@ -84,28 +84,28 @@ const Navigation = () => {
               aria-labelledby='navbarDropdownMenuLink'
             >
               <li>
-                <Link href='/routes'>
+                <Link href='/admin/routes'>
                   <a className='dropdown-item'>
                     <FaRoute className='mb-1' /> Routes
                   </a>
                 </Link>
               </li>
               <li>
-                <Link href='/groups'>
+                <Link href='/admin/groups'>
                   <a className='dropdown-item'>
                     <FaUsers className='mb-1' /> Groups
                   </a>
                 </Link>
               </li>
               <li>
-                <Link href='/users'>
+                <Link href='/admin/users'>
                   <a className='dropdown-item'>
                     <FaUsers className='mb-1' /> Users
                   </a>
                 </Link>
               </li>
               <li>
-                <Link href='/logon'>
+                <Link href='/admin/logon'>
                   <a className='dropdown-item'>
                     <FaFileContract className='mb-1' /> Users Logon
                   </a>

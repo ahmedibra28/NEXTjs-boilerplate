@@ -1,7 +1,7 @@
 import nc from 'next-connect'
-import db from '../../../utils/db'
-import Group from '../../../models/Group'
-import { isAuth } from '../../../utils/auth'
+import db from '../../../../utils/db'
+import Group from '../../../../models/Group'
+import { isAuth } from '../../../../utils/auth'
 
 const handler = nc()
 handler.use(isAuth)

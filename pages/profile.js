@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react'
+import dynamic from 'next/dynamic'
+import withAuth from '../HOC/withAuth'
 import Message from '../components/Message'
 import Loader from 'react-loader-spinner'
 import FormContainer from '../components/FormContainer'
@@ -164,4 +166,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default dynamic(() => Promise.resolve(withAuth(Profile)), { ssr: false })
