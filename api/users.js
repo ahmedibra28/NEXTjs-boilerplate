@@ -25,6 +25,19 @@ export const getUsers = async (page) => {
 export const login = async (credentials) => {
   try {
     const { data } = await axios.post(`/api/users/login`, credentials, config())
+
+    const groupData = await axios.get(`/api/admin/groups`, config())
+
+    const group = groupData.data
+
+    const authRoutes =
+      group && group.filter((r) => r.name === data.group && r.route)[0]
+
+    const authPath = authRoutes && authRoutes.route.map((g) => g.path)
+
+    typeof window !== undefined &&
+      localStorage.setItem('userRoutes', JSON.stringify(authPath))
+
     typeof window !== undefined &&
       localStorage.setItem('userInfo', JSON.stringify(data))
     return data
@@ -34,6 +47,7 @@ export const login = async (credentials) => {
 }
 
 export const logout = () => {
+  typeof window !== undefined && localStorage.removeItem('userRoutes')
   return typeof window !== undefined && localStorage.removeItem('userInfo')
 }
 
