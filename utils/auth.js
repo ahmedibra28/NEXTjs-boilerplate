@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
-import db from './db'
+import dbConnect from './db'
 
 export const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -9,7 +9,7 @@ export const generateToken = (id) => {
 }
 
 export const isAuth = async (req, res, next) => {
-  await db.connect()
+  await dbConnect()
   let token
 
   if (
@@ -31,7 +31,6 @@ export const isAuth = async (req, res, next) => {
     res.status(401)
     throw new Error('Not authorized, no token')
   }
-  await db.disconnect()
 }
 
 export const isAdmin = async (req, res, next) => {

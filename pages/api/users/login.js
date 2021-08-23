@@ -1,5 +1,5 @@
 import nc from 'next-connect'
-import db from '../../../utils/db'
+import dbConnect from '../../../utils/db'
 import User from '../../../models/User'
 import UserLogon from '../../../models/UserLogon'
 import { generateToken } from '../../../utils/auth'
@@ -7,7 +7,7 @@ import { generateToken } from '../../../utils/auth'
 const handler = nc()
 
 handler.post(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const email = req.body.email.toLowerCase()
   const password = req.body.password
@@ -17,7 +17,6 @@ handler.post(async (req, res) => {
     await UserLogon.create({
       user: user._id,
     })
-    await db.disconnect()
 
     return res.send({
       _id: user._id,

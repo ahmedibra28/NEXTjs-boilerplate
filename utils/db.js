@@ -1,46 +1,45 @@
 import mongoose from 'mongoose'
 
-const connection = {}
+const MONGO_URI = process.env.MONGO_URI
 
-async function connect() {
-  if (connection.isConnected) {
-    console.log('already connected')
-    return
+if (!MONGO_URI) {
+  throw new Error(
+    'Please define the MONGO_URI environment variable inside .env.local'
+  )
+}
+
+/**
+ * Global is used here to maintain a cached connection across hot reloads
+ * in development. This prevents connections growing exponentially
+ * during API Route usage.
+ */
+let cached = global.mongoose
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null }
+}
+
+async function dbConnect() {
+  if (cached.conn) {
+    return cached.conn
   }
-  if (mongoose.connections.length > 0) {
-    connection.isConnected = mongoose.connections[0].readyState
-    if (connection.isConnected === 1) {
-      console.log('use previous connection')
-      return
+
+  if (!cached.promise) {
+    const opts = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      bufferCommands: false,
+      bufferMaxEntries: 0,
+      useFindAndModify: true,
+      useCreateIndex: true,
     }
-    await mongoose.disconnect()
+
+    cached.promise = mongoose.connect(MONGO_URI, opts).then((mongoose) => {
+      return mongoose
+    })
   }
-  const db = await mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  })
-  console.log('new connection')
-  connection.isConnected = db.connections[0].readyState
+  cached.conn = await cached.promise
+  return cached.conn
 }
 
-async function disconnect() {
-  if (connection.isConnected) {
-    if (process.env.NODE_ENV === 'production') {
-      await mongoose.disconnect()
-      connection.isConnected = false
-    } else {
-      console.log('not disconnected')
-    }
-  }
-}
-
-function convertDocToObj(doc) {
-  doc._id = doc._id.toString()
-  doc.createdAt = doc.createdAt.toString()
-  doc.updatedAt = doc.updatedAt.toString()
-  return doc
-}
-
-const db = { connect, disconnect, convertDocToObj }
-export default db
+export default dbConnect

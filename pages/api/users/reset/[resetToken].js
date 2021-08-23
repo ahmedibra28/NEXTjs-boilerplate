@@ -1,12 +1,12 @@
 import nc from 'next-connect'
 import crypto from 'crypto'
-import db from '../../../../utils/db'
 import User from '../../../../models/User'
+import dbConnect from '../../../../utils/db'
 
 const handler = nc()
 
 handler.put(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const resetPasswordToken = crypto
     .createHash('sha256')
@@ -29,8 +29,6 @@ handler.put(async (req, res) => {
 
     res.send('Password Updated Successfully')
   }
-
-  await db.disconnect()
 })
 
 export default handler

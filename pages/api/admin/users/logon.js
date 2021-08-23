@@ -1,5 +1,5 @@
 import nc from 'next-connect'
-import db from '../../../../utils/db'
+import dbConnect from '../../../../utils/db'
 import UserLogon from '../../../../models/UserLogon'
 import { isAuth, isAdmin } from '../../../../utils/auth'
 
@@ -7,7 +7,7 @@ const handler = nc()
 handler.use(isAuth, isAdmin)
 
 handler.get(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   let query = UserLogon.find()
 
@@ -25,7 +25,6 @@ handler.get(async (req, res) => {
     .populate('user', ['name', 'email'])
 
   const result = await query
-  await db.disconnect()
 
   res.send({
     startIndex: skip + 1,

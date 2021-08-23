@@ -1,5 +1,5 @@
 import nc from 'next-connect'
-import db from '../../../utils/db'
+import dbConnect from '../../../utils/db'
 import User from '../../../models/User'
 import { generateToken, isAuth } from '../../../utils/auth'
 
@@ -7,7 +7,7 @@ const handler = nc()
 handler.use(isAuth)
 
 handler.get(async (req, res) => {
-  await db.connect()
+  await dbConnect()
   const user = await User.findById(req.user._id)
   if (user) {
     res.send({
@@ -19,12 +19,10 @@ handler.get(async (req, res) => {
   } else {
     return res.status(404).send('User can not be found')
   }
-
-  await db.disconnect()
 })
 
 handler.put(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const user = await User.findById(req.user._id)
 
@@ -36,7 +34,6 @@ handler.put(async (req, res) => {
     }
 
     const updatedUser = await user.save()
-    await db.disconnect()
 
     res.json({
       _id: updatedUser._id,

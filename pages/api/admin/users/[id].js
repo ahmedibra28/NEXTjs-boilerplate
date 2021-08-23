@@ -1,5 +1,5 @@
 import nc from 'next-connect'
-import db from '../../../../utils/db'
+import dbConnect from '../../../../utils/db'
 import User from '../../../../models/User'
 import { isAuth, isAdmin } from '../../../../utils/auth'
 
@@ -7,7 +7,7 @@ const handler = nc()
 handler.use(isAuth, isAdmin)
 
 handler.put(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const userExist = await User.findById(req.query.id)
 
@@ -26,7 +26,6 @@ handler.put(async (req, res) => {
     }
 
     const updatedUser = await userExist.save()
-    await db.disconnect()
 
     res.send({
       _id: updatedUser._id,
@@ -40,7 +39,7 @@ handler.put(async (req, res) => {
 })
 
 handler.delete(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const user = await User.findById(req.query.id)
 
@@ -52,7 +51,7 @@ handler.delete(async (req, res) => {
 
   if (user) {
     await user.remove()
-    await db.disconnect()
+
     res.send({ message: 'User removed' })
   } else {
     return res.status(404).send('User not found')

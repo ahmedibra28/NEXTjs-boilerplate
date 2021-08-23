@@ -1,5 +1,5 @@
 import nc from 'next-connect'
-import db from '../../../utils/db'
+import dbConnect from '../../../utils/db'
 import User from '../../../models/User'
 import { forgotMessage } from '../../../utils/forgotEmailTemplate'
 import { sendEmail } from '../../../utils/sendEmail'
@@ -7,7 +7,7 @@ import { sendEmail } from '../../../utils/sendEmail'
 const handler = nc()
 
 handler.post(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const email = req.body.email.toLowerCase()
 
@@ -43,7 +43,6 @@ handler.post(async (req, res) => {
 
     return res.status(404).send('Email could not be send')
   }
-  await db.disconnect()
 })
 
 export default handler

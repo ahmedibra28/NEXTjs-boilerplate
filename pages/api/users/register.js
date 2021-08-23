@@ -1,12 +1,12 @@
 import nc from 'next-connect'
-import db from '../../../utils/db'
+import dbConnect from '../../../utils/db'
 import User from '../../../models/User'
 import { generateToken } from '../../../utils/auth'
 
 const handler = nc()
 
 handler.post(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const { name, email, password } = req.body
   const userExist = await User.findOne({ email })
@@ -20,7 +20,6 @@ handler.post(async (req, res) => {
     password,
     group: 'user',
   })
-  await db.disconnect()
 
   if (userCreate) {
     res.status(201).json({

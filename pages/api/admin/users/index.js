@@ -1,5 +1,5 @@
 import nc from 'next-connect'
-import db from '../../../../utils/db'
+import dbConnect from '../../../../utils/db'
 import User from '../../../../models/User'
 import { generateToken, isAuth, isAdmin } from '../../../../utils/auth'
 
@@ -7,7 +7,7 @@ const handler = nc()
 handler.use(isAuth, isAdmin)
 
 handler.get(async (req, res) => {
-  await db.connect()
+  await dbConnect()
   let query = User.find()
 
   const page = parseInt(req.query.page) || 1
@@ -25,8 +25,6 @@ handler.get(async (req, res) => {
 
   const result = await query
 
-  await db.disconnect()
-
   res.status(200).json({
     startIndex: skip + 1,
     endIndex: skip + result.length,
@@ -39,7 +37,7 @@ handler.get(async (req, res) => {
 })
 
 handler.post(async (req, res) => {
-  await db.connect()
+  await dbConnect()
 
   const { name, email, password, group } = req.body
   const userExist = await User.findOne({ email })
@@ -53,7 +51,6 @@ handler.post(async (req, res) => {
     password,
     group,
   })
-  await db.disconnect()
 
   if (userCreate) {
     res.status(201).json({
