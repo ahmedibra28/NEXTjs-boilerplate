@@ -93,8 +93,8 @@ const Logon = () => {
                               {log.user && log.user.email}
                             </a>
                           </td>
-                          <td>{moment(log.logDate).format('YYYY-MM-DD')}</td>
-                          <td>{moment(log.logDate).format('HH:mm:ss')}</td>
+                          <td>{moment(log.createdAt).format('YYYY-MM-DD')}</td>
+                          <td>{moment(log.createdAt).format('HH:mm:ss')}</td>
                         </tr>
                       )
                   )}
