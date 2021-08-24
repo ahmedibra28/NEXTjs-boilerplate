@@ -14,6 +14,7 @@ import { logout } from '../api/users'
 import { useMutation } from 'react-query'
 import { useRouter } from 'next/router'
 import localStorageInfo from '../utils/localStorageInfo'
+import { Access, UnlockAccess } from '../utils/UnlockAccess'
 
 const Navigation = () => {
   const router = useRouter()
@@ -68,51 +69,53 @@ const Navigation = () => {
           </li>
         </ul> */}
         <ul className='navbar-nav ms-auto'>
-          <li className='nav-item dropdown'>
-            <a
-              className='nav-link dropdown-toggle'
-              href='#'
-              id='navbarDropdownMenuLink'
-              role='button'
-              data-bs-toggle='dropdown'
-              aria-expanded='false'
-            >
-              <FaCog className='mb-1' /> Admin
-            </a>
-            <ul
-              className='dropdown-menu border-0'
-              aria-labelledby='navbarDropdownMenuLink'
-            >
-              <li>
-                <Link href='/admin/routes'>
-                  <a className='dropdown-item'>
-                    <FaRoute className='mb-1' /> Routes
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href='/admin/groups'>
-                  <a className='dropdown-item'>
-                    <FaUsers className='mb-1' /> Groups
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href='/admin/users'>
-                  <a className='dropdown-item'>
-                    <FaUsers className='mb-1' /> Users
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href='/admin/logon'>
-                  <a className='dropdown-item'>
-                    <FaFileContract className='mb-1' /> Users Logon
-                  </a>
-                </Link>
-              </li>
-            </ul>
-          </li>
+          {UnlockAccess(Access.admin) && (
+            <li className='nav-item dropdown'>
+              <a
+                className='nav-link dropdown-toggle'
+                href='#'
+                id='navbarDropdownMenuLink'
+                role='button'
+                data-bs-toggle='dropdown'
+                aria-expanded='false'
+              >
+                <FaCog className='mb-1' /> Admin
+              </a>
+              <ul
+                className='dropdown-menu border-0'
+                aria-labelledby='navbarDropdownMenuLink'
+              >
+                <li>
+                  <Link href='/admin/routes'>
+                    <a className='dropdown-item'>
+                      <FaRoute className='mb-1' /> Routes
+                    </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href='/admin/groups'>
+                    <a className='dropdown-item'>
+                      <FaUsers className='mb-1' /> Groups
+                    </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href='/admin/users'>
+                    <a className='dropdown-item'>
+                      <FaUsers className='mb-1' /> Users
+                    </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href='/admin/logon'>
+                    <a className='dropdown-item'>
+                      <FaFileContract className='mb-1' /> Users Logon
+                    </a>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+          )}
 
           <li className='nav-item dropdown'>
             <a
@@ -130,13 +133,15 @@ const Navigation = () => {
               className='dropdown-menu border-0'
               aria-labelledby='navbarDropdownMenuLink'
             >
-              <li>
-                <Link href='/profile'>
-                  <a className='dropdown-item'>
-                    <FaUserCircle className='mb-1' /> Profile
-                  </a>
-                </Link>
-              </li>
+              {UnlockAccess(Access.adminUser) && (
+                <li>
+                  <Link href='/profile'>
+                    <a className='dropdown-item'>
+                      <FaUserCircle className='mb-1' /> Profile
+                    </a>
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link href='/'>
                   <a className='dropdown-item' onClick={logoutHandler}>

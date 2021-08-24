@@ -3,19 +3,11 @@ import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
 import Loader from 'react-loader-spinner'
-import {
-  FaCheckCircle,
-  FaEdit,
-  FaPlus,
-  FaTimesCircle,
-  FaTrash,
-} from 'react-icons/fa'
+import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
 import Pagination from '../../components/Pagination'
 import { getUsers, updateUser, deleteUser, createUser } from '../../api/users'
 import { getGroups } from '../../api/groups'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-
-import { UnlockAccess } from '../../components/UnlockAccess'
 
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../../components/Confirm'
@@ -357,13 +349,7 @@ const Users = () => {
                       <td>
                         <a href={`mailto:${user.email}`}>{user.email}</a>
                       </td>
-                      <td>
-                        {UnlockAccess(user && user.group) ? (
-                          <FaCheckCircle className='text-success mb-1' />
-                        ) : (
-                          <FaTimesCircle className='text-danger mb-1' />
-                        )}
-                      </td>
+                      <td>{user.group}</td>
                       <td className='btn-group'>
                         <button
                           className='btn btn-primary btn-sm'
