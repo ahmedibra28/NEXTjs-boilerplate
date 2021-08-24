@@ -3,6 +3,7 @@ import dbConnect from '../../../utils/db'
 import Group from '../../../models/Group'
 import User from '../../../models/User'
 import Route from '../../../models/Route'
+import UserLogon from '../../../models/UserLogon'
 
 import { users, groups, routes } from '../../../utils/data'
 
@@ -19,6 +20,7 @@ handler.get(async (req, res) => {
   await Group.insertMany(groups(routesId.map((r) => r._id)))
 
   await User.deleteMany()
+  await UserLogon.deleteMany()
   await User.create(users())
 
   res.send({ status: 'success data insertion' })

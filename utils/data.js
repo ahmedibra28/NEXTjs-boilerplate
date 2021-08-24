@@ -9,7 +9,7 @@ export const routes = () => {
     {
       isActive: true,
       component: 'Dropdown',
-      path: '/admin/users/logs',
+      path: '/admin/logon',
       name: 'User Logs',
     },
     {
