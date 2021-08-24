@@ -77,11 +77,6 @@ const Navigation = () => {
                 )
             )}
         </ul>
-        {console.log(
-          customLocalStorage() &&
-            customLocalStorage().userAccessRoutes &&
-            customLocalStorage().userAccessRoutes.route
-        )}
         <ul className='navbar-nav ms-auto'>
           {UnlockAccess(Access.admin) && (
             <li className='nav-item dropdown'>
