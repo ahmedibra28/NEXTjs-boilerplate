@@ -21,7 +21,7 @@ handler.get(async (req, res) => {
   query = query
     .skip(skip)
     .limit(pageSize)
-    .sort({ logDate: -1 })
+    .sort({ createdAt: -1 })
     .populate('user', ['name', 'email'])
 
   const result = await query
