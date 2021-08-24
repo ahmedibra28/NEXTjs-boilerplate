@@ -6,11 +6,12 @@ import FormContainer from '../components/FormContainer'
 import { useForm } from 'react-hook-form'
 import { login as loginFun } from '../api/users'
 import { useMutation, useQueryClient } from 'react-query'
-import localStorageInfo from '../utils/localStorageInfo'
+import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
 
 const Login = () => {
   const router = useRouter()
+  const pathName = router.query.next || '/'
   const {
     register,
     handleSubmit,
@@ -26,12 +27,12 @@ const Login = () => {
     onSuccess: (data) => {
       reset()
       queryClient.setQueryData('userInfo', data)
-      router.push('/')
+      router.push(pathName)
     },
   })
 
   useEffect(() => {
-    localStorageInfo() && router.push('/')
+    customLocalStorage() && customLocalStorage().userInfo && router.push('/')
   }, [router])
 
   const submitHandler = async (data) => {

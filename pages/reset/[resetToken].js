@@ -3,7 +3,7 @@ import Message from '../../components/Message'
 import FormContainer from '../../components/FormContainer'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import localStorageInfo from '../../utils/localStorageInfo'
+import { customLocalStorage } from '../../utils/customLocalStorage'
 
 import { reset as resetPassword } from '../../api/users'
 import { useMutation } from 'react-query'
@@ -39,7 +39,7 @@ const Reset = () => {
   )
 
   useEffect(() => {
-    localStorageInfo() && router.push('/')
+    customLocalStorage() && customLocalStorage().userInfo && router.push('/')
   }, [router])
 
   const submitHandler = (data) => {

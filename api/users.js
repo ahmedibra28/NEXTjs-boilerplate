@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { config } from '../utils/localStorageInfo'
+import { config } from '../utils/customLocalStorage'
 
 export const getUsersLog = async (page) => {
   try {
@@ -28,15 +28,12 @@ export const login = async (credentials) => {
 
     const groupData = await axios.get(`/api/admin/groups`, config())
 
-    const group = groupData.data
-
     const authRoutes =
-      group && group.filter((r) => r.name === data.group && r.route)[0]
-
-    const authPath = authRoutes && authRoutes.route.map((g) => g.path)
+      groupData &&
+      groupData.data.filter((r) => r.name === data.group && r.route)[0]
 
     typeof window !== undefined &&
-      localStorage.setItem('userRoutes', JSON.stringify(authPath))
+      localStorage.setItem('userGroup', JSON.stringify(authRoutes))
 
     typeof window !== undefined &&
       localStorage.setItem('userInfo', JSON.stringify(data))
@@ -48,12 +45,22 @@ export const login = async (credentials) => {
 
 export const logout = () => {
   typeof window !== undefined && localStorage.removeItem('userRoutes')
+  typeof window !== undefined && localStorage.removeItem('userGroup')
   return typeof window !== undefined && localStorage.removeItem('userInfo')
 }
 
 export const registerUser = async (user) => {
   try {
     const { data } = await axios.post(`/api/users/register`, user, config())
+    const groupData = await axios.get(`/api/admin/groups`, config())
+
+    const authRoutes =
+      groupData &&
+      groupData.data.filter((r) => r.name === data.group && r.route)[0]
+
+    typeof window !== undefined &&
+      localStorage.setItem('userGroup', JSON.stringify(authRoutes))
+
     typeof window !== undefined &&
       localStorage.setItem('userInfo', JSON.stringify(data))
     return data

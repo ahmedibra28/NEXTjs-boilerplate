@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 
 import { forgot } from '../api/users'
 import { useMutation } from 'react-query'
-import localStorageInfo from '../utils/localStorageInfo'
+import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
 
 const Forgot = () => {
@@ -30,7 +30,7 @@ const Forgot = () => {
   )
 
   useEffect(() => {
-    localStorageInfo() && router.push('/')
+    customLocalStorage() && customLocalStorage().userInfo && router.push('/')
   }, [router])
 
   const submitHandler = (data) => {

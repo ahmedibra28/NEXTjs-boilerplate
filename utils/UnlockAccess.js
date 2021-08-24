@@ -1,7 +1,11 @@
-import localStorageInfo from './localStorageInfo'
+import { customLocalStorage } from './customLocalStorage'
 
 export const UnlockAccess = (roles) => {
-  return roles.includes(localStorageInfo() && localStorageInfo().group)
+  return roles.includes(
+    customLocalStorage() &&
+      customLocalStorage().userInfo &&
+      customLocalStorage().userInfo.group
+  )
 }
 
 export const Access = {

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { config } from '../utils/localStorageInfo'
+import { config } from '../utils/customLocalStorage'
 
 export const getGroups = async () => {
   try {

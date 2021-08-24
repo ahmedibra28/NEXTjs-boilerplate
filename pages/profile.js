@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 
 import { getUserDetails, updateUserProfile } from '../api/users'
 import { useQuery, useMutation } from 'react-query'
-import localStorageInfo from '../utils/localStorageInfo'
+import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
 
 const Profile = () => {
@@ -21,8 +21,18 @@ const Profile = () => {
   } = useForm()
 
   const { data, isLoading, isError, error } = useQuery(
-    ['userDetails', localStorageInfo() && localStorageInfo()._id],
-    () => getUserDetails(localStorageInfo() && localStorageInfo()._id),
+    [
+      'userDetails',
+      customLocalStorage() &&
+        customLocalStorage().userInfo &&
+        customLocalStorage().userInfo._id,
+    ],
+    () =>
+      getUserDetails(
+        customLocalStorage() &&
+          customLocalStorage().userInfo &&
+          customLocalStorage().userInfo._id
+      ),
     {
       retry: 0,
     }
@@ -35,7 +45,12 @@ const Profile = () => {
     isSuccess,
     mutateAsync,
   } = useMutation(
-    ['updateProfile', localStorageInfo() && localStorageInfo()._id],
+    [
+      'updateProfile',
+      customLocalStorage() &&
+        customLocalStorage().userInfo &&
+        customLocalStorage().userInfo._id,
+    ],
     updateUserProfile,
     {
       retry: 0,
