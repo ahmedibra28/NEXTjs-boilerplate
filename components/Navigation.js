@@ -59,15 +59,29 @@ const Navigation = () => {
   const authItems = () => {
     return (
       <>
-        {/* <ul className='navbar-nav me-auto'>
-          <li className='nav-item'>
-            <Link href='/about'>
-              <a className='nav-link active' aria-current='page'>
-                Home
-              </a>
-            </Link>
-          </li>
-        </ul> */}
+        <ul className='navbar-nav me-auto'>
+          {customLocalStorage() &&
+            customLocalStorage().userAccessRoutes &&
+            customLocalStorage().userAccessRoutes.route &&
+            customLocalStorage().userAccessRoutes.route.map(
+              (route) =>
+                route.isActive &&
+                route.component !== 'Dropdown' && (
+                  <li key={route._id} className='nav-item'>
+                    <Link href={route.path}>
+                      <a className='nav-link active' aria-current='page'>
+                        {route.name}
+                      </a>
+                    </Link>
+                  </li>
+                )
+            )}
+        </ul>
+        {console.log(
+          customLocalStorage() &&
+            customLocalStorage().userAccessRoutes &&
+            customLocalStorage().userAccessRoutes.route
+        )}
         <ul className='navbar-nav ms-auto'>
           {UnlockAccess(Access.admin) && (
             <li className='nav-item dropdown'>
@@ -135,15 +149,14 @@ const Navigation = () => {
               className='dropdown-menu border-0'
               aria-labelledby='navbarDropdownMenuLink'
             >
-              {UnlockAccess(Access.adminUser) && (
-                <li>
-                  <Link href='/profile'>
-                    <a className='dropdown-item'>
-                      <FaUserCircle className='mb-1' /> Profile
-                    </a>
-                  </Link>
-                </li>
-              )}
+              <li>
+                <Link href='/profile'>
+                  <a className='dropdown-item'>
+                    <FaUserCircle className='mb-1' /> Profile
+                  </a>
+                </Link>
+              </li>
+
               <li>
                 <Link href='/'>
                   <a className='dropdown-item' onClick={logoutHandler}>
