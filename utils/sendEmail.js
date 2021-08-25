@@ -1,12 +1,6 @@
 import nodemailer from 'nodemailer'
 
 export const sendEmail = (options) => {
-  console.log(
-    process.env.SMTP_SERVER,
-    process.env.SMTP_PORT,
-    process.env.SMTP_USER,
-    process.env.SMTP_KEY
-  )
   const smtpTransparent = nodemailer.createTransport({
     host: process.env.SMTP_SERVER,
     port: process.env.SMTP_PORT,
