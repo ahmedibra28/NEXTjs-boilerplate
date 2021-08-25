@@ -2,10 +2,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import {
   FaCog,
-  FaFileContract,
-  FaRoute,
   FaUserCircle,
-  FaUsers,
   FaSignInAlt,
   FaUserPlus,
   FaPowerOff,
@@ -66,7 +63,7 @@ const Navigation = () => {
             customLocalStorage().userAccessRoutes.route.map(
               (route) =>
                 route.isActive &&
-                route.component !== 'Dropdown' && (
+                route.component === 'Normal' && (
                   <li key={route._id} className='nav-item'>
                     <Link href={route.path}>
                       <a className='nav-link active' aria-current='page'>
@@ -94,34 +91,20 @@ const Navigation = () => {
                 className='dropdown-menu border-0'
                 aria-labelledby='navbarDropdownMenuLink'
               >
-                <li>
-                  <Link href='/admin/routes'>
-                    <a className='dropdown-item'>
-                      <FaRoute className='mb-1' /> Routes
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/admin/groups'>
-                    <a className='dropdown-item'>
-                      <FaUsers className='mb-1' /> Groups
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/admin/users'>
-                    <a className='dropdown-item'>
-                      <FaUsers className='mb-1' /> Users
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/admin/logon'>
-                    <a className='dropdown-item'>
-                      <FaFileContract className='mb-1' /> Users Logon
-                    </a>
-                  </Link>
-                </li>
+                 {customLocalStorage() &&
+                  customLocalStorage().userAccessRoutes &&
+                  customLocalStorage().userAccessRoutes.route &&
+                  customLocalStorage().userAccessRoutes.route.map(
+                    (route) =>
+                      route.isActive &&
+                      route.component === 'Admin' && (
+                        <li key={route._id}>
+                          <Link href={route.path}>
+                            <a className='dropdown-item'>{route.name}</a>
+                          </Link>
+                        </li>
+                      )
+                  )}
               </ul>
             </li>
           )}

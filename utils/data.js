@@ -2,37 +2,37 @@ export const routes = () => {
   return [
     {
       isActive: true,
-      component: 'Home',
+      component: 'Normal',
       path: '/',
       name: 'Home',
     },
     {
       isActive: true,
-      component: 'Dropdown',
+      component: 'Admin',
       path: '/admin/logon',
       name: 'User Logs',
     },
     {
       isActive: true,
-      component: 'Dropdown',
+      component: 'Admin',
       path: '/admin/users',
       name: 'Users',
     },
     {
       isActive: true,
-      component: 'Dropdown',
+      component: 'Admin',
       path: '/admin/groups',
       name: 'Groups',
     },
     {
       isActive: true,
-      component: 'Dropdown',
+      component: 'Admin',
       path: '/admin/routes',
       name: 'Routes',
     },
     {
       isActive: true,
-      component: 'Dropdown',
+      component: 'Profile',
       path: '/profile',
       name: 'Profile',
     },
