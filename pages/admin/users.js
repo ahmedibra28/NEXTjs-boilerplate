@@ -39,12 +39,12 @@ const Users = () => {
   const { data: groupData } = useQuery('groups', () => getGroups())
 
   const {
-    isLoading: isLoadingUpdateUser,
-    isError: isErrorUpdateUser,
-    error: errorUpdateUser,
-    isSuccess: isSuccessUpdateUser,
-    mutateAsync: updateUserMutateAsync,
-  } = useMutation(['updateUser'], updateUser, {
+    isLoading: isLoadingUpdate,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+    isSuccess: isSuccessUpdate,
+    mutateAsync: updateMutateAsync,
+  } = useMutation(['update'], updateUser, {
     retry: 0,
     onSuccess: () => {
       reset()
@@ -53,23 +53,23 @@ const Users = () => {
   })
 
   const {
-    isLoading: isLoadingDeleteUser,
-    isError: isErrorDeleteUser,
-    error: errorDeleteUser,
-    isSuccess: isSuccessDeleteUser,
-    mutateAsync: deleteUserMutateAsync,
-  } = useMutation(['deleteUser'], deleteUser, {
+    isLoading: isLoadingDelete,
+    isError: isErrorDelete,
+    error: errorDelete,
+    isSuccess: isSuccessDelete,
+    mutateAsync: deleteMutateAsync,
+  } = useMutation(['delete'], deleteUser, {
     retry: 0,
     onSuccess: () => queryClient.invalidateQueries(['users']),
   })
 
   const {
-    isLoading: isLoadingCreateUser,
-    isError: isErrorCreateUser,
-    error: errorCreateUser,
-    isSuccess: isSuccessCreateUser,
-    mutateAsync: createUserMutateAsync,
-  } = useMutation(['createUser'], createUser, {
+    isLoading: isLoadingAdd,
+    isError: isErrorAdd,
+    error: errorAdd,
+    isSuccess: isSuccessAdd,
+    mutateAsync: addMutateAsync,
+  } = useMutation(['add'], createUser, {
     retry: 0,
     onSuccess: () => {
       reset()
@@ -86,19 +86,19 @@ const Users = () => {
   }
 
   const deleteHandler = (id) => {
-    confirmAlert(Confirm(() => deleteUserMutateAsync(id)))
+    confirmAlert(Confirm(() => deleteMutateAsync(id)))
   }
 
   const submitHandler = (data) => {
     edit
-      ? updateUserMutateAsync({
+      ? updateMutateAsync({
           _id: id,
           name: data.name,
           email: data.email,
           password: data.password,
           group: data.group,
         })
-      : createUserMutateAsync(data)
+      : addMutateAsync(data)
   }
 
   const editHandler = (user) => {
@@ -118,24 +118,18 @@ const Users = () => {
 
   return (
     <div className='container'>
-      {isSuccessDeleteUser && (
+      {isSuccessDelete && (
         <Message variant='success'>User has been deleted successfully.</Message>
       )}
-      {isErrorDeleteUser && (
-        <Message variant='danger'>{errorDeleteUser}</Message>
-      )}
-      {isSuccessUpdateUser && (
+      {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
+      {isSuccessUpdate && (
         <Message variant='success'>User has been updated successfully.</Message>
       )}
-      {isErrorUpdateUser && (
-        <Message variant='danger'>{errorUpdateUser}</Message>
-      )}
-      {isSuccessCreateUser && (
+      {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
+      {isSuccessAdd && (
         <Message variant='success'>User has been Created successfully.</Message>
       )}
-      {isErrorCreateUser && (
-        <Message variant='danger'>{errorCreateUser}</Message>
-      )}
+      {isErrorAdd && <Message variant='danger'>{errorAdd}</Message>}
 
       <div
         className='modal fade'
@@ -286,9 +280,9 @@ const Users = () => {
                     <button
                       type='submit'
                       className='btn btn-primary '
-                      disabled={isLoadingCreateUser || isLoadingUpdateUser}
+                      disabled={isLoadingAdd || isLoadingUpdate}
                     >
-                      {isLoadingCreateUser || isLoadingUpdateUser ? (
+                      {isLoadingAdd || isLoadingUpdate ? (
                         <span className='spinner-border spinner-border-sm' />
                       ) : (
                         'Submit'
@@ -363,9 +357,9 @@ const Users = () => {
                         <button
                           className='btn btn-danger btn-sm'
                           onClick={() => deleteHandler(user._id)}
-                          disabled={isLoadingDeleteUser}
+                          disabled={isLoadingDelete}
                         >
-                          {isLoadingDeleteUser ? (
+                          {isLoadingDelete ? (
                             <span className='spinner-border spinner-border-sm' />
                           ) : (
                             <span>

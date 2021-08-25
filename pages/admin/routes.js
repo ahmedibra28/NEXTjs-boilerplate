@@ -11,7 +11,7 @@ import {
   FaTrash,
 } from 'react-icons/fa'
 
-import { getRoutes, updateRoute, deleteRoute, addRoute } from '../../api/routes'
+import { getRoutes, addRoute, deleteRoute, updateRoute } from '../../api/routes'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 
 import { confirmAlert } from 'react-confirm-alert'
@@ -46,12 +46,12 @@ const Route = () => {
   )
 
   const {
-    isLoading: isLoadingUpdateRoute,
-    isError: isErrorUpdateRoute,
-    error: errorUpdateRoute,
-    isSuccess: isSuccessUpdateRoute,
-    mutateAsync: updateRouteMutateAsync,
-  } = useMutation(['updateRoute'], updateRoute, {
+    isLoading: isLoadingUpdate,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+    isSuccess: isSuccessUpdate,
+    mutateAsync: updateMutateAsync,
+  } = useMutation(['update'], updateRoute, {
     retry: 0,
     onSuccess: () => {
       reset()
@@ -61,23 +61,23 @@ const Route = () => {
   })
 
   const {
-    isLoading: isLoadingDeleteRoute,
-    isError: isErrorDeleteRoute,
-    error: errorDeleteRoute,
-    isSuccess: isSuccessDeleteRoute,
-    mutateAsync: deleteRouteMutateAsync,
-  } = useMutation(['deleteRoute'], deleteRoute, {
+    isLoading: isLoadingDelete,
+    isError: isErrorDelete,
+    error: errorDelete,
+    isSuccess: isSuccessDelete,
+    mutateAsync: deleteMutateAsync,
+  } = useMutation(['delete'], deleteRoute, {
     retry: 0,
     onSuccess: () => queryClient.invalidateQueries(['routes']),
   })
 
   const {
-    isLoading: isLoadingAddRoute,
-    isError: isErrorAddRoute,
-    error: errorAddRoute,
-    isSuccess: isSuccessAddRoute,
-    mutateAsync: addRouteMutateAsync,
-  } = useMutation(['addRoute'], addRoute, {
+    isLoading: isLoadingAdd,
+    isError: isErrorAdd,
+    error: errorAdd,
+    isSuccess: isSuccessAdd,
+    mutateAsync: addMutateAsync,
+  } = useMutation(['add'], addRoute, {
     retry: 0,
     onSuccess: () => {
       reset()
@@ -91,19 +91,19 @@ const Route = () => {
   }
 
   const deleteHandler = (id) => {
-    confirmAlert(Confirm(() => deleteRouteMutateAsync(id)))
+    confirmAlert(Confirm(() => deleteMutateAsync(id)))
   }
 
   const submitHandler = (data) => {
     edit
-      ? updateRouteMutateAsync({
+      ? updateMutateAsync({
           _id: id,
           path: data.path,
           component: data.component,
           isActive: data.isActive,
           name: data.name,
         })
-      : addRouteMutateAsync(data)
+      : addMutateAsync(data)
   }
 
   const editHandler = (route) => {
@@ -117,28 +117,24 @@ const Route = () => {
 
   return (
     <div className='container'>
-      {isSuccessUpdateRoute && (
+      {isSuccessUpdate && (
         <Message variant='success'>
           Route has been updated successfully.
         </Message>
       )}
-      {isErrorUpdateRoute && (
-        <Message variant='danger'>{errorUpdateRoute}</Message>
-      )}
-      {isSuccessAddRoute && (
+      {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
+      {isSuccessAdd && (
         <Message variant='success'>
           Route has been Created successfully.
         </Message>
       )}
-      {isErrorAddRoute && <Message variant='danger'>{errorAddRoute}</Message>}
-      {isSuccessDeleteRoute && (
+      {isErrorAdd && <Message variant='danger'>{errorAdd}</Message>}
+      {isSuccessDelete && (
         <Message variant='success'>
           Route has been deleted successfully.
         </Message>
       )}
-      {isErrorDeleteRoute && (
-        <Message variant='danger'>{errorDeleteRoute}</Message>
-      )}
+      {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
       <div
         className='modal fade'
         id='editRouteModal'
@@ -252,9 +248,9 @@ const Route = () => {
                     <button
                       type='submit'
                       className='btn btn-primary '
-                      disabled={isLoadingAddRoute || isLoadingUpdateRoute}
+                      disabled={isLoadingAdd || isLoadingUpdate}
                     >
-                      {isLoadingAddRoute || isLoadingUpdateRoute ? (
+                      {isLoadingAdd || isLoadingUpdate ? (
                         <span className='spinner-border spinner-border-sm' />
                       ) : (
                         'Submit'
@@ -333,9 +329,9 @@ const Route = () => {
                         <button
                           className='btn btn-danger btn-sm'
                           onClick={() => deleteHandler(route._id)}
-                          disabled={isLoadingDeleteRoute}
+                          disabled={isLoadingDelete}
                         >
-                          {isLoadingDeleteRoute ? (
+                          {isLoadingDelete ? (
                             <span className='spinner-border spinner-border-sm' />
                           ) : (
                             <span>

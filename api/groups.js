@@ -1,43 +1,13 @@
-import axios from 'axios'
-import { config } from '../utils/customLocalStorage'
+import dynamicAPI from './dynamicAPI'
 
-export const getGroups = async () => {
-  try {
-    const { data } = await axios.get(`/api/admin/groups`, config())
+const url = '/api/admin/groups'
 
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+export const getGroups = async () => await dynamicAPI('get', url, {})
 
-export const addGroup = async (obj) => {
-  try {
-    const { data } = await axios.post(`/api/admin/groups`, obj, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+export const addGroup = async (obj) => await dynamicAPI('post', url, obj)
 
-export const updateGroup = async (obj) => {
-  try {
-    const { data } = await axios.put(
-      `/api/admin/groups/${obj._id}`,
-      obj,
-      config()
-    )
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+export const updateGroup = async (obj) =>
+  await dynamicAPI('put', `${url}/${obj._id}`, obj)
 
-export const deleteGroup = async (id) => {
-  try {
-    const { data } = await axios.delete(`/api/admin/groups/${id}`, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+export const deleteGroup = async (id) =>
+  await dynamicAPI('delete', `${url}/${id}`, {})

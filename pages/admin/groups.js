@@ -49,12 +49,12 @@ const Group = () => {
   })
 
   const {
-    isLoading: isLoadingUpdateGroup,
-    isError: isErrorUpdateGroup,
-    error: errorUpdateGroup,
-    isSuccess: isSuccessUpdateGroup,
-    mutateAsync: updateGroupMutateAsync,
-  } = useMutation(['updateGroup'], updateGroup, {
+    isLoading: isLoadingUpdate,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+    isSuccess: isSuccessUpdate,
+    mutateAsync: updateMutateAsync,
+  } = useMutation(updateGroup, {
     retry: 0,
     onSuccess: () => {
       reset()
@@ -63,23 +63,23 @@ const Group = () => {
   })
 
   const {
-    isLoading: isLoadingDeleteGroup,
-    isError: isErrorDeleteGroup,
-    error: errorDeleteGroup,
-    isSuccess: isSuccessDeleteGroup,
-    mutateAsync: deleteGroupMutateAsync,
-  } = useMutation(['deleteGroup'], deleteGroup, {
+    isLoading: isLoadingDelete,
+    isError: isErrorDelete,
+    error: errorDelete,
+    isSuccess: isSuccessDelete,
+    mutateAsync: deleteMutateAsync,
+  } = useMutation(deleteGroup, {
     retry: 0,
     onSuccess: () => queryClient.invalidateQueries(['groups']),
   })
 
   const {
-    isLoading: isLoadingAddGroup,
-    isError: isErrorAddGroup,
-    error: errorAddGroup,
-    isSuccess: isSuccessAddGroup,
-    mutateAsync: addGroupMutateAsync,
-  } = useMutation(['addGroup'], addGroup, {
+    isLoading: isLoadingAdd,
+    isError: isErrorAdd,
+    error: errorAdd,
+    isSuccess: isSuccessAdd,
+    mutateAsync: addMutateAsync,
+  } = useMutation(addGroup, {
     retry: 0,
     onSuccess: () => {
       reset()
@@ -96,18 +96,18 @@ const Group = () => {
   }
 
   const deleteHandler = (id) => {
-    confirmAlert(Confirm(() => deleteGroupMutateAsync(id)))
+    confirmAlert(Confirm(() => deleteMutateAsync(id)))
   }
 
   const submitHandler = (data) => {
     edit
-      ? updateGroupMutateAsync({
+      ? updateMutateAsync({
           _id: id,
           name: data.name,
           route: data.route,
           isActive: data.isActive,
         })
-      : addGroupMutateAsync(data)
+      : addMutateAsync(data)
   }
 
   const editHandler = (group) => {
@@ -123,28 +123,24 @@ const Group = () => {
 
   return (
     <div className='container'>
-      {isSuccessUpdateGroup && (
+      {isSuccessUpdate && (
         <Message variant='success'>
           Group has been updated successfully.
         </Message>
       )}
-      {isErrorUpdateGroup && (
-        <Message variant='danger'>{errorUpdateGroup}</Message>
-      )}
-      {isSuccessAddGroup && (
+      {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
+      {isSuccessAdd && (
         <Message variant='success'>
           Group has been Created successfully.
         </Message>
       )}
-      {isErrorAddGroup && <Message variant='danger'>{errorAddGroup}</Message>}
-      {isSuccessDeleteGroup && (
+      {isErrorAdd && <Message variant='danger'>{errorAdd}</Message>}
+      {isSuccessDelete && (
         <Message variant='success'>
           Group has been deleted successfully.
         </Message>
       )}
-      {isErrorDeleteGroup && (
-        <Message variant='danger'>{errorDeleteGroup}</Message>
-      )}
+      {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
       <div
         className='modal fade'
         id='editGroupModal'
@@ -249,9 +245,9 @@ const Group = () => {
                     <button
                       type='submit'
                       className='btn btn-primary '
-                      disabled={isLoadingAddGroup || isLoadingUpdateGroup}
+                      disabled={isLoadingAdd || isLoadingUpdate}
                     >
-                      {isLoadingAddGroup || isLoadingUpdateGroup ? (
+                      {isLoadingAdd || isLoadingUpdate ? (
                         <span className='spinner-border spinner-border-sm' />
                       ) : (
                         'Submit'
@@ -333,9 +329,9 @@ const Group = () => {
                         <button
                           className='btn btn-danger btn-sm'
                           onClick={() => deleteHandler(group._id)}
-                          disabled={isLoadingDeleteGroup}
+                          disabled={isLoadingDelete}
                         >
-                          {isLoadingDeleteGroup ? (
+                          {isLoadingDelete ? (
                             <span className='spinner-border spinner-border-sm' />
                           ) : (
                             <span>

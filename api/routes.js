@@ -1,42 +1,13 @@
-import axios from 'axios'
-import { config } from '../utils/customLocalStorage'
+import dynamicAPI from './dynamicAPI'
 
-export const getRoutes = async () => {
-  try {
-    const { data } = await axios.get(`/api/admin/routes`, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+const url = '/api/admin/routes'
 
-export const addRoute = async (obj) => {
-  try {
-    const { data } = await axios.post(`/api/admin/routes`, obj, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+export const getRoutes = async () => await dynamicAPI('get', url, {})
 
-export const updateRoute = async (obj) => {
-  try {
-    const { data } = await axios.put(
-      `/api/admin/routes/${obj._id}`,
-      obj,
-      config()
-    )
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+export const addRoute = async (obj) => await dynamicAPI('post', url, obj)
 
-export const deleteRoute = async (id) => {
-  try {
-    const { data } = await axios.delete(`/api/admin/routes/${id}`, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+export const updateRoute = async (obj) =>
+  await dynamicAPI('put', `${url}/${obj._id}`, obj)
+
+export const deleteRoute = async (id) =>
+  await dynamicAPI('delete', `${url}/${id}`, {})

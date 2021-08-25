@@ -1,26 +1,32 @@
 import axios from 'axios'
 import { config } from '../utils/customLocalStorage'
 
-export const getUsersLog = async (page) => {
-  try {
-    const { data } = await axios.get(
-      `/api/admin/users/logon?page=${page}`,
-      config()
-    )
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+import dynamicAPI from './dynamicAPI'
 
-export const getUsers = async (page) => {
-  try {
-    const { data } = await axios.get(`/api/admin/users?page=${page}`, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
+const url = '/api/admin/users'
+
+export const getUsers = async (page) =>
+  await dynamicAPI('get', `${url}?page=${page}`, {})
+
+export const getUsersLog = async (page) =>
+  await dynamicAPI('get', `${url}/logon?page=${page}`, {})
+
+export const createUser = async (obj) => await dynamicAPI('post', url, obj)
+
+export const updateUser = async (obj) =>
+  await dynamicAPI('put', `${url}/${obj._id}`, obj)
+
+export const deleteUser = async (id) =>
+  await dynamicAPI('delete', `${url}/${id}`, {})
+
+export const getUserDetails = async (id) =>
+  await dynamicAPI('get', `/api/users/${id}`, {})
+
+export const forgot = async (obj) =>
+  await dynamicAPI('post', `/api/users/forgot`, obj)
+
+export const reset = async (obj) =>
+  await dynamicAPI('put', `/api/users/reset/${obj.resetToken}`, obj)
 
 export const login = async (credentials) => {
   try {
@@ -69,79 +75,11 @@ export const registerUser = async (user) => {
   }
 }
 
-export const createUser = async (user) => {
-  try {
-    const { data } = await axios.post(
-      `/api/admin/users/register`,
-      user,
-      config()
-    )
-    typeof window !== undefined &&
-      localStorage.setItem('userInfo', JSON.stringify(data))
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
-export const updateUser = async (user) => {
-  try {
-    const { data } = await axios.put(
-      `/api/admin/users/${user._id}`,
-      user,
-      config()
-    )
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
-export const deleteUser = async (id) => {
-  try {
-    const { data } = await axios.delete(`/api/admin/users/${id}`, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
-export const getUserDetails = async (id) => {
-  try {
-    const { data } = await axios.get(`/api/users/${id}`, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
 export const updateUserProfile = async (user) => {
   try {
     const { data } = await axios.put(`/api/users/profile`, user, config())
     typeof window !== undefined &&
       localStorage.setItem('userInfo', JSON.stringify(data))
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
-export const forgot = async (email) => {
-  try {
-    const { data } = await axios.post(`/api/users/forgot`, email, config())
-    return data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
-export const reset = async (info) => {
-  try {
-    const { data } = await axios.put(
-      `/api/users/reset/${info.resetToken}`,
-      info,
-      config()
-    )
     return data
   } catch (error) {
     throw error.response.data
