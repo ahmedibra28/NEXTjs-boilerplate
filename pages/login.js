@@ -8,6 +8,7 @@ import { login as loginFun } from '../api/users'
 import { useMutation, useQueryClient } from 'react-query'
 import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
+import { inputEmail, inputPassword } from '../utils/dynamicForm'
 
 const Login = () => {
   const router = useRouter()
@@ -49,38 +50,12 @@ const Login = () => {
       {isError && <Message variant='danger'>{error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className='mb-3'>
-          <label htmlFor='email'>Email Address</label>
-          <input
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.+\S+/,
-                message: 'Entered value does not match email format',
-              },
-            })}
-            type='email'
-            className='form-control'
-            placeholder='Enter email'
-            autoFocus
-          />
-          {errors.email && (
-            <span className='text-danger'>{errors.email.message}</span>
-          )}
-        </div>
-
-        <div className='mb-3'>
-          <label htmlFor='password'>Password</label>
-          <input
-            {...register('password', { required: 'Password is required' })}
-            type='password'
-            placeholder='Enter password'
-            className='form-control'
-          />
-          {errors.password && (
-            <span className='text-danger'>{errors.password.message}</span>
-          )}
-        </div>
+        {inputEmail({ register, errors, name: 'email' })}
+        {inputPassword({
+          register,
+          errors,
+          name: 'password',
+        })}
 
         <button type='submit' className='btn btn-primary ' disabled={isLoading}>
           {isLoading ? (

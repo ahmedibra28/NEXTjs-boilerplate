@@ -10,6 +10,7 @@ import { useMutation } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
+import { inputEmail, inputPassword, inputText } from '../utils/dynamicForm'
 
 const Register = () => {
   const router = useRouter()
@@ -58,77 +59,26 @@ const Register = () => {
 
       {isError && <Message variant='danger'>{error}</Message>}
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className='mb-3'>
-          <label htmlFor='name'>Name</label>
-          <input
-            {...register('name', { required: 'Name is required' })}
-            type='text'
-            placeholder='Enter name'
-            className='form-control'
-            autoFocus
-          />
-          {errors.name && (
-            <span className='text-danger'>{errors.name.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='email'>Email Address</label>
-          <input
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.+\S+/,
-                message: 'Entered value does not match email format',
-              },
-            })}
-            type='email'
-            placeholder='Enter email'
-            className='form-control'
-          />
-          {errors.email && (
-            <span className='text-danger'>{errors.email.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='password'>Password</label>
-          <input
-            {...register('password', {
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must have at least 6 characters',
-              },
-            })}
-            type='password'
-            placeholder='Enter password'
-            className='form-control'
-          />
-          {errors.password && (
-            <span className='text-danger'>{errors.password.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='confirmPassword'>Confirm Password</label>
-          <input
-            {...register('confirmPassword', {
-              required: 'Confirm password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must have at least 6 characters',
-              },
-              validate: (value) =>
-                value === watch().password || 'The passwords do not match',
-            })}
-            type='password'
-            placeholder='Confirm password'
-            className='form-control'
-          />
-          {errors.confirmPassword && (
-            <span className='text-danger'>
-              {errors.confirmPassword.message}
-            </span>
-          )}
-        </div>
+        {inputText({ register, errors, name: 'name' })}
+        {inputEmail({ register, errors, name: 'email' })}
+        {inputPassword({
+          register,
+          errors,
+          name: 'password',
+          isRequired: true,
+          minLength: true,
+        })}
+
+        {inputPassword({
+          register,
+          errors,
+          watch,
+          name: 'confirmPassword',
+          screenName: 'confirm password',
+          validate: true,
+          minLength: true,
+        })}
+
         <button type='submit' className='btn btn-primary ' disabled={isLoading}>
           {isLoading ? (
             <span className='spinner-border spinner-border-sm' />

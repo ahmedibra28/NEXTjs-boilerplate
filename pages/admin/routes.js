@@ -17,12 +17,12 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../../components/Confirm'
 import { useForm } from 'react-hook-form'
+import { inputCheckBox, inputText } from '../../utils/dynamicForm'
 
 const Route = () => {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     reset,
     formState: { errors },
@@ -173,66 +173,18 @@ const Route = () => {
                 <Message variant='danger'>{error}</Message>
               ) : (
                 <form onSubmit={handleSubmit(submitHandler)}>
-                  <div className='mb-3'>
-                    <label htmlFor='name'>Name</label>
-                    <input
-                      {...register('name', { required: 'Name is required' })}
-                      type='text'
-                      placeholder='Enter name'
-                      className='form-control'
-                      autoFocus
-                    />
-                    {errors.name && (
-                      <span className='text-danger'>{errors.name.message}</span>
-                    )}
-                  </div>
-
-                  <div className='mb-3'>
-                    <label htmlFor='path'>Path</label>
-                    <input
-                      {...register('path', { required: 'Path is required' })}
-                      type='text'
-                      placeholder='Enter path'
-                      className='form-control'
-                      autoFocus
-                    />
-                    {errors.path && (
-                      <span className='text-danger'>{errors.path.message}</span>
-                    )}
-                  </div>
-
-                  <div className='mb-3'>
-                    <label htmlFor='component'>Component</label>
-                    <input
-                      {...register('component', {
-                        required: 'Component is required',
-                      })}
-                      type='text'
-                      placeholder='Enter component'
-                      className='form-control'
-                      autoFocus
-                    />
-                    {errors.component && (
-                      <span className='text-danger'>
-                        {errors.component.message}
-                      </span>
-                    )}
-                  </div>
+                  {inputText({ register, errors, name: 'name' })}
+                  {inputText({ register, errors, name: 'path' })}
+                  {inputText({ register, errors, name: 'component' })}
 
                   <div className='row'>
                     <div className='col'>
-                      <div className='form-check'>
-                        <input
-                          className='form-check-input'
-                          type='checkbox'
-                          id='isActive'
-                          {...register('isActive')}
-                          checked={watch().isActive}
-                        />
-                        <label className='form-check-label' htmlFor='isActive'>
-                          is Active?
-                        </label>
-                      </div>
+                      {inputCheckBox({
+                        register,
+                        errors,
+                        name: 'isActive',
+                        isRequired: false,
+                      })}
                     </div>
                   </div>
 

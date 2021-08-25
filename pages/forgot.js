@@ -8,6 +8,7 @@ import { forgot } from '../api/users'
 import { useMutation } from 'react-query'
 import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
+import { inputEmail } from '../utils/dynamicForm'
 
 const Forgot = () => {
   const router = useRouter()
@@ -51,25 +52,7 @@ const Forgot = () => {
       {isError && <Message variant='danger'>{error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className='mb-3'>
-          <label htmlFor='email'>Email Address</label>
-          <input
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.+\S+/,
-                message: 'Entered value does not match email format',
-              },
-            })}
-            type='email'
-            placeholder='Enter email'
-            className='form-control'
-            autoFocus
-          />
-          {errors.email && (
-            <span className='text-danger'>{errors.email.message}</span>
-          )}
-        </div>
+        {inputEmail({ register, errors, name: 'email' })}
 
         <button
           type='submit'

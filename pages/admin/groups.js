@@ -19,12 +19,12 @@ import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../../components/Confirm'
 import { useForm } from 'react-hook-form'
 import { getRoutes } from '../../api/routes'
+import { inputCheckBox, inputText } from '../../utils/dynamicForm'
 
 const Group = () => {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     reset,
     formState: { errors },
@@ -179,19 +179,7 @@ const Group = () => {
                 <Message variant='danger'>{error}</Message>
               ) : (
                 <form onSubmit={handleSubmit(submitHandler)}>
-                  <div className='mb-3'>
-                    <label htmlFor='name'>Name</label>
-                    <input
-                      {...register('name', { required: 'Name is required' })}
-                      type='text'
-                      placeholder='Enter name'
-                      className='form-control'
-                      autoFocus
-                    />
-                    {errors.name && (
-                      <span className='text-danger'>{errors.name.message}</span>
-                    )}
-                  </div>
+                  {inputText({ register, errors, name: 'name' })}
 
                   <div className='row g-1 mb-3'>
                     {routeData &&
@@ -218,18 +206,12 @@ const Group = () => {
 
                   <div className='row'>
                     <div className='col'>
-                      <div className='form-check'>
-                        <input
-                          className='form-check-input'
-                          type='checkbox'
-                          id='isActive'
-                          {...register('isActive')}
-                          checked={watch().isActive}
-                        />
-                        <label className='form-check-label' htmlFor='isActive'>
-                          is Active?
-                        </label>
-                      </div>
+                      {inputCheckBox({
+                        register,
+                        errors,
+                        name: 'isActive',
+                        isRequired: false,
+                      })}
                     </div>
                   </div>
 

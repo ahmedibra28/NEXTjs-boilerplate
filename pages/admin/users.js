@@ -12,6 +12,12 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../../components/Confirm'
 import { useForm } from 'react-hook-form'
+import {
+  dynamicInputSelect,
+  inputEmail,
+  inputPassword,
+  inputText,
+} from '../../utils/dynamicForm'
 
 const Users = () => {
   const [page, setPage] = useState(1)
@@ -169,104 +175,33 @@ const Users = () => {
                 <Message variant='danger'>{error}</Message>
               ) : (
                 <form onSubmit={handleSubmit(submitHandler)}>
-                  <div className='mb-3'>
-                    <label htmlFor='name'>Name</label>
-                    <input
-                      {...register('name', { required: 'Name is required' })}
-                      type='text'
-                      placeholder='Enter name'
-                      className='form-control'
-                      autoFocus
-                    />
-                    {errors.name && (
-                      <span className='text-danger'>{errors.name.message}</span>
-                    )}
-                  </div>
-                  <div className='mb-3'>
-                    <label htmlFor='email'>Email Address</label>
-                    <input
-                      {...register('email', {
-                        required: 'Email is required',
-                        pattern: {
-                          value: /\S+@\S+\.+\S+/,
-                          message: 'Entered value does not match email format',
-                        },
-                      })}
-                      type='email'
-                      placeholder='Enter email'
-                      className='form-control'
-                    />
-                    {errors.email && (
-                      <span className='text-danger'>
-                        {errors.email.message}
-                      </span>
-                    )}
-                  </div>
-                  <div className='mb-3'>
-                    <label htmlFor='password'>Password</label>
-                    <input
-                      {...register('password', {
-                        minLength: {
-                          value: 6,
-                          message: 'Password must have at least 6 characters',
-                        },
-                      })}
-                      type='password'
-                      placeholder='Enter password'
-                      className='form-control'
-                    />
-                    {errors.password && (
-                      <span className='text-danger'>
-                        {errors.password.message}
-                      </span>
-                    )}
-                  </div>
-                  <div className='mb-3'>
-                    <label htmlFor='confirmPassword'>Confirm Password</label>
-                    <input
-                      {...register('confirmPassword', {
-                        minLength: {
-                          value: 6,
-                          message: 'Password must have at least 6 characters',
-                        },
-                        validate: (value) =>
-                          value === watch().password ||
-                          'The passwords do not match',
-                      })}
-                      type='password'
-                      placeholder='Confirm password'
-                      className='form-control'
-                    />
-                    {errors.confirmPassword && (
-                      <span className='text-danger'>
-                        {errors.confirmPassword.message}
-                      </span>
-                    )}
-                  </div>
+                  {inputText({ register, errors, name: 'name' })}
+                  {inputEmail({ register, errors, name: 'email' })}
+                  {inputPassword({
+                    register,
+                    errors,
+                    name: 'password',
+                    minLength: true,
+                    isRequired: false,
+                  })}
 
-                  <div className='mb-3'>
-                    <label htmlFor='group'>Group</label>
-                    <select
-                      {...register('group', { required: 'Group is required' })}
-                      type='text'
-                      placeholder='Enter group'
-                      className='form-control'
-                      autoFocus
-                    >
-                      <option value=''>-------</option>
-                      {groupData &&
-                        groupData.map((group) => (
-                          <option key={group._id} value={group.name}>
-                            {group.name}
-                          </option>
-                        ))}
-                    </select>
-                    {errors.group && (
-                      <span className='text-danger'>
-                        {errors.group.message}
-                      </span>
-                    )}
-                  </div>
+                  {inputPassword({
+                    register,
+                    errors,
+                    watch,
+                    name: 'confirmPassword',
+                    screenName: 'confirm password',
+                    validate: true,
+                    minLength: true,
+                    isRequired: false,
+                  })}
+
+                  {dynamicInputSelect({
+                    register,
+                    errors,
+                    data: groupData && groupData,
+                    name: 'group',
+                  })}
 
                   <div className='modal-footer'>
                     <button

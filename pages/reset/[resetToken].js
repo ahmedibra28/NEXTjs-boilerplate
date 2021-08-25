@@ -8,6 +8,7 @@ import { customLocalStorage } from '../../utils/customLocalStorage'
 import { reset as resetPassword } from '../../api/users'
 import { useMutation } from 'react-query'
 import Head from 'next/head'
+import { inputPassword } from '../../utils/dynamicForm'
 
 const Reset = () => {
   const router = useRouter()
@@ -61,46 +62,23 @@ const Reset = () => {
       {isError && <Message variant='danger'>{error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className='mb-3'>
-          <label htmlFor='password'>Password</label>
-          <input
-            {...register('password', {
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must have at least 6 characters',
-              },
-            })}
-            type='password'
-            placeholder='Enter password'
-            className='form-control'
-          />
-          {errors.password && (
-            <span className='text-danger'>{errors.password.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='confirmPassword'>Confirm Password</label>
-          <input
-            {...register('confirmPassword', {
-              required: 'Confirm password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must have at least 6 characters',
-              },
-              validate: (value) =>
-                value === watch().password || 'The passwords do not match',
-            })}
-            type='password'
-            placeholder='Confirm password'
-            className='form-control'
-          />
-          {errors.confirmPassword && (
-            <span className='text-danger'>
-              {errors.confirmPassword.message}
-            </span>
-          )}
-        </div>
+        {inputPassword({
+          register,
+          errors,
+          name: 'password',
+          minLength: true,
+          isRequired: true,
+        })}
+
+        {inputPassword({
+          register,
+          errors,
+          watch,
+          name: 'confirmPassword',
+          screenName: 'confirm password',
+          validate: true,
+          minLength: true,
+        })}
 
         <button type='submit' className='btn btn-primary ' disabled={isLoading}>
           {isLoading ? (
