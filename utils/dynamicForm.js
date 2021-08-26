@@ -133,3 +133,24 @@ export const inputCheckBox = (args) => {
     </div>
   )
 }
+
+export const inputFile = (args) => {
+  const { register, errors, name, isRequired = true, setFile, label } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor={name}>{label}</label>
+      <input
+        {...register(name, isRequired && { required: `${name} is required` })}
+        type='file'
+        placeholder={`Enter ${name}`}
+        className='form-control'
+        id='formFile'
+        onChange={(e) => setFile(e.target.files[0])}
+      />
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}

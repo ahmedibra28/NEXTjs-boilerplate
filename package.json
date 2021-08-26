@@ -16,6 +16,7 @@
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.0.0-beta3",
     "crypto": "^1.0.1",
+    "express-fileupload": "^1.2.1",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
