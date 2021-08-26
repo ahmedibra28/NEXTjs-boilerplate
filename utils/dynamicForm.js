@@ -154,3 +154,24 @@ export const inputFile = (args) => {
     </div>
   )
 }
+
+export const inputTextArea = (args) => {
+  const { register, errors, name, isRequired = true } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor={name}>{name}</label>
+      <textarea
+        row='10'
+        cols='10'
+        {...register(name, isRequired && { required: `${name} is required` })}
+        type='text'
+        placeholder={`Enter ${name}`}
+        className='form-control'
+      />
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
