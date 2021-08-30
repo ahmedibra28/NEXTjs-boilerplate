@@ -99,7 +99,7 @@ const Route = () => {
       ? updateMutateAsync({
           _id: id,
           path: data.path,
-          component: data.component,
+          menu: data.menu,
           isActive: data.isActive,
           name: data.name,
         })
@@ -110,7 +110,7 @@ const Route = () => {
     setId(route._id)
     setEdit(true)
     setValue('path', route.path)
-    setValue('component', route.component)
+    setValue('menu', route.menu)
     setValue('isActive', route.isActive)
     setValue('name', route.name)
   }
@@ -175,7 +175,7 @@ const Route = () => {
                 <form onSubmit={handleSubmit(submitHandler)}>
                   {inputText({ register, errors, name: 'name' })}
                   {inputText({ register, errors, name: 'path' })}
-                  {inputText({ register, errors, name: 'component' })}
+                  {inputText({ register, errors, name: 'menu' })}
 
                   <div className='row'>
                     <div className='col'>
@@ -259,7 +259,7 @@ const Route = () => {
                     <tr key={route._id}>
                       <td>{route.name}</td>
                       <td>{route.path}</td>
-                      <td>{route.component}</td>
+                      <td>{route.menu}</td>
                       <td>
                         {route.isActive ? (
                           <FaCheckCircle className='text-success mb-1' />

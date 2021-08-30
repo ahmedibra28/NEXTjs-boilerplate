@@ -17,7 +17,7 @@ handler.use(isAuth)
 handler.post(async (req, res) => {
   await dbConnect()
 
-  const { isActive, component, path, name } = req.body
+  const { isActive, menu, path, name } = req.body
   const createdBy = req.user.id
 
   const exist = await Route.findOne({ path })
@@ -25,7 +25,7 @@ handler.post(async (req, res) => {
     return res.status(400).send('Route already exist')
   }
   const createObj = await Route.create({
-    component,
+    menu,
     path,
     isActive,
     createdBy,

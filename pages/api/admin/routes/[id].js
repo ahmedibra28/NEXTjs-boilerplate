@@ -9,7 +9,7 @@ handler.use(isAuth)
 handler.put(async (req, res) => {
   await dbConnect()
 
-  const { isActive, component, path, name } = req.body
+  const { isActive, menu, path, name } = req.body
   const updatedBy = req.user.id
 
   const _id = req.query.id
@@ -24,7 +24,7 @@ handler.put(async (req, res) => {
     if (exist.length === 0) {
       obj.path = path
       obj.name = name
-      obj.component = component
+      obj.menu = menu
       obj.isActive = isActive
       obj.updatedBy = updatedBy
       await obj.save()

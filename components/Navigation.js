@@ -63,7 +63,7 @@ const Navigation = () => {
             customLocalStorage().userAccessRoutes.route.map(
               (route) =>
                 route.isActive &&
-                route.component === 'Normal' && (
+                route.menu === 'Normal' && (
                   <li key={route._id} className='nav-item'>
                     <Link href={route.path}>
                       <a className='nav-link active' aria-current='page'>
@@ -91,13 +91,13 @@ const Navigation = () => {
                 className='dropdown-menu border-0'
                 aria-labelledby='navbarDropdownMenuLink'
               >
-                 {customLocalStorage() &&
+                {customLocalStorage() &&
                   customLocalStorage().userAccessRoutes &&
                   customLocalStorage().userAccessRoutes.route &&
                   customLocalStorage().userAccessRoutes.route.map(
                     (route) =>
                       route.isActive &&
-                      route.component === 'Admin' && (
+                      route.menu === 'Admin' && (
                         <li key={route._id}>
                           <Link href={route.path}>
                             <a className='dropdown-item'>{route.name}</a>
