@@ -179,7 +179,7 @@ const Group = () => {
                 <Message variant='danger'>{error}</Message>
               ) : (
                 <form onSubmit={handleSubmit(submitHandler)}>
-                  {inputText({ register, errors, name: 'name' })}
+                  {inputText({ register, label: 'Name', errors, name: 'name' })}
 
                   <div className='row g-1 mb-3'>
                     {routeData &&
@@ -209,6 +209,7 @@ const Group = () => {
                       {inputCheckBox({
                         register,
                         errors,
+                        label: 'isActive',
                         name: 'isActive',
                         isRequired: false,
                       })}

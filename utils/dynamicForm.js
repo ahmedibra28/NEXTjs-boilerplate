@@ -1,11 +1,11 @@
 export const inputText = (args) => {
-  const { register, errors, name, isRequired = true } = args
+  const { register, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
-      <label htmlFor={name}>{name}</label>
+      <label htmlFor={name}>{label}</label>
       <input
-        {...register(name, isRequired && { required: `${name} is required` })}
+        {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
         placeholder={`Enter ${name}`}
         className='form-control'
@@ -17,15 +17,34 @@ export const inputText = (args) => {
   )
 }
 
-export const inputEmail = (args) => {
-  const { register, errors, name } = args
+export const inputNumber = (args) => {
+  const { register, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
-      <label htmlFor={name}>{name}</label>
+      <label htmlFor={name}>{label}</label>
+      <input
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type='number'
+        placeholder={`Enter ${name}`}
+        className='form-control'
+      />
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
+
+export const inputEmail = (args) => {
+  const { register, errors, label, name } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor={name}>{label}</label>
       <input
         {...register(name, {
-          required: `${name} is required`,
+          required: `${label} is required`,
           pattern: {
             value: /\S+@\S+\.+\S+/,
             message: 'Entered value does not match email format',
@@ -48,7 +67,7 @@ export const inputPassword = (args) => {
     errors,
     watch,
     name,
-    screenName,
+    label,
     validate = false,
     isRequired = true,
     minLength = false,
@@ -56,12 +75,10 @@ export const inputPassword = (args) => {
 
   return (
     <div className='mb-3'>
-      <label htmlFor={screenName ? screenName : name}>
-        {screenName ? screenName : name}
-      </label>
+      <label htmlFor={name}>{label}</label>
       <input
         {...register(name, {
-          required: isRequired ? `${name} is required` : null,
+          required: isRequired ? `${label} is required` : null,
           minLength: minLength
             ? {
                 value: 6,
@@ -85,13 +102,13 @@ export const inputPassword = (args) => {
 }
 
 export const dynamicInputSelect = (args) => {
-  const { register, errors, name, data, isRequired = true } = args
+  const { register, errors, name, label, data, isRequired = true } = args
 
   return (
     <div className='mb-3'>
-      <label htmlFor={name}>{name}</label>
+      <label htmlFor={name}>{label}</label>
       <select
-        {...register(name, isRequired && { required: `${name} is required` })}
+        {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
         placeholder={`Enter ${name}`}
         className='form-control'
@@ -99,7 +116,34 @@ export const dynamicInputSelect = (args) => {
         <option value=''>-------</option>
         {data &&
           data.map((d) => (
-            <option key={d._id} value={d.name}>
+            <option key={d._id} value={d._id}>
+              {d.name}
+            </option>
+          ))}
+      </select>
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
+
+export const staticInputSelect = (args) => {
+  const { register, errors, name, data, label, isRequired = true } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor={name}>{label}</label>
+      <select
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type='text'
+        placeholder={`Enter ${name}`}
+        className='form-control'
+      >
+        <option value=''>-------</option>
+        {data &&
+          data.map((d) => (
+            <option key={d.name} value={d.name}>
               {d.name}
             </option>
           ))}
@@ -112,7 +156,7 @@ export const dynamicInputSelect = (args) => {
 }
 
 export const inputCheckBox = (args) => {
-  const { register, errors, name, isRequired = true } = args
+  const { register, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -121,10 +165,13 @@ export const inputCheckBox = (args) => {
           className='form-check-input'
           type='checkbox'
           id={name}
-          {...register(name, isRequired && { required: `${name} is required` })}
+          {...register(
+            name,
+            isRequired && { required: `${label} is required` }
+          )}
         />
         <label className='form-check-label' htmlFor={name}>
-          {name}
+          {label}
         </label>
       </div>
       {errors && errors[name] && (
@@ -135,13 +182,13 @@ export const inputCheckBox = (args) => {
 }
 
 export const inputFile = (args) => {
-  const { register, errors, name, isRequired = true, setFile, label } = args
+  const { register, errors, name, isRequired = true, label, setFile } = args
 
   return (
     <div className='mb-3'>
       <label htmlFor={name}>{label}</label>
       <input
-        {...register(name, isRequired && { required: `${name} is required` })}
+        {...register(name, isRequired && { required: `${label} is required` })}
         type='file'
         placeholder={`Enter ${name}`}
         className='form-control'
@@ -155,17 +202,15 @@ export const inputFile = (args) => {
   )
 }
 
-export const inputTextArea = (args) => {
-  const { register, errors, name, isRequired = true } = args
+export const inputDate = (args) => {
+  const { register, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
-      <label htmlFor={name}>{name}</label>
-      <textarea
-        row='10'
-        cols='10'
-        {...register(name, isRequired && { required: `${name} is required` })}
-        type='text'
+      <label htmlFor={name}>{label}</label>
+      <input
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type='date'
         placeholder={`Enter ${name}`}
         className='form-control'
       />

@@ -173,15 +173,16 @@ const Route = () => {
                 <Message variant='danger'>{error}</Message>
               ) : (
                 <form onSubmit={handleSubmit(submitHandler)}>
-                  {inputText({ register, errors, name: 'name' })}
-                  {inputText({ register, errors, name: 'path' })}
-                  {inputText({ register, errors, name: 'menu' })}
+                  {inputText({ register, errors, label: 'Name', name: 'name' })}
+                  {inputText({ register, errors, label: 'Path', name: 'path' })}
+                  {inputText({ register, errors, label: 'Menu', name: 'menu' })}
 
                   <div className='row'>
                     <div className='col'>
                       {inputCheckBox({
                         register,
                         errors,
+                        label: 'isActive',
                         name: 'isActive',
                         isRequired: false,
                       })}
@@ -248,7 +249,7 @@ const Route = () => {
                 <tr>
                   <th>ROUTE NAME</th>
                   <th>PATH</th>
-                  <th>COMPONENT</th>
+                  <th>MENU</th>
                   <th>ACTIVE</th>
                   <th>ACTIONS</th>
                 </tr>

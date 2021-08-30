@@ -50,10 +50,11 @@ const Login = () => {
       {isError && <Message variant='danger'>{error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
-        {inputEmail({ register, errors, name: 'email' })}
+        {inputEmail({ register, errors, label: 'Email', name: 'email' })}
         {inputPassword({
           register,
           errors,
+          label: 'Password',
           name: 'password',
         })}
 

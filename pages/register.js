@@ -59,11 +59,12 @@ const Register = () => {
 
       {isError && <Message variant='danger'>{error}</Message>}
       <form onSubmit={handleSubmit(submitHandler)}>
-        {inputText({ register, errors, name: 'name' })}
-        {inputEmail({ register, errors, name: 'email' })}
+        {inputText({ register, errors, label: 'Name', name: 'name' })}
+        {inputEmail({ register, errors, label: 'Email', name: 'email' })}
         {inputPassword({
           register,
           errors,
+          label: 'Password',
           name: 'password',
           isRequired: true,
           minLength: true,
@@ -74,7 +75,7 @@ const Register = () => {
           errors,
           watch,
           name: 'confirmPassword',
-          screenName: 'confirm password',
+          label: 'Confirm Password',
           validate: true,
           minLength: true,
         })}

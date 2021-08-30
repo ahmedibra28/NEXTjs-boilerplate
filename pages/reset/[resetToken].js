@@ -65,6 +65,7 @@ const Reset = () => {
         {inputPassword({
           register,
           errors,
+          label: 'Password',
           name: 'password',
           minLength: true,
           isRequired: true,
@@ -75,7 +76,7 @@ const Reset = () => {
           errors,
           watch,
           name: 'confirmPassword',
-          screenName: 'confirm password',
+          label: 'Confirm Password',
           validate: true,
           minLength: true,
         })}

@@ -52,7 +52,7 @@ const Forgot = () => {
       {isError && <Message variant='danger'>{error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
-        {inputEmail({ register, errors, name: 'email' })}
+        {inputEmail({ register, errors, label: 'Email', name: 'email' })}
 
         <button
           type='submit'

@@ -10,6 +10,7 @@ import { getUserDetails, updateUserProfile } from '../api/users'
 import { useQuery, useMutation } from 'react-query'
 import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
+import { inputEmail, inputPassword, inputText } from '../utils/dynamicForm'
 
 const Profile = () => {
   const {
@@ -96,75 +97,33 @@ const Profile = () => {
         </div>
       )}
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className='mb-3'>
-          <label htmlFor='name'>Name</label>
-          <input
-            {...register('name', { required: 'Name is required' })}
-            type='text'
-            placeholder='Enter name'
-            className='form-control'
-            autoFocus
-          />
-          {errors.name && (
-            <span className='text-danger'>{errors.name.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='email'>Email Address</label>
-          <input
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.+\S+/,
-                message: 'Entered value does not match email format',
-              },
-            })}
-            type='email'
-            placeholder='Enter email'
-            className='form-control'
-          />
-          {errors.email && (
-            <span className='text-danger'>{errors.email.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='password'>Password</label>
-          <input
-            {...register('password', {
-              minLength: {
-                value: 6,
-                message: 'Password must have at least 6 characters',
-              },
-            })}
-            type='password'
-            placeholder='Enter password'
-            className='form-control'
-          />
-          {errors.password && (
-            <span className='text-danger'>{errors.password.message}</span>
-          )}
-        </div>
-        <div className='mb-3'>
-          <label htmlFor='confirmPassword'>Confirm Password</label>
-          <input
-            {...register('confirmPassword', {
-              minLength: {
-                value: 6,
-                message: 'Password must have at least 6 characters',
-              },
-              validate: (value) =>
-                value === watch().password || 'The passwords do not match',
-            })}
-            type='password'
-            placeholder='Confirm password'
-            className='form-control'
-          />
-          {errors.confirmPassword && (
-            <span className='text-danger'>
-              {errors.confirmPassword.message}
-            </span>
-          )}
-        </div>
+        {inputText({ register, errors, label: 'Name', name: 'name' })}
+
+        {inputEmail({
+          register,
+          errors,
+          label: 'Email',
+          name: 'email',
+        })}
+        {inputPassword({
+          register,
+          errors,
+          label: 'Password',
+          name: 'password',
+          minLength: true,
+          isRequired: false,
+        })}
+
+        {inputPassword({
+          register,
+          errors,
+          watch,
+          name: 'confirmPassword',
+          label: 'Confirm Password',
+          validate: true,
+          minLength: true,
+          isRequired: false,
+        })}
         <button
           type='submit'
           className='btn btn-primary  '
