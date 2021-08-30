@@ -81,7 +81,11 @@ const Reset = () => {
           minLength: true,
         })}
 
-        <button type='submit' className='btn btn-primary ' disabled={isLoading}>
+        <button
+          type='submit'
+          className='btn btn-primary form-control'
+          disabled={isLoading}
+        >
           {isLoading ? (
             <span className='spinner-border spinner-border-sm' />
           ) : (

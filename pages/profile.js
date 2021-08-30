@@ -126,7 +126,7 @@ const Profile = () => {
         })}
         <button
           type='submit'
-          className='btn btn-primary  '
+          className='btn btn-primary form-control'
           disabled={isLoadingUpdateProfile}
         >
           {isLoadingUpdateProfile ? (

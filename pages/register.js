@@ -80,7 +80,11 @@ const Register = () => {
           minLength: true,
         })}
 
-        <button type='submit' className='btn btn-primary ' disabled={isLoading}>
+        <button
+          type='submit'
+          className='btn btn-primary form-control'
+          disabled={isLoading}
+        >
           {isLoading ? (
             <span className='spinner-border spinner-border-sm' />
           ) : (
@@ -89,11 +93,15 @@ const Register = () => {
         </button>
       </form>
 
+      <Link href='/login' type='submit'>
+        <a className='btn btn-outline-primary form-control mt-2 '>Login</a>
+      </Link>
+
       <div className='row py-3'>
         <div className='col'>
           Have an Account?
           <Link href='/login'>
-            <a className='ps-1'>Login </a>
+            <a className='ps-1 text-decoration-none'>Login </a>
           </Link>
         </div>
       </div>

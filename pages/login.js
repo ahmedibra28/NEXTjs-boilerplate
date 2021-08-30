@@ -57,27 +57,26 @@ const Login = () => {
           label: 'Password',
           name: 'password',
         })}
-
-        <button type='submit' className='btn btn-primary ' disabled={isLoading}>
+        <button
+          type='submit'
+          className='btn btn-primary form-control '
+          disabled={isLoading}
+        >
           {isLoading ? (
             <span className='spinner-border spinner-border-sm' />
           ) : (
             'Sign In'
           )}
         </button>
+
+        <Link href='/register' type='submit'>
+          <a className='btn btn-outline-primary form-control mt-2'> Register</a>
+        </Link>
       </form>
       <div className='row pt-3'>
         <div className='col'>
           <Link href='/forgot'>
-            <a className='ps-1'> Forgot Password</a>
-          </Link>
-        </div>
-      </div>
-      <div className='row '>
-        <div className='col'>
-          New Member?
-          <Link href='/register'>
-            <a className='ps-1'>Register</a>
+            <a className='ps-1 text-decoration-none'> Forgot Password?</a>
           </Link>
         </div>
       </div>
