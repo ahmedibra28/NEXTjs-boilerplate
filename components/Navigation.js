@@ -6,12 +6,15 @@ import {
   FaSignInAlt,
   FaUserPlus,
   FaPowerOff,
+  FaHamburger,
+  FaBars,
 } from 'react-icons/fa'
 import { logout } from '../api/users'
 import { useMutation } from 'react-query'
 import { useRouter } from 'next/router'
 import { customLocalStorage } from '../utils/customLocalStorage'
 import { Access, UnlockAccess } from '../utils/UnlockAccess'
+import { bottom } from '@popperjs/core'
 
 const Navigation = () => {
   const router = useRouter()
@@ -153,7 +156,15 @@ const Navigation = () => {
     <nav className='navbar navbar-expand-sm navbar-light shadow-lg'>
       <div className='container'>
         <Link href='/'>
-          <a className='navbar-brand'>NEXT.js</a>
+          <a className='navbar-brand'>
+            <FaBars
+              className='mb-1 me-3'
+              data-bs-toggle='offcanvas'
+              data-bs-target='#offcanvasWithBackdrop'
+              aria-controls='offcanvasWithBackdrop'
+            />
+            NEXT.js
+          </a>
         </Link>
         <button
           className='navbar-toggler'

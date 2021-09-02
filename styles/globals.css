@@ -33,6 +33,7 @@ a {
 }
 
 .modal-background,
+.offcanvas,
 body {
   font-family: 'PT Sans Narrow', sans-serif;
   background-color: var(--secondary-color) !important;
