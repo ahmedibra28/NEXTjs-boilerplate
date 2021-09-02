@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
@@ -117,6 +118,10 @@ const Route = () => {
 
   return (
     <div className='container'>
+      <Head>
+        <title>Routes</title>
+        <meta property='og:title' content='Routes' key='title' />
+      </Head>
       {isSuccessUpdate && (
         <Message variant='success'>
           Route has been updated successfully.

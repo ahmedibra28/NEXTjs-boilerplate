@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
@@ -58,6 +59,7 @@ const Group = () => {
     retry: 0,
     onSuccess: () => {
       reset()
+      setEdit(false)
       queryClient.invalidateQueries(['groups'])
     },
   })
@@ -83,6 +85,7 @@ const Group = () => {
     retry: 0,
     onSuccess: () => {
       reset()
+      setEdit(false)
       queryClient.invalidateQueries(['groups'])
     },
   })
@@ -123,6 +126,10 @@ const Group = () => {
 
   return (
     <div className='container'>
+      <Head>
+        <title>Group</title>
+        <meta property='og:title' content='Group' key='title' />
+      </Head>
       {isSuccessUpdate && (
         <Message variant='success'>
           Group has been updated successfully.

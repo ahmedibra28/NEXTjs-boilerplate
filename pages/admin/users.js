@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
@@ -124,6 +125,10 @@ const Users = () => {
 
   return (
     <div className='container'>
+      <Head>
+        <title>Users</title>
+        <meta property='og:title' content='Users' key='title' />
+      </Head>
       {isSuccessDelete && (
         <Message variant='success'>User has been deleted successfully.</Message>
       )}

@@ -181,6 +181,43 @@ export const inputCheckBox = (args) => {
   )
 }
 
+export const inputMultipleCheckBox = (args) => {
+  const { register, errors, name, data, label, isRequired = true } = args
+
+  return (
+    <div className='mb-3'>
+      <div className='row g-1 mb-3'>
+        {data &&
+          data.map((d) => (
+            <div key={d._id} className='col-md-4 col-6'>
+              <div className='form-check'>
+                <input
+                  {...register(
+                    name,
+                    isRequired && { required: `${label} is required` }
+                  )}
+                  className='form-check-input'
+                  type='checkbox'
+                  value={d._id}
+                  id={`flexCheck${d._id}`}
+                />
+                <label
+                  className='form-check-label'
+                  htmlFor={`flexCheck${d._id}`}
+                >
+                  {d.name}
+                </label>
+              </div>
+            </div>
+          ))}
+      </div>
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
+
 export const inputFile = (args) => {
   const { register, errors, name, isRequired = true, label, setFile } = args
 
