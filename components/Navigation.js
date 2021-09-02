@@ -155,17 +155,21 @@ const Navigation = () => {
   return (
     <nav className='navbar navbar-expand-sm navbar-light shadow-lg'>
       <div className='container'>
-        <Link href='/'>
-          <a className='navbar-brand'>
+        <span className='navbar-brand'>
+          {userInfo && (
             <FaBars
               className='mb-1 me-3'
               data-bs-toggle='offcanvas'
               data-bs-target='#offcanvasWithBackdrop'
               aria-controls='offcanvasWithBackdrop'
             />
-            NEXT.js
-          </a>
+          )}
+        </span>
+
+        <Link href='/'>
+          <a className='navbar-brand'>NEXT.js</a>
         </Link>
+
         <button
           className='navbar-toggler'
           type='button'
