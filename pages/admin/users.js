@@ -55,6 +55,7 @@ const Users = () => {
     retry: 0,
     onSuccess: () => {
       reset()
+      setEdit(false)
       queryClient.invalidateQueries(['users'])
     },
   })
@@ -80,6 +81,7 @@ const Users = () => {
     retry: 0,
     onSuccess: () => {
       reset()
+      setEdit(false)
       queryClient.invalidateQueries(['users'])
     },
   })

@@ -82,6 +82,7 @@ const Route = () => {
     retry: 0,
     onSuccess: () => {
       reset()
+      setEdit(false)
       queryClient.invalidateQueries(['routes'])
     },
   })
