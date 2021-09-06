@@ -160,7 +160,7 @@ export const inputCheckBox = (args) => {
 
   return (
     <div className='mb-3'>
-      <div className='form-check'>
+      <div className='form-check form-switch'>
         <input
           className='form-check-input'
           type='checkbox'
@@ -190,7 +190,7 @@ export const inputMultipleCheckBox = (args) => {
         {data &&
           data.map((d) => (
             <div key={d._id} className='col-md-4 col-6'>
-              <div className='form-check'>
+              <div className='form-check form-switch'>
                 <input
                   {...register(
                     name,
@@ -251,6 +251,40 @@ export const inputDate = (args) => {
         placeholder={`Enter ${name}`}
         className='form-control'
       />
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
+
+export const InputAutoCompleteSelect = (args) => {
+  const { register, errors, name, data, label, isRequired = true } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor='exampleDataList' className='form-label'>
+        {label}
+      </label>
+      <input
+        list='datalistOptions'
+        autoComplete='off'
+        id='exampleDataList'
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type='text'
+        placeholder={`Enter ${name}`}
+        className='form-control'
+      />
+      <datalist id='datalistOptions'>
+        <option value=''>-------------</option>
+        {data &&
+          data.map((d) => (
+            <option key={d._id} value={d._id}>
+              {d.name}
+            </option>
+          ))}
+      </datalist>
+
       {errors && errors[name] && (
         <span className='text-danger'>{errors[name].message}</span>
       )}
