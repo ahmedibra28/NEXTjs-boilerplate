@@ -291,3 +291,31 @@ export const InputAutoCompleteSelect = (args) => {
     </div>
   )
 }
+
+
+export const dynamicInputSelectNumber = (args) => {
+  const { register, errors, name, label, data, isRequired = true } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor={name}>{label}</label>
+      <select
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type='text'
+        placeholder={`Enter ${name}`}
+        className='form-control'
+      >
+        <option value=''>-------</option>
+
+        {[...Array(data).keys()].map((num) => (
+          <option key={num + 1} value={num + 1}>
+            {num + 1}
+          </option>
+        ))}
+      </select>
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
