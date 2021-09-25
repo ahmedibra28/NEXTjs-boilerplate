@@ -7,7 +7,7 @@ const __dirname = path.resolve()
 // handler.use(fileUpload())
 
 export const upload = async (args) => {
-  const { fileName, fileType, path } = args
+  const { fileName, fileType, pathName } = args
 
   if (!fileName) {
     throw new Error('Please, upload a file')
@@ -18,7 +18,7 @@ export const upload = async (args) => {
 
   const fullFileName = fileName && `${fullName}-${Date.now()}.${extension}`
 
-  const filePath = `/public/${path}/${fullFileName}`
+  let filePath = `/public/${pathName}/${fullFileName}`
 
   const files = /(\.pdf|\.docx|\.doc)$/i
   const images = /(\.jpg|\.jpeg|\.png|\.gif|\.svg)$/i
@@ -36,17 +36,19 @@ export const upload = async (args) => {
 
     return {
       fullFileName,
-      filePath,
+      filePath: `/${pathName}/${fullFileName}`,
     }
   }
 }
 
 export const deleteFile = (args) => {
-  const { path } = args
+  const { pathName } = args
+
+  const filePath = `/public/${pathName}`
 
   const destroy =
-    path &&
-    fs.unlink(path.join(__dirname, path), (err) => {
+    pathName &&
+    fs.unlink(path.join(__dirname, filePath), (err) => {
       if (err) {
         throw new Error(err)
       }

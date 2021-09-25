@@ -17,6 +17,27 @@ export const inputText = (args) => {
   )
 }
 
+export const inputTextArea = (args) => {
+  const { register, errors, name, label, isRequired = true } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor={name}>{label}</label>
+      <textarea
+        rows='5'
+        cols='30'
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type='text'
+        placeholder={`Enter ${name}`}
+        className='form-control'
+      />
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
+
 export const inputNumber = (args) => {
   const { register, errors, name, label, isRequired = true } = args
 
@@ -291,7 +312,6 @@ export const InputAutoCompleteSelect = (args) => {
     </div>
   )
 }
-
 
 export const dynamicInputSelectNumber = (args) => {
   const { register, errors, name, label, data, isRequired = true } = args
