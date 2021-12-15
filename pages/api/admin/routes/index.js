@@ -8,7 +8,7 @@ const handler = nc()
 handler.get(async (req, res) => {
   await dbConnect()
 
-  const obj = await Route.find({}).sort({ createdAt: -1 }).populate('route')
+  const obj = await Route.find({}).sort({ createdAt: -1 })
 
   res.status(201).json(obj)
 })

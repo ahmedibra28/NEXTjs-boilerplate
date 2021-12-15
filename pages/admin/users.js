@@ -304,7 +304,7 @@ const Users = () => {
                         </button>
 
                         <button
-                          className='btn btn-danger btn-sm'
+                          className='btn btn-danger btn-sm ms-1'
                           onClick={() => deleteHandler(user._id)}
                           disabled={isLoadingDelete}
                         >
