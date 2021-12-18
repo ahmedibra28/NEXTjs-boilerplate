@@ -1,7 +1,6 @@
 import Navigation from './Navigation'
 import Head from 'next/head'
 import Canvas from './Canvas'
-import { FaBars } from 'react-icons/fa'
 
 export default function Layout({ children }) {
   return (

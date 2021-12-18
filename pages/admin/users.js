@@ -6,9 +6,9 @@ import Message from '../../components/Message'
 import Loader from 'react-loader-spinner'
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
 import Pagination from '../../components/Pagination'
-import { getUsers, updateUser, deleteUser, createUser } from '../../api/users'
-import { getGroups } from '../../api/groups'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
+import useUsers from '../../api/users'
+import useGroups from '../../api/groups'
+import { useQueryClient } from 'react-query'
 
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../../components/Confirm'
@@ -22,6 +22,9 @@ import {
 
 const Users = () => {
   const [page, setPage] = useState(1)
+  const { getUsers, updateUser, addUser, deleteUser } = useUsers(page)
+  const { getGroups } = useGroups()
+
   const {
     register,
     handleSubmit,
@@ -35,15 +38,8 @@ const Users = () => {
 
   const queryClient = useQueryClient()
 
-  const { data, isLoading, isError, error } = useQuery(
-    'users',
-    () => getUsers(page),
-    {
-      retry: 0,
-    }
-  )
-
-  const { data: groupData } = useQuery('groups', () => getGroups())
+  const { data, isLoading, isError, error } = getUsers
+  const { data: groupData } = getGroups
 
   const {
     isLoading: isLoadingUpdate,
@@ -51,14 +47,7 @@ const Users = () => {
     error: errorUpdate,
     isSuccess: isSuccessUpdate,
     mutateAsync: updateMutateAsync,
-  } = useMutation(['update'], updateUser, {
-    retry: 0,
-    onSuccess: () => {
-      reset()
-      setEdit(false)
-      queryClient.invalidateQueries(['users'])
-    },
-  })
+  } = updateUser
 
   const {
     isLoading: isLoadingDelete,
@@ -66,10 +55,7 @@ const Users = () => {
     error: errorDelete,
     isSuccess: isSuccessDelete,
     mutateAsync: deleteMutateAsync,
-  } = useMutation(['delete'], deleteUser, {
-    retry: 0,
-    onSuccess: () => queryClient.invalidateQueries(['users']),
-  })
+  } = deleteUser
 
   const {
     isLoading: isLoadingAdd,
@@ -77,14 +63,7 @@ const Users = () => {
     error: errorAdd,
     isSuccess: isSuccessAdd,
     mutateAsync: addMutateAsync,
-  } = useMutation(['add'], createUser, {
-    retry: 0,
-    onSuccess: () => {
-      reset()
-      setEdit(false)
-      queryClient.invalidateQueries(['users'])
-    },
-  })
+  } = addUser
 
   const [id, setId] = useState(null)
   const [edit, setEdit] = useState(false)

@@ -13,16 +13,17 @@ import {
   FaTrash,
 } from 'react-icons/fa'
 
-import { getGroups, updateGroup, deleteGroup, addGroup } from '../../api/groups'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
+import useGroups from '../../api/groups'
+import useRoutes from '../../api/routes'
 
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../../components/Confirm'
 import { useForm } from 'react-hook-form'
-import { getRoutes } from '../../api/routes'
 import { inputCheckBox, inputText } from '../../utils/dynamicForm'
 
 const Group = () => {
+  const { getGroups, updateGroup, addGroup, deleteGroup } = useGroups()
+  const { getRoutes } = useRoutes()
   const {
     register,
     handleSubmit,
@@ -35,19 +36,9 @@ const Group = () => {
     },
   })
 
-  const queryClient = useQueryClient()
+  const { data, isLoading, isError, error } = getGroups
 
-  const { data, isLoading, isError, error } = useQuery(
-    'groups',
-    () => getGroups(),
-    {
-      retry: 0,
-    }
-  )
-
-  const { data: routeData } = useQuery('routes', () => getRoutes(), {
-    retry: 0,
-  })
+  const { data: routeData } = getRoutes
 
   const {
     isLoading: isLoadingUpdate,
@@ -55,14 +46,7 @@ const Group = () => {
     error: errorUpdate,
     isSuccess: isSuccessUpdate,
     mutateAsync: updateMutateAsync,
-  } = useMutation(updateGroup, {
-    retry: 0,
-    onSuccess: () => {
-      reset()
-      setEdit(false)
-      queryClient.invalidateQueries(['groups'])
-    },
-  })
+  } = updateGroup
 
   const {
     isLoading: isLoadingDelete,
@@ -70,10 +54,7 @@ const Group = () => {
     error: errorDelete,
     isSuccess: isSuccessDelete,
     mutateAsync: deleteMutateAsync,
-  } = useMutation(deleteGroup, {
-    retry: 0,
-    onSuccess: () => queryClient.invalidateQueries(['groups']),
-  })
+  } = deleteGroup
 
   const {
     isLoading: isLoadingAdd,
@@ -81,14 +62,7 @@ const Group = () => {
     error: errorAdd,
     isSuccess: isSuccessAdd,
     mutateAsync: addMutateAsync,
-  } = useMutation(addGroup, {
-    retry: 0,
-    onSuccess: () => {
-      reset()
-      setEdit(false)
-      queryClient.invalidateQueries(['groups'])
-    },
-  })
+  } = addGroup
 
   const [id, setId] = useState(null)
   const [edit, setEdit] = useState(false)

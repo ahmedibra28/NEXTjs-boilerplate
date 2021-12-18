@@ -12,8 +12,7 @@ import {
   FaTrash,
 } from 'react-icons/fa'
 
-import { getRoutes, addRoute, deleteRoute, updateRoute } from '../../api/routes'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
+import useRoutes from '../../api/routes'
 
 import { confirmAlert } from 'react-confirm-alert'
 import { Confirm } from '../../components/Confirm'
@@ -21,6 +20,7 @@ import { useForm } from 'react-hook-form'
 import { inputCheckBox, inputText } from '../../utils/dynamicForm'
 
 const Route = () => {
+  const { getRoutes, addRoute, updateRoute, deleteRoute } = useRoutes()
   const {
     register,
     handleSubmit,
@@ -36,15 +36,7 @@ const Route = () => {
   const [id, setId] = useState(null)
   const [edit, setEdit] = useState(false)
 
-  const queryClient = useQueryClient()
-
-  const { data, isLoading, isError, error } = useQuery(
-    'routes',
-    () => getRoutes(),
-    {
-      retry: 0,
-    }
-  )
+  const { data, isLoading, isError, error } = getRoutes
 
   const {
     isLoading: isLoadingUpdate,
@@ -52,14 +44,7 @@ const Route = () => {
     error: errorUpdate,
     isSuccess: isSuccessUpdate,
     mutateAsync: updateMutateAsync,
-  } = useMutation(['update'], updateRoute, {
-    retry: 0,
-    onSuccess: () => {
-      reset()
-      setEdit(false)
-      queryClient.invalidateQueries(['routes'])
-    },
-  })
+  } = updateRoute
 
   const {
     isLoading: isLoadingDelete,
@@ -67,10 +52,7 @@ const Route = () => {
     error: errorDelete,
     isSuccess: isSuccessDelete,
     mutateAsync: deleteMutateAsync,
-  } = useMutation(['delete'], deleteRoute, {
-    retry: 0,
-    onSuccess: () => queryClient.invalidateQueries(['routes']),
-  })
+  } = deleteRoute
 
   const {
     isLoading: isLoadingAdd,
@@ -78,15 +60,7 @@ const Route = () => {
     error: errorAdd,
     isSuccess: isSuccessAdd,
     mutateAsync: addMutateAsync,
-  } = useMutation(['add'], addRoute, {
-    retry: 0,
-    onSuccess: () => {
-      reset()
-      setEdit(false)
-      queryClient.invalidateQueries(['routes'])
-    },
-  })
-
+  } = addRoute
   const formCleanHandler = () => {
     setEdit(false)
     reset()

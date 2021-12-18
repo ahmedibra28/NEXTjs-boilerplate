@@ -1,32 +1,12 @@
 import axios from 'axios'
 import { config } from '../utils/customLocalStorage'
-
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import dynamicAPI from './dynamicAPI'
 
 const url = '/api/admin/users'
 
-export const getUsers = async (page) =>
-  await dynamicAPI('get', `${url}?page=${page}`, {})
-
-export const getUsersLog = async (page) =>
-  await dynamicAPI('get', `${url}/logon?page=${page}`, {})
-
-export const createUser = async (obj) => await dynamicAPI('post', url, obj)
-
-export const updateUser = async (obj) =>
-  await dynamicAPI('put', `${url}/${obj._id}`, obj)
-
-export const deleteUser = async (id) =>
-  await dynamicAPI('delete', `${url}/${id}`, {})
-
 export const getUserDetails = async (id) =>
   await dynamicAPI('get', `/api/users/${id}`, {})
-
-export const forgot = async (obj) =>
-  await dynamicAPI('post', `/api/users/forgot`, obj)
-
-export const reset = async (obj) =>
-  await dynamicAPI('put', `/api/users/reset/${obj.resetToken}`, obj)
 
 export const login = async (credentials) => {
   try {
@@ -83,5 +63,79 @@ export const updateUserProfile = async (user) => {
     return data
   } catch (error) {
     throw error.response.data
+  }
+}
+
+export default function useUsers(page) {
+  const queryClient = useQueryClient()
+
+  // get all users
+  const getUsers = useQuery(
+    'users',
+    async () => await dynamicAPI('get', `${url}?page=${page}`, {}),
+    { retry: 0 }
+  )
+
+  // get all users log
+  const getUsersLog = useQuery(
+    'usersLog',
+    async () => await dynamicAPI('get', `${url}/logon?page=${page}`, {}),
+    { retry: 0 }
+  )
+
+  // update group
+  const updateUser = useMutation(
+    async (obj) => await dynamicAPI('put', `${url}/${obj._id}`, obj),
+    {
+      retry: 0,
+      onSuccess: () => queryClient.invalidateQueries(['users']),
+    }
+  )
+
+  // delete user
+  const deleteUser = useMutation(
+    async (id) => await dynamicAPI('delete', `${url}/${id}`, {}),
+    {
+      retry: 0,
+      onSuccess: () => queryClient.invalidateQueries(['users']),
+    }
+  )
+
+  // add user
+  const addUser = useMutation(
+    async (obj) => await dynamicAPI('post', url, obj),
+    {
+      retry: 0,
+      onSuccess: () => queryClient.invalidateQueries(['users']),
+    }
+  )
+
+  // forgot password
+  const forgot = useMutation(
+    async (obj) => await dynamicAPI('post', `/api/users/forgot`, obj),
+    {
+      retry: 0,
+      onSuccess: () => queryClient.invalidateQueries(['forgot']),
+    }
+  )
+
+  // reset password
+  const reset = useMutation(
+    async (obj) =>
+      await dynamicAPI('put', `/api/users/reset/${obj.resetToken}`, obj),
+    {
+      retry: 0,
+      onSuccess: () => queryClient.invalidateQueries(['resetPassword']),
+    }
+  )
+
+  return {
+    getUsers,
+    getUsersLog,
+    updateUser,
+    addUser,
+    deleteUser,
+    reset,
+    forgot,
   }
 }

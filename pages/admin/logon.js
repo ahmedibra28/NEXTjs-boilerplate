@@ -5,28 +5,23 @@ import Head from 'next/head'
 import Message from '../../components/Message'
 import Pagination from '../../components/Pagination'
 import moment from 'moment'
-import { getUsersLog } from '../../api/users'
-import { useQuery, useQueryClient } from 'react-query'
+import useUsers from '../../api/users'
+import { useQueryClient } from 'react-query'
 
 import Loader from 'react-loader-spinner'
 
 const Logon = () => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const { getUsersLog } = useUsers(page)
 
   const queryClient = useQueryClient()
 
-  const { data, error, isLoading, isError } = useQuery(
-    'users-log',
-    () => getUsersLog(page),
-    {
-      retry: 0,
-    }
-  )
+  const { data, error, isLoading, isError } = getUsersLog
 
   useEffect(() => {
     const refetch = async () => {
-      await queryClient.prefetchQuery('users-log')
+      await queryClient.prefetchQuery('usersLog')
     }
     refetch()
   }, [page, queryClient])
