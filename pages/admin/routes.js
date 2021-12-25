@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
@@ -65,6 +65,10 @@ const Route = () => {
     setEdit(false)
     reset()
   }
+
+  useEffect(() => {
+    if (isSuccessAdd || isSuccessUpdate) formCleanHandler()
+  }, [isSuccessAdd, isSuccessUpdate])
 
   const deleteHandler = (id) => {
     confirmAlert(Confirm(() => deleteMutateAsync(id)))

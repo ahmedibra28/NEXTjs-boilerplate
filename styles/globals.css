@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+
 :root {
   --primary-color: #005aab;
   --secondary-color: #a8d2ff;
@@ -35,7 +37,8 @@ a {
 .modal-background,
 .offcanvas,
 body {
-  font-family: 'PT Sans Narrow', sans-serif;
+  /* font-family: 'PT Sans Narrow', sans-serif; */
+  font-family: 'Courier Prime', monospace !important;
   background-color: var(--secondary-color) !important;
 }
 nav {

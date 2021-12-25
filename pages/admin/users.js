@@ -73,6 +73,10 @@ const Users = () => {
     reset()
   }
 
+  useEffect(() => {
+    if (isSuccessAdd || isSuccessUpdate) formCleanHandler()
+  }, [isSuccessAdd, isSuccessUpdate])
+
   const deleteHandler = (id) => {
     confirmAlert(Confirm(() => deleteMutateAsync(id)))
   }
