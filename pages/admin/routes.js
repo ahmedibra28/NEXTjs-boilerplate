@@ -68,6 +68,8 @@ const Route = () => {
 
   useEffect(() => {
     if (isSuccessAdd || isSuccessUpdate) formCleanHandler()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessAdd, isSuccessUpdate])
 
   const deleteHandler = (id) => {
@@ -201,15 +203,22 @@ const Route = () => {
         </div>
       </div>
 
-      <div className='d-flex justify-content-between align-items-center'>
-        <h3 className=''>Routes</h3>
+      <div className='position-relative'>
         <button
-          className='btn btn-primary '
+          className='btn btn-primary position-fixed rounded-3'
+          style={{
+            bottom: '20px',
+            right: '20px',
+          }}
           data-bs-toggle='modal'
           data-bs-target='#editRouteModal'
         >
           <FaPlus className='mb-1' />
         </button>
+      </div>
+
+      <div className='d-flex justify-content-between align-items-center'>
+        <h3 className=''>Routes</h3>
       </div>
 
       {isLoading ? (

@@ -75,6 +75,7 @@ const Users = () => {
 
   useEffect(() => {
     if (isSuccessAdd || isSuccessUpdate) formCleanHandler()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessAdd, isSuccessUpdate])
 
   const deleteHandler = (id) => {
@@ -228,14 +229,21 @@ const Users = () => {
         </div>
       </div>
 
-      <div className='d-flex justify-content-between align-items-center'>
+      <div className='position-relative'>
         <button
-          className='btn btn-primary '
+          className='btn btn-primary position-fixed rounded-3'
+          style={{
+            bottom: '20px',
+            right: '20px',
+          }}
           data-bs-toggle='modal'
           data-bs-target='#editUserModal'
         >
           <FaPlus className='mb-1' />
         </button>
+      </div>
+
+      <div className='d-flex justify-content-between align-items-center'>
         <h3 className=''>Users</h3>
         <Pagination data={data} setPage={setPage} />
       </div>

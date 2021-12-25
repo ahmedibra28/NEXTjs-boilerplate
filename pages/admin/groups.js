@@ -74,6 +74,7 @@ const Group = () => {
 
   useEffect(() => {
     if (isSuccessAdd || isSuccessUpdate) formCleanHandler()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessAdd, isSuccessUpdate])
 
   const deleteHandler = (id) => {
@@ -227,6 +228,20 @@ const Group = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='position-relative'>
+        <button
+          className='btn btn-primary position-fixed rounded-3'
+          style={{
+            bottom: '20px',
+            right: '20px',
+          }}
+          data-bs-toggle='modal'
+          data-bs-target='#editGroupModal'
+        >
+          <FaPlus className='mb-1' />
+        </button>
       </div>
 
       <div className='d-flex justify-content-between align-items-center'>

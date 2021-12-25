@@ -4,13 +4,12 @@ import FormContainer from '../../components/FormContainer'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import { customLocalStorage } from '../../utils/customLocalStorage'
-
-import { reset as resetPassword } from '../../api/users'
-import { useMutation } from 'react-query'
 import Head from 'next/head'
 import { inputPassword } from '../../utils/dynamicForm'
+import useUsers from '../../api/users'
 
 const Reset = () => {
+  const { reset } = useUsers()
   const router = useRouter()
   const { resetToken } = router.query
 
@@ -18,7 +17,7 @@ const Reset = () => {
     register,
     handleSubmit,
     watch,
-    reset,
+    reset: resetForm,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -27,17 +26,15 @@ const Reset = () => {
     },
   })
 
-  const { isLoading, isError, error, isSuccess, mutateAsync } = useMutation(
-    'resetPassword',
-    resetPassword,
-    {
-      retry: 0,
-      onSuccess: () => {
-        reset()
-        router.push('/login')
-      },
+  const { isLoading, isError, error, isSuccess, mutateAsync } = reset
+
+  useEffect(() => {
+    if (isSuccess) {
+      resetForm()
+      router.push('/login')
     }
-  )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess])
 
   useEffect(() => {
     customLocalStorage() && customLocalStorage().userInfo && router.push('/')

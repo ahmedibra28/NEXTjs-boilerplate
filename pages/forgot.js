@@ -4,13 +4,13 @@ import FormContainer from '../components/FormContainer'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 
-import { forgot } from '../api/users'
-import { useMutation } from 'react-query'
 import { customLocalStorage } from '../utils/customLocalStorage'
 import Head from 'next/head'
 import { inputEmail } from '../utils/dynamicForm'
+import useUsers from '../api/users'
 
 const Forgot = () => {
+  const { forgot } = useUsers()
   const router = useRouter()
   const {
     register,
@@ -19,16 +19,12 @@ const Forgot = () => {
     formState: { errors },
   } = useForm()
 
-  const { isLoading, isError, error, isSuccess, mutateAsync } = useMutation(
-    'forgot',
-    forgot,
-    {
-      retry: 0,
-      onSuccess: () => {
-        reset()
-      },
-    }
-  )
+  const { isLoading, isError, error, isSuccess, mutateAsync } = forgot
+
+  useEffect(() => {
+    isSuccess && reset()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess])
 
   useEffect(() => {
     customLocalStorage() && customLocalStorage().userInfo && router.push('/')
