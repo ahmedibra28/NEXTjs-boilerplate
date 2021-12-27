@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import {
   FaCog,
@@ -165,7 +166,9 @@ const Navigation = () => {
         </span>
 
         <Link href='/'>
-          <a className='navbar-brand'>NEXT.js</a>
+          <a className='navbar-brand shadow-lg rounded-pill fw-bold'>
+            <Image src='/logo.svg' width='30' height='30' alt='logo' />
+          </a>
         </Link>
 
         <button
