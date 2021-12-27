@@ -4,10 +4,9 @@ import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
 import Loader from 'react-loader-spinner'
-import moment from 'moment'
 import {
   FaCheckCircle,
-  FaEdit,
+  FaPenAlt,
   FaPlus,
   FaTimesCircle,
   FaTrash,
@@ -104,7 +103,7 @@ const Group = () => {
   }
 
   return (
-    <div className='container'>
+    <>
       <Head>
         <title>Group</title>
         <meta property='og:title' content='Group' key='title' />
@@ -232,7 +231,7 @@ const Group = () => {
 
       <div className='position-relative'>
         <button
-          className='btn btn-primary position-fixed rounded-3'
+          className='btn btn-primary position-fixed rounded-3 animate__bounceIn'
           style={{
             bottom: '20px',
             right: '20px',
@@ -244,15 +243,10 @@ const Group = () => {
         </button>
       </div>
 
-      <div className='d-flex justify-content-between align-items-center'>
-        <h3 className=''>Groups</h3>
-        <button
-          className='btn btn-primary '
-          data-bs-toggle='modal'
-          data-bs-target='#editGroupModal'
-        >
-          <FaPlus className='mb-1' />
-        </button>
+      <div className='row mt-2'>
+        <div className='col-md-4 col-6 me-auto'>
+          <h3 className='fw-light font-monospace'>Groups</h3>
+        </div>
       </div>
 
       {isLoading ? (
@@ -270,15 +264,14 @@ const Group = () => {
       ) : (
         <>
           <div className='table-responsive '>
-            <table className='table table-sm hover bordered striped caption-top '>
+            <table className='table table-sm hover bordered table-striped caption-top '>
               <caption>{data && data.length} records were found</caption>
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>GROUP NAME</th>
-                  <th>ACTIVE</th>
-                  <th>DATE & TIME</th>
-                  <th>ACTIONS</th>
+                  <th>Name</th>
+                  <th>Active</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -297,20 +290,19 @@ const Group = () => {
                           <FaTimesCircle className='text-danger mb-1' />
                         )}
                       </td>
-                      <td>{moment(group.createdAt).format('llll')}</td>
 
                       <td className='btn-group'>
                         <button
-                          className='btn btn-primary btn-sm'
+                          className='btn btn-primary btn-sm rounded-pill '
                           onClick={() => editHandler(group)}
                           data-bs-toggle='modal'
                           data-bs-target='#editGroupModal'
                         >
-                          <FaEdit className='mb-1' /> Edit
+                          <FaPenAlt />
                         </button>
 
                         <button
-                          className='btn btn-danger btn-sm ms-1'
+                          className='btn btn-danger btn-sm rounded-pill ms-1'
                           onClick={() => deleteHandler(group._id)}
                           disabled={isLoadingDelete}
                         >
@@ -319,7 +311,7 @@ const Group = () => {
                           ) : (
                             <span>
                               {' '}
-                              <FaTrash className='mb-1' /> Delete
+                              <FaTrash />
                             </span>
                           )}
                         </button>
@@ -331,7 +323,7 @@ const Group = () => {
           </div>
         </>
       )}
-    </div>
+    </>
   )
 }
 

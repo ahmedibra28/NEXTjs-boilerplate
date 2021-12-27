@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
 import Loader from 'react-loader-spinner'
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
+import { FaPenAlt, FaPlus, FaTrash } from 'react-icons/fa'
 import Pagination from '../../components/Pagination'
 import useUsers from '../../api/users'
 import useGroups from '../../api/groups'
@@ -19,6 +19,7 @@ import {
   inputPassword,
   inputText,
 } from '../../utils/dynamicForm'
+import moment from 'moment'
 
 const Users = () => {
   const [page, setPage] = useState(1)
@@ -110,7 +111,7 @@ const Users = () => {
   }, [page, queryClient])
 
   return (
-    <div className='container'>
+    <>
       <Head>
         <title>Users</title>
         <meta property='og:title' content='Users' key='title' />
@@ -231,7 +232,7 @@ const Users = () => {
 
       <div className='position-relative'>
         <button
-          className='btn btn-primary position-fixed rounded-3'
+          className='btn btn-primary position-fixed rounded-3 animate__bounceIn'
           style={{
             bottom: '20px',
             right: '20px',
@@ -243,9 +244,13 @@ const Users = () => {
         </button>
       </div>
 
-      <div className='d-flex justify-content-between align-items-center'>
-        <h3 className=''>Users</h3>
-        <Pagination data={data} setPage={setPage} />
+      <div className='row mt-2'>
+        <div className='col-md-4 col-6 me-auto'>
+          <h3 className='fw-light font-monospace'>Users</h3>
+        </div>
+        <div className='col-md-4 col-6 ms-auto text-end'>
+          <Pagination data={data} setPage={setPage} />
+        </div>
       </div>
 
       {isLoading ? (
@@ -263,22 +268,22 @@ const Users = () => {
       ) : (
         <>
           <div className='table-responsive '>
-            <table className='table table-sm hover bordered striped caption-top '>
+            <table className='table table-sm hover bordered table-striped caption-top '>
               <caption>{data && data.total} records were found</caption>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>NAME</th>
-                  <th>EMAIL</th>
-                  <th>GROUP</th>
-                  <th></th>
+                  <th>Joined Date</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Group</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {data &&
                   data.data.map((user) => (
                     <tr key={user._id}>
-                      <td>{user._id}</td>
+                      <td>{moment(user.createdAt).format('llll')}</td>
                       <td>{user.name}</td>
                       <td>
                         <a href={`mailto:${user.email}`}>{user.email}</a>
@@ -286,16 +291,16 @@ const Users = () => {
                       <td>{user.group}</td>
                       <td className='btn-group'>
                         <button
-                          className='btn btn-primary btn-sm'
+                          className='btn btn-primary btn-sm rounded-pill'
                           onClick={() => editHandler(user)}
                           data-bs-toggle='modal'
                           data-bs-target='#editUserModal'
                         >
-                          <FaEdit className='mb-1' /> Edit
+                          <FaPenAlt />
                         </button>
 
                         <button
-                          className='btn btn-danger btn-sm ms-1'
+                          className='btn btn-danger btn-sm ms-1 rounded-pill'
                           onClick={() => deleteHandler(user._id)}
                           disabled={isLoadingDelete}
                         >
@@ -303,8 +308,7 @@ const Users = () => {
                             <span className='spinner-border spinner-border-sm' />
                           ) : (
                             <span>
-                              {' '}
-                              <FaTrash className='mb-1' /> Delete
+                              <FaTrash />
                             </span>
                           )}
                         </button>
@@ -316,7 +320,7 @@ const Users = () => {
           </div>
         </>
       )}
-    </div>
+    </>
   )
 }
 

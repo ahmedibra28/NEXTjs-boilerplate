@@ -4,9 +4,11 @@ import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
 import Loader from 'react-loader-spinner'
+import { CSVLink } from 'react-csv'
 import {
   FaCheckCircle,
-  FaEdit,
+  FaFileDownload,
+  FaPenAlt,
   FaPlus,
   FaTimesCircle,
   FaTrash,
@@ -98,7 +100,7 @@ const Route = () => {
   }
 
   return (
-    <div className='container'>
+    <>
       <Head>
         <title>Routes</title>
         <meta property='og:title' content='Routes' key='title' />
@@ -205,7 +207,7 @@ const Route = () => {
 
       <div className='position-relative'>
         <button
-          className='btn btn-primary position-fixed rounded-3'
+          className='btn btn-primary position-fixed rounded-3 animate__bounceIn'
           style={{
             bottom: '20px',
             right: '20px',
@@ -215,10 +217,26 @@ const Route = () => {
         >
           <FaPlus className='mb-1' />
         </button>
+
+        <CSVLink data={data ? data : []}>
+          <button
+            className='btn btn-success position-fixed rounded-3 animate__bounceIn'
+            style={{
+              bottom: '60px',
+              right: '20px',
+            }}
+          >
+            <FaFileDownload className='mb-1' />
+          </button>
+        </CSVLink>
+
+
       </div>
 
-      <div className='d-flex justify-content-between align-items-center'>
-        <h3 className=''>Routes</h3>
+      <div className='row mt-2'>
+        <div className='col-md-4 col-6 me-auto'>
+          <h3 className='fw-light font-monospace'>Routes</h3>
+        </div>
       </div>
 
       {isLoading ? (
@@ -236,15 +254,15 @@ const Route = () => {
       ) : (
         <>
           <div className='table-responsive '>
-            <table className='table table-sm hover bordered striped caption-top '>
+            <table className='table table-sm hover bordered table-striped caption-top '>
               <caption>{data && data.length} records were found</caption>
               <thead>
                 <tr>
-                  <th>ROUTE NAME</th>
-                  <th>PATH</th>
-                  <th>MENU</th>
-                  <th>ACTIVE</th>
-                  <th>ACTIONS</th>
+                  <th>Name</th>
+                  <th>Path</th>
+                  <th>Menu</th>
+                  <th>Active</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -264,16 +282,16 @@ const Route = () => {
 
                       <td className='btn-route'>
                         <button
-                          className='btn btn-primary btn-sm'
+                          className='btn btn-primary btn-sm rounded-pill'
                           onClick={() => editHandler(route)}
                           data-bs-toggle='modal'
                           data-bs-target='#editRouteModal'
                         >
-                          <FaEdit className='mb-1' /> Edit
+                          <FaPenAlt />
                         </button>
 
                         <button
-                          className='btn btn-danger btn-sm'
+                          className='btn btn-danger btn-sm rounded-pill ms-1'
                           onClick={() => deleteHandler(route._id)}
                           disabled={isLoadingDelete}
                         >
@@ -282,7 +300,7 @@ const Route = () => {
                           ) : (
                             <span>
                               {' '}
-                              <FaTrash className='mb-1' /> Delete
+                              <FaTrash />
                             </span>
                           )}
                         </button>
@@ -294,7 +312,7 @@ const Route = () => {
           </div>
         </>
       )}
-    </div>
+    </>
   )
 }
 

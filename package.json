@@ -26,6 +26,7 @@
     "nodemailer": "^6.7.2",
     "react": "17.0.2",
     "react-confirm-alert": "^2.7.0",
+    "react-csv": "^2.2.1",
     "react-dom": "17.0.2",
     "react-hook-form": "^7.21.0",
     "react-icons": "^4.3.1",

@@ -1,15 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
 
 :root {
-  --primary-color: #005aab;
-  --secondary-color: #a8d2ff;
-  --white-color: #ffffff;
+  --primary-color: #142f43;
+  --secondary-color: #daddfc;
+  --white-color: #aaaaae;
 }
 
 button {
   border-radius: 0 !important;
   border: none !important;
   box-shadow: none !important;
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url('/menu.svg') !important;
 }
 
 input,
@@ -34,11 +38,15 @@ a {
   text-decoration: none;
 }
 
+table,
+.report {
+  font-family: 'Courier Prime', monospace !important;
+}
+
 .modal-background,
 .offcanvas,
 body {
-  /* font-family: 'PT Sans Narrow', sans-serif; */
-  font-family: 'Courier Prime', monospace !important;
+  font-family: 'PT Sans Narrow', sans-serif;
   background-color: var(--secondary-color) !important;
 }
 nav {
