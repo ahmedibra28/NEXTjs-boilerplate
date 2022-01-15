@@ -52,7 +52,7 @@ const Register = () => {
         <title>Sign up</title>
         <meta property='og:title' content='Signup' key='title' />
       </Head>
-      <h3 className=''>Sign Up</h3>
+      <h3 className='fw-light font-monospace text-center'>Sign Up</h3>
       {isSuccess && (
         <Message variant='success'>User has registered successfully</Message>
       )}

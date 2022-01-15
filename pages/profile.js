@@ -77,7 +77,7 @@ const Profile = () => {
         <title>Profile</title>
         <meta property='og:title' content='Profile' key='title' />
       </Head>
-      <h3 className=''>User Profile</h3>
+      <h3 className='fw-light font-monospace text-center'>User Profile</h3>
       {isErrorUpdateProfile && (
         <Message variant='danger'>{errorUpdateProfile}</Message>
       )}

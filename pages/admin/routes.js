@@ -218,7 +218,7 @@ const Route = () => {
           <FaPlus className='mb-1' />
         </button>
 
-        <CSVLink data={data ? data : []}>
+        <CSVLink data={data ? data : []} filename='router.csv'>
           <button
             className='btn btn-success position-fixed rounded-3 animate__bounceIn'
             style={{
@@ -229,8 +229,6 @@ const Route = () => {
             <FaFileDownload className='mb-1' />
           </button>
         </CSVLink>
-
-
       </div>
 
       <div className='row mt-2'>

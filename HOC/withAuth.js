@@ -24,7 +24,9 @@ const withAuth = async (WrappedComponent) => {
       }
 
       if (!accessToken) {
-        router.push(`/login?next=${pathName}`)
+        router.isReady &&
+          router.push(`/login?next=${router.isReady && router.asPath}`)
+
         return null
       }
 

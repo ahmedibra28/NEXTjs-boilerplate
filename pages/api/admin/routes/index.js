@@ -27,7 +27,7 @@ handler.post(async (req, res) => {
   const createdBy = req.user.id
 
   const exist = await constants.model.exists({
-    path: { $regex: path, $options: 'i' },
+    path: path.toLowerCase(),
   })
   if (exist) {
     return res.status(400).send(constants.existed)

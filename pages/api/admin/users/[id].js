@@ -40,8 +40,6 @@ handler.put(async (req, res) => {
 
 handler.delete(async (req, res) => {
   await dbConnect()
-  console.log('----------------------------')
-  console.log(req.query.id)
 
   const user = await User.findById(req.query.id)
 

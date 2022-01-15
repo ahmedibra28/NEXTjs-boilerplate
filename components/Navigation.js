@@ -58,7 +58,7 @@ const Navigation = () => {
   const authItems = () => {
     return (
       <>
-        <ul className='navbar-nav me-auto'>
+        <ul className='navbar-nav ms-auto'>
           {customLocalStorage() &&
             customLocalStorage().userAccessRoutes &&
             customLocalStorage().userAccessRoutes.route &&
@@ -75,8 +75,7 @@ const Navigation = () => {
                   </li>
                 )
             )}
-        </ul>
-        <ul className='navbar-nav ms-auto'>
+
           {UnlockAccess(Access.admin) && (
             <li className='nav-item dropdown'>
               <a
@@ -166,9 +165,14 @@ const Navigation = () => {
         </span>
 
         <Link href='/'>
-          <a className='navbar-brand shadow-lg rounded-pill fw-bold'>
-            <Image src='/logo.svg' width='30' height='30' alt='logo' />
-          </a>
+          <Image
+            priority
+            width='40'
+            height='40'
+            src='/favicon.png'
+            className='img-fluid brand-logos'
+            alt='logo'
+          />
         </Link>
 
         <button

@@ -27,8 +27,9 @@ handler.put(async (req, res) => {
   if (obj) {
     const exist = await constants.model.exists({
       _id: { $ne: _id },
-      path: { $regex: path, $options: 'i' },
+      path: path.toLowerCase(),
     })
+
     if (!exist) {
       obj.path = path
       obj.name = name
@@ -39,7 +40,7 @@ handler.put(async (req, res) => {
 
       res.json({ status: constants.success })
     } else {
-      return res.status(400).send(constants.success)
+      return res.status(400).send(constants.failed)
     }
   } else {
     return res.status(404).send(constants.failed)

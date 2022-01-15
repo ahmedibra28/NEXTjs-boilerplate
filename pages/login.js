@@ -46,7 +46,7 @@ const Login = () => {
         <title>Login</title>
         <meta property='og:title' content='Login' key='title' />
       </Head>
-      <h3 className=''>Sign In</h3>
+      <h3 className='fw-light font-monospace text-center'>Sign In</h3>
       {isError && <Message variant='danger'>{error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>

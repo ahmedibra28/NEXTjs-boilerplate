@@ -39,7 +39,7 @@ const Forgot = () => {
         <title>Forgot</title>
         <meta property='og:title' content='Forgot' key='title' />
       </Head>
-      <h3 className=''>Forgot Password</h3>
+      <h3 className='fw-light font-monospace text-center'>Forgot Password</h3>
       {isSuccess && (
         <Message variant='success'>
           An email has been sent with further instructions.
