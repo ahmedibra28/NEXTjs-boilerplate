@@ -3,7 +3,7 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import Message from '../../components/Message'
-import Loader from 'react-loader-spinner'
+import { ThreeDots } from 'react-loader-spinner'
 import { FaPenAlt, FaPlus, FaTrash } from 'react-icons/fa'
 import Pagination from '../../components/Pagination'
 import useUsers from '../../api/users'
@@ -155,7 +155,7 @@ const Users = () => {
             <div className='modal-body'>
               {isLoading ? (
                 <div className='text-center'>
-                  <Loader
+                  <ThreeDots
                     type='ThreeDots'
                     color='#00BFFF'
                     height={100}
@@ -255,7 +255,7 @@ const Users = () => {
 
       {isLoading ? (
         <div className='text-center'>
-          <Loader
+          <ThreeDots
             type='ThreeDots'
             color='#00BFFF'
             height={100}

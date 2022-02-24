@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import withAuth from '../HOC/withAuth'
 import Message from '../components/Message'
-import Loader from 'react-loader-spinner'
+import { ThreeDots } from 'react-loader-spinner'
 import FormContainer from '../components/FormContainer'
 import { useForm } from 'react-hook-form'
 
@@ -87,7 +87,7 @@ const Profile = () => {
       )}
       {isLoading && (
         <div className='text-center'>
-          <Loader
+          <ThreeDots
             type='ThreeDots'
             color='#00BFFF'
             height={100}

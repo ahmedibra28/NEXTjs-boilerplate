@@ -8,7 +8,7 @@ import moment from 'moment'
 import useUsers from '../../api/users'
 import { useQueryClient } from 'react-query'
 
-import Loader from 'react-loader-spinner'
+import { ThreeDots } from 'react-loader-spinner'
 
 const Logon = () => {
   const [search, setSearch] = useState('')
@@ -56,7 +56,7 @@ const Logon = () => {
 
       {isLoading ? (
         <div className='text-center'>
-          <Loader
+          <ThreeDots
             type='ThreeDots'
             color='#00BFFF'
             height={100}
