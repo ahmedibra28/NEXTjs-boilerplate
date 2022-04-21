@@ -46,6 +46,7 @@ const Login = () => {
         router.push(pathName)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, userRole])
 
   useEffect(() => {

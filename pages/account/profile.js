@@ -86,6 +86,7 @@ const Profile = () => {
       formData.append('file', file)
       mutateAsyncUpload({ type: 'image', formData })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file])
 
   useEffect(() => {
@@ -97,6 +98,7 @@ const Profile = () => {
           dataUpload.filePaths[0].path
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessUpload])
 
   return (
