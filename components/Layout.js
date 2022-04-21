@@ -1,6 +1,5 @@
 import Navigation from './Navigation'
 import Head from 'next/head'
-import Canvas from './Canvas'
 import Footer from './Footer'
 
 export default function Layout({ children }) {
@@ -11,8 +10,7 @@ export default function Layout({ children }) {
         <meta property='og:title' content='NEXT.js Boilerplate' key='title' />
       </Head>
       <Navigation />
-      <Canvas />
-      <main className='container'>{children}</main>
+      <main className='container py-2'>{children}</main>
       <Footer />
     </>
   )

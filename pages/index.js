@@ -1,15 +1,10 @@
-import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../HOC/withAuth'
 
-function Home() {
+const Home = () => {
   return (
-    <div>
-      <Head>
-        <title>NEXT.js Boilerplate</title>
-        <meta property='og:title' content='NEXT.js Boilerplate' key='title' />
-      </Head>
-      <div className='display-1 text-center custom-text-primary'>Dashboard</div>
+    <div className='container'>
+      <h1 className='text-center text-success'>NEXT.js Boilerplate</h1>
     </div>
   )
 }

@@ -4,16 +4,14 @@ const Footer = () => {
 
   return (
     <footer>
-      <hr />
-      <div className='container'>
+      <div className='container text-primary'>
         <div className='row'>
-          <div className='col text-center custom-custom-text-primary py-3 footer font-monospace'>
+          <div className='col text-center py-3 footer font-monospace'>
             Copyright {currentYear} &copy; All Rights Reserved
+            <span id='watermark' className='ms-3' />
           </div>
         </div>
       </div>
-
-      <div id='watermark'></div>
     </footer>
   )
 }

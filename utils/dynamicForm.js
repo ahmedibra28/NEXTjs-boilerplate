@@ -1,5 +1,5 @@
 export const inputText = (args) => {
-  const { register, errors, name, label, isRequired = true } = args
+  const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -7,7 +7,26 @@ export const inputText = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
+        className='form-control'
+      />
+      {errors && errors[name] && (
+        <span className='text-danger'>{errors[name].message}</span>
+      )}
+    </div>
+  )
+}
+
+export const inputTel = (args) => {
+  const { register, placeholder, errors, name, label, isRequired = true } = args
+
+  return (
+    <div className='mb-3'>
+      <label htmlFor={name}>{label}</label>
+      <input
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type='tel'
+        placeholder={`${placeholder}`}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -18,7 +37,7 @@ export const inputText = (args) => {
 }
 
 export const inputTextArea = (args) => {
-  const { register, errors, name, label, isRequired = true } = args
+  const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -28,7 +47,7 @@ export const inputTextArea = (args) => {
         cols='30'
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -39,7 +58,7 @@ export const inputTextArea = (args) => {
 }
 
 export const inputNumber = (args) => {
-  const { register, errors, name, label, isRequired = true } = args
+  const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -47,7 +66,7 @@ export const inputNumber = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='number'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -58,7 +77,7 @@ export const inputNumber = (args) => {
 }
 
 export const inputEmail = (args) => {
-  const { register, errors, label, name } = args
+  const { register, placeholder, errors, label, name } = args
 
   return (
     <div className='mb-3'>
@@ -72,7 +91,7 @@ export const inputEmail = (args) => {
           },
         })}
         type='email'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -85,6 +104,7 @@ export const inputEmail = (args) => {
 export const inputPassword = (args) => {
   const {
     register,
+    placeholder,
     errors,
     watch,
     name,
@@ -112,7 +132,7 @@ export const inputPassword = (args) => {
             : null,
         })}
         type='password'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -123,7 +143,16 @@ export const inputPassword = (args) => {
 }
 
 export const dynamicInputSelect = (args) => {
-  const { register, errors, name, label, data, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    data,
+    isRequired = true,
+    value,
+  } = args
 
   return (
     <div className='mb-3'>
@@ -131,14 +160,14 @@ export const dynamicInputSelect = (args) => {
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       >
         <option value=''>-------</option>
         {data &&
           data.map((d) => (
-            <option key={d._id} value={name === 'group' ? d.name : d._id}>
-              {d.name}
+            <option key={d._id} value={d._id}>
+              {d[value]}
             </option>
           ))}
       </select>
@@ -150,7 +179,15 @@ export const dynamicInputSelect = (args) => {
 }
 
 export const staticInputSelect = (args) => {
-  const { register, errors, name, data, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    data,
+    label,
+    isRequired = true,
+  } = args
 
   return (
     <div className='mb-3'>
@@ -158,7 +195,7 @@ export const staticInputSelect = (args) => {
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       >
         <option value=''>-------</option>
@@ -177,7 +214,7 @@ export const staticInputSelect = (args) => {
 }
 
 export const inputCheckBox = (args) => {
-  const { register, errors, name, label, isRequired = true } = args
+  const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -203,7 +240,15 @@ export const inputCheckBox = (args) => {
 }
 
 export const inputMultipleCheckBox = (args) => {
-  const { register, errors, name, data, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    data,
+    label,
+    isRequired = true,
+  } = args
 
   return (
     <div className='mb-3'>
@@ -240,7 +285,15 @@ export const inputMultipleCheckBox = (args) => {
 }
 
 export const inputFile = (args) => {
-  const { register, errors, name, isRequired = true, label, setFile } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    isRequired = true,
+    label,
+    setFile,
+  } = args
 
   return (
     <div className='mb-3'>
@@ -248,7 +301,7 @@ export const inputFile = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='file'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
         id='formFile'
         onChange={(e) => setFile(e.target.files[0])}
@@ -261,7 +314,7 @@ export const inputFile = (args) => {
 }
 
 export const inputDate = (args) => {
-  const { register, errors, name, label, isRequired = true } = args
+  const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -269,7 +322,7 @@ export const inputDate = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='date'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -280,7 +333,15 @@ export const inputDate = (args) => {
 }
 
 export const InputAutoCompleteSelect = (args) => {
-  const { register, errors, name, data, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    data,
+    label,
+    isRequired = true,
+  } = args
 
   return (
     <div className='mb-3'>
@@ -293,7 +354,7 @@ export const InputAutoCompleteSelect = (args) => {
         id='exampleDataList'
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       />
       <datalist id='datalistOptions'>
@@ -314,7 +375,15 @@ export const InputAutoCompleteSelect = (args) => {
 }
 
 export const dynamicInputSelectNumber = (args) => {
-  const { register, errors, name, label, data, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    data,
+    isRequired = true,
+  } = args
 
   return (
     <div className='mb-3'>
@@ -322,7 +391,7 @@ export const dynamicInputSelectNumber = (args) => {
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`Enter ${name}`}
+        placeholder={`${placeholder}`}
         className='form-control'
       >
         <option value=''>-------</option>

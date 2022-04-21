@@ -8,9 +8,9 @@ export const customLocalStorage = () => {
         : null,
 
     userAccessRoutes:
-      typeof window !== 'undefined' && localStorage.getItem('userGroup')
+      typeof window !== 'undefined' && localStorage.getItem('userRole')
         ? JSON.parse(
-            typeof window !== 'undefined' && localStorage.getItem('userGroup')
+            typeof window !== 'undefined' && localStorage.getItem('userRole')
           )
         : null,
   }
