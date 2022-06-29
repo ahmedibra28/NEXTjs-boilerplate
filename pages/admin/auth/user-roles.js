@@ -5,16 +5,12 @@ import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useUserRolesHook from '../../../utils/api/userRoles'
+import { Spinner, Pagination, Message, Confirm } from '../../../components'
+import { dynamicInputSelect } from '../../../utils/dynamicForm'
+import TableView from '../../../components/TableView'
+import FormView from '../../../components/FormView'
 import useRolesHook from '../../../utils/api/roles'
 import useUsersHook from '../../../utils/api/users'
-import {
-  Spinner,
-  ViewUserRoles,
-  Pagination,
-  FormUserRoles,
-  Message,
-  Confirm,
-} from '../../../components'
 
 const UserRoles = () => {
   const [page, setPage] = useState(1)
@@ -27,7 +23,6 @@ const UserRoles = () => {
       page,
       q,
     })
-
   const { getRoles } = useRolesHook({
     limit: 100000,
     page: 1,
@@ -79,11 +74,6 @@ const UserRoles = () => {
     mutateAsync: mutateAsyncPost,
   } = postUserRole
 
-  const formCleanHandler = () => {
-    setEdit(false)
-    reset()
-  }
-
   useEffect(() => {
     if (isSuccessPost || isSuccessUpdate) formCleanHandler()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,8 +95,34 @@ const UserRoles = () => {
     setPage(1)
   }
 
+  // TableView
+  const table = {
+    header: ['Name', 'Email', 'Role', 'Role Type'],
+    body: ['role.name', 'user.email', 'role.name', 'role.type'],
+    createdAt: 'createdAt',
+    data: data,
+  }
+
+  const editHandler = (item) => {
+    setId(item._id)
+
+    setEdit(true)
+    setValue('user', item?.user?._id)
+    setValue('role', item?.role?._id)
+  }
+
   const deleteHandler = (id) => {
     confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+  }
+
+  const name = 'User Roles List'
+  const label = 'User Role'
+  const modal = 'userRole'
+  const searchPlaceholder = 'Search by name'
+
+  // FormView
+  const formCleanHandler = () => {
+    reset(), setEdit(false)
   }
 
   const submitHandler = (data) => {
@@ -119,72 +135,102 @@ const UserRoles = () => {
       : mutateAsyncPost(data)
   }
 
-  const editHandler = (userRole) => {
-    setId(userRole._id)
-    setEdit(true)
-    setValue('user', userRole.user && userRole.user._id)
-    setValue('role', userRole.role && userRole.role._id)
-  }
+  const form = [
+    dynamicInputSelect({
+      register,
+      errors,
+      label: 'User',
+      name: 'user',
+      placeholder: 'User',
+      value: 'name',
+      data:
+        dataUsers &&
+        dataUsers.data &&
+        dataUsers.data.filter((user) => user.confirmed && !user.blocked),
+      placeholder: 'User',
+    }),
+
+    dynamicInputSelect({
+      register,
+      errors,
+      label: 'Role',
+      name: 'role',
+      placeholder: 'Role',
+      data: dataRoles && dataRoles.data,
+      placeholder: 'Role',
+      value: 'name',
+    }),
+  ]
+
+  const row = false
+  const column = 'col-md-6 col-12'
+  const modalSize = 'modal-md'
 
   return (
     <>
       <Head>
-        <title>UserRoles</title>
-        <meta property='og:title' content='UserRoles' key='title' />
+        <title>User Roles</title>
+        <meta property='og:title' content='User Roles' key='title' />
       </Head>
+
       {isSuccessDelete && (
         <Message variant='success'>
-          UserRole has been deleted successfully.
+          {label} has been deleted successfully.
         </Message>
       )}
       {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
       {isSuccessUpdate && (
         <Message variant='success'>
-          UserRole has been updated successfully.
+          {label} has been updated successfully.
         </Message>
       )}
       {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
       {isSuccessPost && (
         <Message variant='success'>
-          UserRole has been Created successfully.
+          {label} has been Created successfully.
         </Message>
       )}
       {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
 
-      <FormUserRoles
+      <div className='ms-auto text-end'>
+        <Pagination data={table.data} setPage={setPage} />
+      </div>
+
+      <FormView
         edit={edit}
         formCleanHandler={formCleanHandler}
-        isLoading={isLoading}
-        isError={isError}
-        errors={errors}
+        form={form}
+        watch={watch}
         isLoadingUpdate={isLoadingUpdate}
         isLoadingPost={isLoadingPost}
-        register={register}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
-        watch={watch}
-        error={error}
-        dataRoles={dataRoles}
-        dataUsers={dataUsers}
+        modal={modal}
+        label={label}
+        column={column}
+        row={row}
+        modalSize={modalSize}
       />
-
-      <div className='ms-auto text-end'>
-        <Pagination data={data} setPage={setPage} />
-      </div>
 
       {isLoading ? (
         <Spinner />
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <ViewUserRoles
-          data={data}
+        <TableView
+          table={table}
           editHandler={editHandler}
           deleteHandler={deleteHandler}
+          searchHandler={searchHandler}
           isLoadingDelete={isLoadingDelete}
+          name={name}
+          label={label}
+          modal={modal}
           setQ={setQ}
           q={q}
-          searchHandler={searchHandler}
+          searchPlaceholder={searchPlaceholder}
+          searchInput={true}
+          addBtn={true}
         />
       )}
     </>

@@ -5,14 +5,10 @@ import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useClientPermissionsHook from '../../../utils/api/clientPermissions'
-import {
-  Spinner,
-  ViewClientPermissions,
-  Pagination,
-  FormClientPermissions,
-  Message,
-  Confirm,
-} from '../../../components'
+import { Spinner, Pagination, Message, Confirm } from '../../../components'
+import { inputText, inputTextArea } from '../../../utils/dynamicForm'
+import TableView from '../../../components/TableView'
+import FormView from '../../../components/FormView'
 
 const ClientPermissions = () => {
   const [page, setPage] = useState(1)
@@ -38,7 +34,9 @@ const ClientPermissions = () => {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {},
+    defaultValues: {
+      auth: true,
+    },
   })
 
   const { data, isLoading, isError, error, refetch } = getClientPermissions
@@ -67,11 +65,6 @@ const ClientPermissions = () => {
     mutateAsync: mutateAsyncPost,
   } = postClientPermission
 
-  const formCleanHandler = () => {
-    setEdit(false)
-    reset()
-  }
-
   useEffect(() => {
     if (isSuccessPost || isSuccessUpdate) formCleanHandler()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,8 +86,33 @@ const ClientPermissions = () => {
     setPage(1)
   }
 
+  // TableView
+  const table = {
+    header: ['Name', 'Menu', 'Path', 'Description'],
+    body: ['name', 'menu', 'path', 'description'],
+    createdAt: 'createdAt',
+    data: data,
+  }
+
+  const editHandler = (item) => {
+    setId(item._id)
+
+    table.body.map((t) => setValue(t, item[t]))
+    setEdit(true)
+  }
+
   const deleteHandler = (id) => {
     confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+  }
+
+  const name = 'Client Permissions List'
+  const label = 'Client Permission'
+  const modal = 'clientPermission'
+  const searchPlaceholder = 'Search by name'
+
+  // FormView
+  const formCleanHandler = () => {
+    reset(), setEdit(false)
   }
 
   const submitHandler = (data) => {
@@ -109,14 +127,42 @@ const ClientPermissions = () => {
       : mutateAsyncPost(data)
   }
 
-  const editHandler = (clientPermission) => {
-    setId(clientPermission._id)
-    setEdit(true)
-    setValue('name', clientPermission.name)
-    setValue('menu', clientPermission.menu)
-    setValue('path', clientPermission.path)
-    setValue('description', clientPermission.description)
-  }
+  const form = [
+    inputText({
+      register,
+      errors,
+      label: 'Name',
+      name: 'name',
+      placeholder: 'Name',
+    }),
+    inputText({
+      register,
+      errors,
+      label: 'Menu',
+      name: 'menu',
+      placeholder: 'Menu',
+    }),
+    inputText({
+      register,
+      errors,
+      label: 'Path',
+      name: 'path',
+      placeholder: 'Path',
+    }),
+
+    inputTextArea({
+      register,
+      errors,
+      label: 'Description',
+      name: 'description',
+      placeholder: 'Description',
+      isRequired: false,
+    }),
+  ]
+
+  const row = false
+  const column = 'col-md-6 col-12'
+  const modalSize = 'modal-md'
 
   return (
     <>
@@ -124,57 +170,65 @@ const ClientPermissions = () => {
         <title>Client Permissions</title>
         <meta property='og:title' content='Client Permissions' key='title' />
       </Head>
+
       {isSuccessDelete && (
         <Message variant='success'>
-          Client Permission has been deleted successfully.
+          {label} has been deleted successfully.
         </Message>
       )}
       {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
       {isSuccessUpdate && (
         <Message variant='success'>
-          Client Permission has been updated successfully.
+          {label} has been updated successfully.
         </Message>
       )}
       {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
       {isSuccessPost && (
         <Message variant='success'>
-          Client Permission has been Created successfully.
+          {label} has been Created successfully.
         </Message>
       )}
       {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
 
-      <FormClientPermissions
+      <div className='ms-auto text-end'>
+        <Pagination data={table.data} setPage={setPage} />
+      </div>
+
+      <FormView
         edit={edit}
         formCleanHandler={formCleanHandler}
-        isLoading={isLoading}
-        isError={isError}
-        errors={errors}
+        form={form}
+        watch={watch}
         isLoadingUpdate={isLoadingUpdate}
         isLoadingPost={isLoadingPost}
-        register={register}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
-        watch={watch}
-        error={error}
+        modal={modal}
+        label={label}
+        column={column}
+        row={row}
+        modalSize={modalSize}
       />
-
-      <div className='ms-auto text-end'>
-        <Pagination data={data} setPage={setPage} />
-      </div>
 
       {isLoading ? (
         <Spinner />
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <ViewClientPermissions
-          data={data}
+        <TableView
+          table={table}
           editHandler={editHandler}
           deleteHandler={deleteHandler}
+          searchHandler={searchHandler}
           isLoadingDelete={isLoadingDelete}
+          name={name}
+          label={label}
+          modal={modal}
           setQ={setQ}
           q={q}
-          searchHandler={searchHandler}
+          searchPlaceholder={searchPlaceholder}
+          searchInput={true}
+          addBtn={true}
         />
       )}
     </>

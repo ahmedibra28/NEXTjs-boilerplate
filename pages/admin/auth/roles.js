@@ -5,16 +5,18 @@ import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useRolesHook from '../../../utils/api/roles'
+import { Spinner, Pagination, Message, Confirm } from '../../../components'
+import {
+  inputCheckBox,
+  inputMultipleCheckBox,
+  inputText,
+  inputTextArea,
+  staticInputSelect,
+} from '../../../utils/dynamicForm'
+import TableView from '../../../components/TableView'
+import FormView from '../../../components/FormView'
 import usePermissionsHook from '../../../utils/api/permissions'
 import useClientPermissionsHook from '../../../utils/api/clientPermissions'
-import {
-  Spinner,
-  ViewRoles,
-  Pagination,
-  FormRoles,
-  Message,
-  Confirm,
-} from '../../../components'
 
 const Roles = () => {
   const [page, setPage] = useState(1)
@@ -26,6 +28,7 @@ const Roles = () => {
     page,
     q,
   })
+
   const { getPermissions } = usePermissionsHook({
     limit: 1000000,
   })
@@ -41,7 +44,9 @@ const Roles = () => {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {},
+    defaultValues: {
+      auth: true,
+    },
   })
 
   const { data, isLoading, isError, error, refetch } = getRoles
@@ -72,11 +77,6 @@ const Roles = () => {
     mutateAsync: mutateAsyncPost,
   } = postRole
 
-  const formCleanHandler = () => {
-    setEdit(false)
-    reset()
-  }
-
   useEffect(() => {
     if (isSuccessPost || isSuccessUpdate) formCleanHandler()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,8 +98,42 @@ const Roles = () => {
     setPage(1)
   }
 
+  // TableView
+  const table = {
+    header: ['Name', 'Type', 'Description'],
+    body: ['name', 'type', 'description'],
+    createdAt: 'createdAt',
+    data: data,
+  }
+
+  const editHandler = (item) => {
+    setId(item._id)
+
+    table.body.map((t) => setValue(t, item[t]))
+    setEdit(true)
+
+    setValue(
+      'permission',
+      item.permission && item.permission.map((item) => item._id)
+    )
+    setValue(
+      'clientPermission',
+      item.clientPermission && item.clientPermission.map((item) => item._id)
+    )
+  }
+
   const deleteHandler = (id) => {
     confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+  }
+
+  const name = 'Roles List'
+  const label = 'Role'
+  const modal = 'role'
+  const searchPlaceholder = 'Search by name'
+
+  // FormView
+  const formCleanHandler = () => {
+    reset(), setEdit(false)
   }
 
   const submitHandler = (data) => {
@@ -107,27 +141,65 @@ const Roles = () => {
       ? mutateAsyncUpdate({
           _id: id,
           name: data.name,
+          method: data.method,
+          route: data.route,
+          auth: data.auth,
           description: data.description,
-          permission: data.permission,
-          clientPermission: data.clientPermission,
         })
       : mutateAsyncPost(data)
   }
 
-  const editHandler = (role) => {
-    setId(role._id)
-    setEdit(true)
-    setValue('name', role.name)
-    setValue('description', role.description)
-    setValue(
-      'permission',
-      role.permission && role.permission.map((item) => item._id)
-    )
-    setValue(
-      'clientPermission',
-      role.clientPermission && role.clientPermission.map((item) => item._id)
-    )
-  }
+  const form = [
+    inputText({
+      register,
+      errors,
+      label: 'Name',
+      name: 'name',
+      placeholder: 'Enter name',
+    }),
+
+    inputMultipleCheckBox({
+      register,
+      errors,
+      label: 'Permission',
+      name: 'permission',
+      placeholder: 'Permission',
+      data:
+        permissionData &&
+        permissionData?.data?.map((item) => ({
+          name: `${item.method} - ${item.description}`,
+          _id: item._id,
+        })),
+      isRequired: false,
+    }),
+
+    inputTextArea({
+      register,
+      errors,
+      label: 'Description',
+      name: 'description',
+      placeholder: 'Description',
+    }),
+
+    inputMultipleCheckBox({
+      register,
+      errors,
+      label: 'Client Permission',
+      name: 'clientPermission',
+      placeholder: 'Client Permission',
+      data:
+        clientPermissionData &&
+        clientPermissionData?.data?.map((item) => ({
+          name: `${item.menu} - ${item.path}`,
+          _id: item._id,
+        })),
+      isRequired: false,
+    }),
+  ]
+
+  const row = false
+  const column = 'col-md-6 col-12'
+  const modalSize = 'modal-lg'
 
   return (
     <>
@@ -135,53 +207,65 @@ const Roles = () => {
         <title>Roles</title>
         <meta property='og:title' content='Roles' key='title' />
       </Head>
+
       {isSuccessDelete && (
-        <Message variant='success'>Role has been deleted successfully.</Message>
+        <Message variant='success'>
+          {label} has been deleted successfully.
+        </Message>
       )}
       {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
       {isSuccessUpdate && (
-        <Message variant='success'>Role has been updated successfully.</Message>
+        <Message variant='success'>
+          {label} has been updated successfully.
+        </Message>
       )}
       {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
       {isSuccessPost && (
-        <Message variant='success'>Role has been Created successfully.</Message>
+        <Message variant='success'>
+          {label} has been Created successfully.
+        </Message>
       )}
       {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
 
-      <FormRoles
+      <div className='ms-auto text-end'>
+        <Pagination data={table.data} setPage={setPage} />
+      </div>
+
+      <FormView
         edit={edit}
         formCleanHandler={formCleanHandler}
-        isLoading={isLoading}
-        isError={isError}
-        errors={errors}
+        form={form}
+        watch={watch}
         isLoadingUpdate={isLoadingUpdate}
         isLoadingPost={isLoadingPost}
-        register={register}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
-        watch={watch}
-        error={error}
-        permissionData={permissionData && permissionData.data}
-        clientPermissionData={clientPermissionData && clientPermissionData.data}
+        modal={modal}
+        label={label}
+        column={column}
+        row={row}
+        modalSize={modalSize}
       />
-
-      <div className='ms-auto text-end'>
-        <Pagination data={data} setPage={setPage} />
-      </div>
 
       {isLoading ? (
         <Spinner />
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <ViewRoles
-          data={data}
+        <TableView
+          table={table}
           editHandler={editHandler}
           deleteHandler={deleteHandler}
+          searchHandler={searchHandler}
           isLoadingDelete={isLoadingDelete}
+          name={name}
+          label={label}
+          modal={modal}
           setQ={setQ}
           q={q}
-          searchHandler={searchHandler}
+          searchPlaceholder={searchPlaceholder}
+          searchInput={true}
+          addBtn={true}
         />
       )}
     </>

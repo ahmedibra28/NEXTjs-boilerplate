@@ -2,19 +2,16 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../../HOC/withAuth'
-import useUserProfilesHook from '../../../utils/api/profiles'
-import {
-  Spinner,
-  ViewUserProfiles,
-  Pagination,
-  Message,
-} from '../../../components'
+import useProfilesHook from '../../../utils/api/profiles'
+import { Spinner, Pagination, Message } from '../../../components'
+
+import TableView from '../../../components/TableView'
 
 const UserProfiles = () => {
   const [page, setPage] = useState(1)
   const [q, setQ] = useState('')
 
-  const { getUserProfiles } = useUserProfilesHook({
+  const { getUserProfiles } = useProfilesHook({
     page,
     q,
   })
@@ -37,6 +34,21 @@ const UserProfiles = () => {
     setPage(1)
   }
 
+  // TableView
+  const table = {
+    header: ['Name', 'Address', 'Phone', 'Email'],
+    body: ['name', 'address', 'phone', 'user.email'],
+    createdAt: 'createdAt',
+    image: 'image',
+    data: data,
+  }
+
+  const name = 'User Profiles List'
+  const label = 'User Profile'
+  const modal = 'userProfile'
+  const searchPlaceholder = 'Search by name'
+  const addBtn = false
+
   return (
     <>
       <Head>
@@ -45,7 +57,7 @@ const UserProfiles = () => {
       </Head>
 
       <div className='ms-auto text-end'>
-        <Pagination data={data} setPage={setPage} />
+        <Pagination data={table.data} setPage={setPage} />
       </div>
 
       {isLoading ? (
@@ -53,11 +65,17 @@ const UserProfiles = () => {
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <ViewUserProfiles
-          data={data}
+        <TableView
+          table={table}
+          searchHandler={searchHandler}
+          name={name}
+          modal={modal}
+          label={label}
           setQ={setQ}
           q={q}
-          searchHandler={searchHandler}
+          searchPlaceholder={searchPlaceholder}
+          searchInput={true}
+          addBtn={false}
         />
       )}
     </>

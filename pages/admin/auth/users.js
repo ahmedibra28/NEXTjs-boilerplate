@@ -5,14 +5,15 @@ import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useUsersHook from '../../../utils/api/users'
+import { Spinner, Pagination, Message, Confirm } from '../../../components'
 import {
-  Spinner,
-  ViewUsers,
-  Pagination,
-  FormUsers,
-  Message,
-  Confirm,
-} from '../../../components'
+  inputCheckBox,
+  inputEmail,
+  inputPassword,
+  inputText,
+} from '../../../utils/dynamicForm'
+import TableView from '../../../components/TableView'
+import FormView from '../../../components/FormView'
 
 const Users = () => {
   const [page, setPage] = useState(1)
@@ -65,11 +66,6 @@ const Users = () => {
     mutateAsync: mutateAsyncPost,
   } = postUser
 
-  const formCleanHandler = () => {
-    setEdit(false)
-    reset()
-  }
-
   useEffect(() => {
     if (isSuccessPost || isSuccessUpdate) formCleanHandler()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,8 +87,35 @@ const Users = () => {
     setPage(1)
   }
 
+  // TableView
+  const table = {
+    header: ['Name', 'Email'],
+    body: ['name', 'email'],
+    createdAt: 'createdAt',
+    confirmed: 'confirmed',
+    blocked: 'blocked',
+    data: data,
+  }
+
+  const editHandler = (item) => {
+    setId(item._id)
+
+    table.body.map((t) => setValue(t, item[t]))
+    setEdit(true)
+  }
+
   const deleteHandler = (id) => {
     confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+  }
+
+  const name = 'Users List'
+  const label = 'User'
+  const modal = 'user'
+  const searchPlaceholder = 'Search by email'
+
+  // FormView
+  const formCleanHandler = () => {
+    reset(), setEdit(false)
   }
 
   const submitHandler = (data) => {
@@ -108,14 +131,57 @@ const Users = () => {
       : mutateAsyncPost(data)
   }
 
-  const editHandler = (user) => {
-    setId(user._id)
-    setEdit(true)
-    setValue('name', user.name)
-    setValue('email', user.email)
-    setValue('confirmed', user.confirmed)
-    setValue('blocked', user.blocked)
-  }
+  const form = [
+    inputText({
+      register,
+      errors,
+      label: 'Name',
+      name: 'name',
+      placeholder: 'Enter name',
+    }),
+    inputEmail({
+      register,
+      errors,
+      label: 'Email',
+      name: 'email',
+      placeholder: 'Enter email address',
+    }),
+    inputPassword({
+      register,
+      errors,
+      label: 'Password',
+      name: 'password',
+      placeholder: 'Enter password',
+      isRequired: false,
+    }),
+    inputPassword({
+      register,
+      errors,
+      label: 'Confirm Password',
+      name: 'confirmPassword',
+      placeholder: 'Enter confirm password',
+      isRequired: false,
+    }),
+
+    inputCheckBox({
+      register,
+      errors,
+      label: 'Confirmed',
+      name: 'confirmed',
+      isRequired: false,
+    }),
+    inputCheckBox({
+      register,
+      errors,
+      label: 'Blocked',
+      name: 'blocked',
+      isRequired: false,
+    }),
+  ]
+
+  const row = false
+  const column = 'col-md-6 col-12'
+  const modalSize = 'modal-md'
 
   return (
     <>
@@ -123,51 +189,65 @@ const Users = () => {
         <title>Users</title>
         <meta property='og:title' content='Users' key='title' />
       </Head>
+
       {isSuccessDelete && (
-        <Message variant='success'>User has been deleted successfully.</Message>
+        <Message variant='success'>
+          {label} has been deleted successfully.
+        </Message>
       )}
       {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
       {isSuccessUpdate && (
-        <Message variant='success'>User has been updated successfully.</Message>
+        <Message variant='success'>
+          {label} has been updated successfully.
+        </Message>
       )}
       {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
       {isSuccessPost && (
-        <Message variant='success'>User has been Created successfully.</Message>
+        <Message variant='success'>
+          {label} has been Created successfully.
+        </Message>
       )}
       {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
 
-      <FormUsers
+      <div className='ms-auto text-end'>
+        <Pagination data={table.data} setPage={setPage} />
+      </div>
+
+      <FormView
         edit={edit}
         formCleanHandler={formCleanHandler}
-        isLoading={isLoading}
-        isError={isError}
-        errors={errors}
+        form={form}
+        watch={watch}
         isLoadingUpdate={isLoadingUpdate}
         isLoadingPost={isLoadingPost}
-        register={register}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
-        watch={watch}
-        error={error}
+        modal={modal}
+        label={label}
+        column={column}
+        row={row}
+        modalSize={modalSize}
       />
-
-      <div className='ms-auto text-end'>
-        <Pagination data={data} setPage={setPage} />
-      </div>
 
       {isLoading ? (
         <Spinner />
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <ViewUsers
-          data={data}
+        <TableView
+          table={table}
           editHandler={editHandler}
           deleteHandler={deleteHandler}
+          searchHandler={searchHandler}
           isLoadingDelete={isLoadingDelete}
+          name={name}
+          label={label}
+          modal={modal}
           setQ={setQ}
           q={q}
-          searchHandler={searchHandler}
+          searchPlaceholder={searchPlaceholder}
+          searchInput={true}
+          addBtn={true}
         />
       )}
     </>
