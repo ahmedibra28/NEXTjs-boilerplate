@@ -5,16 +5,23 @@ import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useRolesHook from '../../../utils/api/roles'
-import { Spinner, Pagination, Message, Confirm } from '../../../components'
+import {
+  Spinner,
+  Pagination,
+  Message,
+  Confirm,
+  Search,
+} from '../../../components'
 import {
   inputMultipleCheckBox,
   inputText,
   inputTextArea,
 } from '../../../utils/dynamicForm'
-import TableView from '../../../components/TableView'
 import FormView from '../../../components/FormView'
 import usePermissionsHook from '../../../utils/api/permissions'
 import useClientPermissionsHook from '../../../utils/api/clientPermissions'
+import { FaPenAlt, FaTrash } from 'react-icons/fa'
+import moment from 'moment'
 
 const Roles = () => {
   const [page, setPage] = useState(1)
@@ -125,10 +132,13 @@ const Roles = () => {
   }
 
   interface Item {
-    [x: string]: any
-    _id: any
+    _id: string
+    name: string
+    type: string
+    description: string
+    createdAt: string
     permission: any[]
-    clientPermission: { menu: string }[]
+    clientPermission: any[]
   }
   const editHandler = (item: Item) => {
     setId(item._id)
@@ -176,7 +186,6 @@ const Roles = () => {
   const name = 'Roles List'
   const label = 'Role'
   const modal = 'role'
-  const searchPlaceholder = 'Search by name'
 
   // FormView
   const formCleanHandler = () => {
@@ -307,7 +316,7 @@ const Roles = () => {
     </div>,
   ]
 
-  const modalSize = 'modal-md'
+  const modalSize = 'modal-lg'
 
   return (
     <>
@@ -357,21 +366,76 @@ const Roles = () => {
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <TableView
-          table={table}
-          editHandler={editHandler}
-          deleteHandler={deleteHandler}
-          searchHandler={searchHandler}
-          isLoadingDelete={isLoadingDelete}
-          name={name}
-          label={label}
-          modal={modal}
-          setQ={setQ}
-          q={q}
-          searchPlaceholder={searchPlaceholder}
-          searchInput={true}
-          addBtn={true}
-        />
+        <div className='table-responsive bg-light p-3 mt-2'>
+          <div className='d-flex align-items-center flex-column mb-2'>
+            <h3 className='fw-light text-muted'>
+              {name}
+              <sup className='fs-6'> [{table?.data?.total}] </sup>
+            </h3>
+            <button
+              className='btn btn-outline-primary btn-sm shadow my-2'
+              data-bs-toggle='modal'
+              data-bs-target={`#${modal}`}
+            >
+              Add New {label}
+            </button>
+            <div className='col-auto'>
+              <Search
+                placeholder='Search by name'
+                setQ={setQ}
+                q={q}
+                searchHandler={searchHandler}
+              />
+            </div>
+          </div>
+          <table className='table table-sm table-border'>
+            <thead className='border-0'>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.data?.map((item: Item) => (
+                <tr key={item?._id}>
+                  <td>{item?.name}</td>
+                  <td>{item?.type}</td>
+                  <td>{item?.description}</td>
+                  <td>{moment(item?.createdAt).format('lll')}</td>
+                  <td>
+                    <div className='btn-group'>
+                      <button
+                        className='btn btn-primary btn-sm rounded-pill'
+                        onClick={() => editHandler(item)}
+                        data-bs-toggle='modal'
+                        data-bs-target={`#${modal}`}
+                      >
+                        <FaPenAlt />
+                      </button>
+
+                      <button
+                        className='btn btn-danger btn-sm ms-1 rounded-pill'
+                        onClick={() => deleteHandler(item._id)}
+                        disabled={isLoadingDelete}
+                      >
+                        {isLoadingDelete ? (
+                          <span className='spinner-border spinner-border-sm' />
+                        ) : (
+                          <span>
+                            <FaTrash />
+                          </span>
+                        )}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   )

@@ -5,15 +5,22 @@ import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useUsersHook from '../../../utils/api/users'
-import { Spinner, Pagination, Message, Confirm } from '../../../components'
+import {
+  Spinner,
+  Pagination,
+  Message,
+  Confirm,
+  Search,
+} from '../../../components'
 import {
   inputCheckBox,
   inputEmail,
   inputPassword,
   inputText,
 } from '../../../utils/dynamicForm'
-import TableView from '../../../components/TableView'
 import FormView from '../../../components/FormView'
+import { FaCheckCircle, FaPenAlt, FaTimesCircle, FaTrash } from 'react-icons/fa'
+import moment from 'moment'
 
 const Users = () => {
   const [page, setPage] = useState(1)
@@ -96,7 +103,15 @@ const Users = () => {
     data: data,
   }
 
-  const editHandler = (item) => {
+  interface Item {
+    _id: string
+    name: string
+    email: string
+    confirmed: boolean
+    blocked: boolean
+    createdAt: string
+  }
+  const editHandler = (item: Item) => {
     setId(item._id)
 
     table.body.map((t) => setValue(t as any, item[t]))
@@ -110,7 +125,6 @@ const Users = () => {
   const name = 'Users List'
   const label = 'User'
   const modal = 'user'
-  const searchPlaceholder = 'Search by email'
 
   // FormView
   const formCleanHandler = () => {
@@ -186,7 +200,7 @@ const Users = () => {
     </div>,
   ]
 
-  const modalSize = 'modal-md'
+  const modalSize = 'modal-lg'
 
   return (
     <>
@@ -236,21 +250,90 @@ const Users = () => {
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <TableView
-          table={table}
-          editHandler={editHandler}
-          deleteHandler={deleteHandler}
-          searchHandler={searchHandler}
-          isLoadingDelete={isLoadingDelete}
-          name={name}
-          label={label}
-          modal={modal}
-          setQ={setQ}
-          q={q}
-          searchPlaceholder={searchPlaceholder}
-          searchInput={true}
-          addBtn={true}
-        />
+        <div className='table-responsive bg-light p-3 mt-2'>
+          <div className='d-flex align-items-center flex-column mb-2'>
+            <h3 className='fw-light text-muted'>
+              {name}
+              <sup className='fs-6'> [{table?.data?.total}] </sup>
+            </h3>
+            <button
+              className='btn btn-outline-primary btn-sm shadow my-2'
+              data-bs-toggle='modal'
+              data-bs-target={`#${modal}`}
+            >
+              Add New {label}
+            </button>
+            <div className='col-auto'>
+              <Search
+                placeholder='Search by email'
+                setQ={setQ}
+                q={q}
+                searchHandler={searchHandler}
+              />
+            </div>
+          </div>
+          <table className='table table-sm table-border'>
+            <thead className='border-0'>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Confirmed</th>
+                <th>Blocked</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.data?.map((item: Item) => (
+                <tr key={item?._id}>
+                  <td>{item?.name}</td>
+                  <td>{item?.email}</td>
+                  <td>
+                    {item?.confirmed ? (
+                      <FaCheckCircle className='text-success' />
+                    ) : (
+                      <FaTimesCircle className='text-danger' />
+                    )}
+                  </td>
+                  <td>
+                    {item?.blocked ? (
+                      <FaCheckCircle className='text-success' />
+                    ) : (
+                      <FaTimesCircle className='text-danger' />
+                    )}
+                  </td>
+                  <td>{moment(item?.createdAt).format('lll')}</td>
+                  <td>
+                    <div className='btn-group'>
+                      <button
+                        className='btn btn-primary btn-sm rounded-pill'
+                        onClick={() => editHandler(item)}
+                        data-bs-toggle='modal'
+                        data-bs-target={`#${modal}`}
+                      >
+                        <FaPenAlt />
+                      </button>
+
+                      <button
+                        className='btn btn-danger btn-sm ms-1 rounded-pill'
+                        onClick={() => deleteHandler(item._id)}
+                        disabled={isLoadingDelete}
+                      >
+                        {isLoadingDelete ? (
+                          <span className='spinner-border spinner-border-sm' />
+                        ) : (
+                          <span>
+                            <FaTrash />
+                          </span>
+                        )}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   )

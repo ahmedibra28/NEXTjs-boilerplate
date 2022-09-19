@@ -1,19 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import usePermissionsHook from '../../../utils/api/permissions'
-import { Spinner, Pagination, Message, Confirm } from '../../../components'
+import {
+  Spinner,
+  Pagination,
+  Message,
+  Confirm,
+  Search,
+} from '../../../components'
 import {
   inputCheckBox,
   inputText,
   inputTextArea,
   staticInputSelect,
 } from '../../../utils/dynamicForm'
-import TableView from '../../../components/TableView'
 import FormView from '../../../components/FormView'
+import { FaCheckCircle, FaPenAlt, FaTimesCircle, FaTrash } from 'react-icons/fa'
+import moment from 'moment'
 
 const Permissions = () => {
   const [page, setPage] = useState(1)
@@ -81,7 +88,7 @@ const Permissions = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
-  const searchHandler = (e) => {
+  const searchHandler = (e: FormEvent) => {
     e.preventDefault()
     refetch()
     setPage(1)
@@ -91,13 +98,21 @@ const Permissions = () => {
   const table = {
     header: ['Name', 'Method', 'Route'],
     body: ['name', 'method', 'route'],
-    class: ['bg-danger', '', ''],
     createdAt: 'createdAt',
     auth: 'auth',
     data: data,
   }
 
-  const editHandler = (item) => {
+  interface Item {
+    _id: string
+    name: string
+    method: string
+    route: string
+    auth: boolean
+    createdAt: string
+    description: string
+  }
+  const editHandler = (item: Item) => {
     setId(item._id)
 
     table.body.map((t) => setValue(t as any, item[t]))
@@ -112,7 +127,6 @@ const Permissions = () => {
   const name = 'Permissions List'
   const label = 'Permission'
   const modal = 'permission'
-  const searchPlaceholder = 'Search by email'
 
   // FormView
   const formCleanHandler = () => {
@@ -184,7 +198,7 @@ const Permissions = () => {
     </div>,
   ]
 
-  const modalSize = 'modal-md'
+  const modalSize = 'modal-lg'
 
   return (
     <>
@@ -234,21 +248,104 @@ const Permissions = () => {
       ) : isError ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        <TableView
-          table={table}
-          editHandler={editHandler}
-          deleteHandler={deleteHandler}
-          searchHandler={searchHandler}
-          isLoadingDelete={isLoadingDelete}
-          name={name}
-          label={label}
-          modal={modal}
-          setQ={setQ}
-          q={q}
-          searchPlaceholder={searchPlaceholder}
-          searchInput={true}
-          addBtn={true}
-        />
+        <div className='table-responsive bg-light p-3 mt-2'>
+          <div className='d-flex align-items-center flex-column mb-2'>
+            <h3 className='fw-light text-muted'>
+              {name}
+              <sup className='fs-6'> [{table?.data?.total}] </sup>
+            </h3>
+            <button
+              className='btn btn-outline-primary btn-sm shadow my-2'
+              data-bs-toggle='modal'
+              data-bs-target={`#${modal}`}
+            >
+              Add New {label}
+            </button>
+            <div className='col-auto'>
+              <Search
+                placeholder='Search by name'
+                setQ={setQ}
+                q={q}
+                searchHandler={searchHandler}
+              />
+            </div>
+          </div>
+          <table className='table table-sm table-border'>
+            <thead className='border-0'>
+              <tr>
+                <th>Name</th>
+                <th>Method</th>
+                <th>Route</th>
+                <th>Auth</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.data?.map((item: Item) => (
+                <tr key={item?._id}>
+                  <td>{item?.name}</td>
+                  <td>
+                    {item?.method === 'GET' ? (
+                      <div className='badge rounded-0s bg-success'>
+                        {item?.method}
+                      </div>
+                    ) : item?.method === 'POST' ? (
+                      <div className='badge rounded-0s bg-primary'>
+                        {item?.method}
+                      </div>
+                    ) : item?.method === 'DELETE' ? (
+                      <div className='badge rounded-0s bg-danger'>
+                        {item?.method}
+                      </div>
+                    ) : (
+                      item?.method === 'PUT' && (
+                        <div className='badge rounded-0s bg-info'>
+                          {item?.method}
+                        </div>
+                      )
+                    )}
+                  </td>
+                  <td>{item?.route}</td>
+                  <td>
+                    {item?.auth ? (
+                      <FaCheckCircle className='text-success' />
+                    ) : (
+                      <FaTimesCircle className='text-danger' />
+                    )}
+                  </td>
+                  <td>{moment(item?.createdAt).format('lll')}</td>
+                  <td>
+                    <div className='btn-group'>
+                      <button
+                        className='btn btn-primary btn-sm rounded-pill'
+                        onClick={() => editHandler(item)}
+                        data-bs-toggle='modal'
+                        data-bs-target={`#${modal}`}
+                      >
+                        <FaPenAlt />
+                      </button>
+
+                      <button
+                        className='btn btn-danger btn-sm ms-1 rounded-pill'
+                        onClick={() => deleteHandler(item._id)}
+                        disabled={isLoadingDelete}
+                      >
+                        {isLoadingDelete ? (
+                          <span className='spinner-border spinner-border-sm' />
+                        ) : (
+                          <span>
+                            <FaTrash />
+                          </span>
+                        )}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   )
