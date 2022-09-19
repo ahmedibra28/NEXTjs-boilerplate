@@ -1,9 +1,10 @@
-# NEXT.js Boilerplate
+# NEXT.js typescript Boilerplate
 
 ![Boilerplate](./boilerplate.gif)
 
 ## Features
 
+- Typescript
 - Login
 - Signup
 - Forgot Password
@@ -37,7 +38,7 @@ I used number of different technologies
 
 ## Installation
 
-This NEXT.js boilerplate requires these technologies to run:
+This NEXT.js typescript boilerplate requires these technologies to run:
 
 - [Node.js](https://nodejs.org/) v12+
 - [MongoDB](https://mongodb.com/) ether local MongoDB or MongoDB Atlas
@@ -64,7 +65,7 @@ Your can find the default `super admin` and `password` in the below directory
 
 ### Default super admin authentication is:
 
-- Email: _ahmed@websom.dev_
+- Email: _ahmaat19@gmail.com_
 - Password: _123456_
 
 **_Free NEXT.js Boilerplate, Hell Yeah!_**
