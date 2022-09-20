@@ -15,12 +15,12 @@ const userScheme = new mongoose.Schema(
   { timestamps: true }
 )
 
-userScheme.methods.matchPassword = async function (enteredPassword) {
+userScheme.methods.matchPassword = async function (enteredPassword: string) {
   return await bcrypt.compare(enteredPassword, this.password)
 }
 
 // encrypt password before saving into mongoDB
-userScheme.methods.encryptPassword = async function (password) {
+userScheme.methods.encryptPassword = async function (password: string) {
   const salt = await bcrypt.genSalt(10)
   return await bcrypt.hash(password, salt)
 }

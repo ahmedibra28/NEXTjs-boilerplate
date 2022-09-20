@@ -1,9 +1,10 @@
 import nc from 'next-connect'
 import db from '../../../../config/db'
 import User from '../../../../models/User'
-import { forgotMessage } from '../../../../utils/emailTemplate'
 import { sendEmail } from '../../../../utils/nodemailer'
 import { NextApiRequest, NextApiResponse } from 'next'
+import DeviceDetector from 'device-detector-js'
+import { eTemplate } from '../../../../utils/eTemplate'
 
 const schemaName = User
 
@@ -22,13 +23,34 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     const resetToken = user.getResetPasswordToken()
     await user.save()
 
-    const resetUrl = `http://localhost:3000/auth/reset-password/${resetToken}`
-    const message = forgotMessage(resetUrl, user)
+    const deviceDetector = new DeviceDetector()
+    const device = deviceDetector.parse(req.headers['user-agent'])
+
+    const {
+      client: { type: clientType, name: clientName },
+      os: { name: osName },
+      device: { type: deviceType, brand },
+    } = device
+
+    const message = eTemplate({
+      url: `http://localhost:3000/auth/reset-password/${resetToken}`,
+      user: user?.name,
+      clientType,
+      clientName,
+      osName,
+      deviceType,
+      brand,
+      webName: 'Next.JS Boilerplate',
+      validTime: '10 minutes',
+      addressStreet: 'Makka Almukarrama',
+      addressCountry: 'Mogadishu - Somalia',
+    })
 
     const result = sendEmail({
       to: user.email,
       subject: 'Password Reset Request',
       text: message,
+      webName: 'Next.JS Boilerplate Team',
     })
 
     if (await result)

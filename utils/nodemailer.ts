@@ -1,6 +1,11 @@
 import nodemailer from 'nodemailer'
 
-export const sendEmail = (options) => {
+export const sendEmail = (options: {
+  to: string
+  subject: string
+  text: string
+  webName: string
+}) => {
   const smtpTransparent = nodemailer.createTransport({
     host: process.env.SMTP_SERVER,
     port: process.env.SMTP_PORT,
@@ -12,7 +17,7 @@ export const sendEmail = (options) => {
   })
 
   const mailOptions = {
-    from: `"Websom Team " <${process.env.SMTP_USER}>`,
+    from: `${options?.webName} <${process.env.SMTP_USER}>`,
     to: options.to,
     subject: options.subject,
     html: options.text,
