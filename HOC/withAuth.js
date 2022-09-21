@@ -1,6 +1,17 @@
 import { useRouter } from 'next/router'
 import { customLocalStorage } from '../utils/customLocalStorage'
 
+// const FetchClientAuth = async () => {
+//   try {
+//     const { data } = await axios.get(
+//       `/api/auth/client-auth-check?user=${customLocalStorage()?.userInfo?._id}`
+//     )
+//     return data
+//   } catch (error) {
+//     console.log(error?.message)
+//   }
+// }
+
 const withAuth = async (WrappedComponent) => {
   // eslint-disable-next-line react/display-name
   return (props) => {

@@ -62,8 +62,6 @@ export const isAuth = async (
         url = urlArray.join('/') + '/' + `:${queryKey[0]}`
       }
 
-      console.log('after ', url)
-
       if (url.includes('page')) {
         url = url.split('page')[0]
 
