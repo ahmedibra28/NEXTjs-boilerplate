@@ -2,16 +2,27 @@ import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import UserRole from '../models/UserRole'
 import db from '../config/db'
+import { NextApiRequest, NextApiResponse } from 'next'
 
-export const generateToken = (id) => {
+interface PermissionsType {
+  route: string
+  method: string
+  auth: boolean
+}
+
+export const generateToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '10d',
   })
 }
 
-export const isAuth = async (req, res, next) => {
+export const isAuth = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  next: any
+) => {
   await db()
-  let token
+  let token: string
 
   if (
     req.headers.authorization &&
@@ -30,16 +41,28 @@ export const isAuth = async (req, res, next) => {
           path: 'permission',
         },
       })
+      const permissions = userRole?.role?.permission?.map(
+        (per: PermissionsType) => ({
+          route: per?.route,
+          method: per?.method,
+          auth: per?.auth,
+        })
+      )
 
       let { url, method } = req
 
       const urlArray = url.split('/')
       const lastIndex = urlArray.pop()
 
-      if (lastIndex.length > 18 && !lastIndex.includes('q')) {
+      const queryValue =
+        Object.values(req.query)?.length > 0 && Object.values(req.query)[0]
+
+      if (queryValue?.length === 24 && !lastIndex.includes('q')) {
         const queryKey = Object.keys(req.query)
         url = urlArray.join('/') + '/' + `:${queryKey[0]}`
       }
+
+      console.log('after ', url)
 
       if (url.includes('page')) {
         url = url.split('page')[0]
@@ -49,8 +72,8 @@ export const isAuth = async (req, res, next) => {
         }
       }
       if (
-        userRole.role.permission.find(
-          (permission) =>
+        permissions?.find(
+          (permission: PermissionsType) =>
             permission.route === url &&
             permission.method === method &&
             permission.auth === false
@@ -59,8 +82,8 @@ export const isAuth = async (req, res, next) => {
         return next()
       }
       if (
-        !userRole.role.permission.find(
-          (permission) =>
+        !permissions.find(
+          (permission: PermissionsType) =>
             permission.route === url &&
             permission.method === method &&
             permission.auth === true

@@ -1,4 +1,19 @@
-export const inputText = (args) => {
+interface Props {
+  register: any
+  placeholder: string
+  errors: string
+  name: string
+  label: string
+  isRequired: boolean
+  validate: boolean
+  minLength: boolean
+  watch: any
+  data: any
+  value: string
+  setFile: any
+}
+
+export const inputText = (args: Props) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
@@ -7,7 +22,7 @@ export const inputText = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -17,7 +32,7 @@ export const inputText = (args) => {
   )
 }
 
-export const inputTel = (args) => {
+export const inputTel = (args: Props) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
@@ -26,7 +41,7 @@ export const inputTel = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='tel'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -36,7 +51,7 @@ export const inputTel = (args) => {
   )
 }
 
-export const inputTextArea = (args) => {
+export const inputTextArea = (args: Props) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
@@ -47,7 +62,7 @@ export const inputTextArea = (args) => {
         cols='30'
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -57,7 +72,7 @@ export const inputTextArea = (args) => {
   )
 }
 
-export const inputNumber = (args) => {
+export const inputNumber = (args: Props) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
@@ -66,7 +81,7 @@ export const inputNumber = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='number'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -76,7 +91,7 @@ export const inputNumber = (args) => {
   )
 }
 
-export const inputEmail = (args) => {
+export const inputEmail = (args: Props) => {
   const { register, placeholder, errors, label, name } = args
 
   return (
@@ -91,7 +106,7 @@ export const inputEmail = (args) => {
           },
         })}
         type='email'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -101,7 +116,7 @@ export const inputEmail = (args) => {
   )
 }
 
-export const inputPassword = (args) => {
+export const inputPassword = (args: Props) => {
   const {
     register,
     placeholder,
@@ -127,12 +142,12 @@ export const inputPassword = (args) => {
               }
             : null,
           validate: validate
-            ? (value) =>
+            ? (value: any) =>
                 value === watch().password || 'The passwords do not match'
             : null,
         })}
         type='password'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -142,7 +157,7 @@ export const inputPassword = (args) => {
   )
 }
 
-export const dynamicInputSelect = (args) => {
+export const dynamicInputSelect = (args: Props) => {
   const {
     register,
     placeholder,
@@ -160,12 +175,12 @@ export const dynamicInputSelect = (args) => {
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       >
         <option value=''>-------</option>
         {data &&
-          data.map((d) => (
+          data.map((d: { _id: string }) => (
             <option key={d._id} value={d._id}>
               {d[value]}
             </option>
@@ -178,7 +193,7 @@ export const dynamicInputSelect = (args) => {
   )
 }
 
-export const staticInputSelect = (args) => {
+export const staticInputSelect = (args: Props) => {
   const {
     register,
     placeholder,
@@ -195,7 +210,7 @@ export const staticInputSelect = (args) => {
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       >
         <option value=''>-------</option>
@@ -213,8 +228,8 @@ export const staticInputSelect = (args) => {
   )
 }
 
-export const inputCheckBox = (args) => {
-  const { register, placeholder, errors, name, label, isRequired = true } = args
+export const inputCheckBox = (args: Props) => {
+  const { register, errors, name, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -239,16 +254,8 @@ export const inputCheckBox = (args) => {
   )
 }
 
-export const inputMultipleCheckBox = (args) => {
-  const {
-    register,
-    placeholder,
-    errors,
-    name,
-    data,
-    label,
-    isRequired = true,
-  } = args
+export const inputMultipleCheckBox = (args: Props) => {
+  const { register, errors, name, data, label, isRequired = true } = args
 
   return (
     <div className='mb-3'>
@@ -284,7 +291,7 @@ export const inputMultipleCheckBox = (args) => {
   )
 }
 
-export const inputFile = (args) => {
+export const inputFile = (args: Props) => {
   const {
     register,
     placeholder,
@@ -301,7 +308,7 @@ export const inputFile = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='file'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
         id='formFile'
         onChange={(e) => setFile(e.target.files[0])}
@@ -313,7 +320,7 @@ export const inputFile = (args) => {
   )
 }
 
-export const inputDate = (args) => {
+export const inputDate = (args: Props) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
@@ -322,7 +329,7 @@ export const inputDate = (args) => {
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type='date'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       {errors && errors[name] && (
@@ -332,7 +339,7 @@ export const inputDate = (args) => {
   )
 }
 
-export const InputAutoCompleteSelect = (args) => {
+export const InputAutoCompleteSelect = (args: Props) => {
   const {
     register,
     placeholder,
@@ -354,7 +361,7 @@ export const InputAutoCompleteSelect = (args) => {
         id='exampleDataList'
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       />
       <datalist id='datalistOptions'>
@@ -374,7 +381,7 @@ export const InputAutoCompleteSelect = (args) => {
   )
 }
 
-export const dynamicInputSelectNumber = (args) => {
+export const dynamicInputSelectNumber = (args: Props) => {
   const {
     register,
     placeholder,
@@ -391,12 +398,12 @@ export const dynamicInputSelectNumber = (args) => {
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type='text'
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         className='form-control'
       >
         <option value=''>-------</option>
 
-        {[...Array(data).keys()].map((num) => (
+        {[...(Array(data).keys() as any)].map((num) => (
           <option key={num + 1} value={num + 1}>
             {num + 1}
           </option>
