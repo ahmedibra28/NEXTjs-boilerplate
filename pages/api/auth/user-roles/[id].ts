@@ -11,37 +11,6 @@ const schemaNameString = 'UserRole'
 
 const handler = nc()
 
-handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
-  await db()
-  try {
-    const { id } = req.query
-
-    const objects = await schemaName
-      .findOne({ user: id })
-      .lean()
-      .sort({ createdAt: -1 })
-      .populate({
-        path: 'role',
-        populate: {
-          path: 'clientPermission',
-          model: 'ClientPermission',
-        },
-      })
-
-    if (!objects)
-      return res
-        .status(404)
-        .json({ error: 'No ' + schemaNameString + ' found' })
-
-    const role = objects.role.type
-    const clientPermission = objects.role.clientPermission
-
-    res.status(200).send({ role, clientPermission })
-  } catch (error) {
-    res.status(500).json({ error: error.message })
-  }
-})
-
 handler.use(isAuth)
 handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
   await db()

@@ -4,8 +4,7 @@ import Link from 'next/link'
 import { FormContainer, Message } from '../../components'
 import { useForm } from 'react-hook-form'
 import useAuthHook from '../../utils/api/auth'
-import useUserRolesHook from '../../utils/api/userRoles'
-import { customLocalStorage } from '../../utils/customLocalStorage'
+import { userInfo } from '../../utils/helper'
 import Head from 'next/head'
 import { inputEmail, inputPassword } from '../../utils/dynamicForm'
 
@@ -20,37 +19,20 @@ const Login = () => {
   } = useForm()
 
   const { postLogin } = useAuthHook()
-  const { postUserRoleById } = useUserRolesHook({
-    page: 1,
-    q: '',
-    limit: 10000000,
-  })
 
   const { isLoading, isError, error, mutateAsync, isSuccess, data } = postLogin
-  const {
-    mutateAsync: userRoleMutateAsync,
-    data: userRole,
-    error: errorUserRole,
-    isError: isErrorUserRole,
-  } = postUserRoleById
 
   useEffect(() => {
     if (isSuccess) {
-      userRoleMutateAsync(data._id)
-      if (userRole) {
-        typeof window !== undefined &&
-          localStorage.setItem('userRole', JSON.stringify(userRole))
-
-        typeof window !== undefined &&
-          localStorage.setItem('userInfo', JSON.stringify(data))
-        router.push(pathName)
-      }
+      typeof window !== undefined &&
+        localStorage.setItem('userInfo', JSON.stringify(data))
+      router.push(pathName as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, userRole])
+  }, [isSuccess])
 
   useEffect(() => {
-    customLocalStorage() && customLocalStorage().userInfo && router.push('/')
+    userInfo() && userInfo().userInfo && router.push('/')
   }, [router])
 
   const submitHandler = async (data) => {
@@ -65,7 +47,6 @@ const Login = () => {
       </Head>
       <h3 className='fw-light font-monospace text-center'>Sign In</h3>
       {isError && <Message variant='danger'>{error}</Message>}
-      {isErrorUserRole && <Message variant='danger'>{errorUserRole}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
         {inputEmail({

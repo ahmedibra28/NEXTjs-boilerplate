@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { config } from '../customLocalStorage'
+import { config } from '../helper'
 
 const dynamicAPI = async (method, url, obj = {}) => {
   try {

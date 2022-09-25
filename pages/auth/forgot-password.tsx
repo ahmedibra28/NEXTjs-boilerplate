@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { FormContainer, Message } from '../../components'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
-import { customLocalStorage } from '../../utils/customLocalStorage'
+import { userInfo } from '../../utils/helper'
 import Head from 'next/head'
 import { inputEmail } from '../../utils/dynamicForm'
 import useAuthHook from '../../utils/api/auth'
@@ -26,7 +26,7 @@ const Forgot = () => {
   }, [isSuccess])
 
   useEffect(() => {
-    customLocalStorage() && customLocalStorage().userInfo && router.push('/')
+    userInfo() && userInfo().userInfo && router.push('/')
   }, [router])
 
   const submitHandler = (data) => {

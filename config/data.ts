@@ -252,13 +252,6 @@ const permissions = [
     method: 'GET',
   },
   {
-    description: 'Get User Roles By Id With POST',
-    route: '/api/auth/user-roles/:id',
-    auth: false,
-    name: 'User Roles',
-    method: 'POST',
-  },
-  {
     description: 'Create User Role',
     route: '/api/auth/user-roles',
     auth: true,

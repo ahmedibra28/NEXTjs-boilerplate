@@ -2,18 +2,29 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import {
-  FaCog,
-  FaUserCircle,
-  FaSignInAlt,
-  FaUserPlus,
-  FaPowerOff,
-} from 'react-icons/fa'
+import { FaSignInAlt, FaPowerOff } from 'react-icons/fa'
 import useAuthHook from '../utils/api/auth'
 import { useMutation } from 'react-query'
 import { useRouter } from 'next/router'
-import { customLocalStorage } from '../utils/customLocalStorage'
+import { userInfo } from '../utils/helper'
 // import { Access, UnlockAccess } from '../utils/UnlockAccess'
+
+export interface AuthProps {
+  block: boolean
+  confirmed: boolean
+  email: string
+  name: string
+  role: string
+  token: string
+  _id: string
+  routes: RouteProps
+}
+interface RouteProps {
+  menu: string
+  name: string
+  path: string
+  sort: number
+}
 
 const Navigation = () => {
   const router = useRouter()
@@ -24,15 +35,8 @@ const Navigation = () => {
   })
 
   const logoutHandler = () => {
-    mutateAsync({})
+    mutateAsync()
   }
-
-  const userInfo =
-    typeof window !== 'undefined' && localStorage.getItem('userInfo')
-      ? JSON.parse(
-          typeof window !== 'undefined' && localStorage.getItem('userInfo')
-        )
-      : null
 
   const guestItems = () => {
     return (
@@ -58,36 +62,22 @@ const Navigation = () => {
     )
   }
 
-  const user = () => {
-    const userInfo =
-      customLocalStorage() &&
-      customLocalStorage().userInfo &&
-      customLocalStorage().userInfo
-
-    return userInfo
-  }
-
   const menus = () => {
-    const dropdownItems =
-      customLocalStorage()?.userAccessRoutes?.clientPermission?.map(
-        (route: { menu: string; sort: number }) => ({
-          menu: route.menu,
-          sort: route.sort,
-        })
-      )
+    const dropdownItems = userInfo()?.userInfo?.routes?.map(
+      (route: RouteProps) => ({
+        menu: route.menu,
+        sort: route.sort,
+      })
+    )
 
-    const menuItems =
-      customLocalStorage()?.userAccessRoutes?.clientPermission?.map(
-        (route) => route
-      )
+    const menuItems = userInfo()?.userInfo?.routes?.map((route) => route)
 
     const dropdownArray = dropdownItems?.filter(
-      (item: { menu: string }) =>
-        item?.menu !== 'hidden' && item?.menu !== 'normal'
+      (item: RouteProps) => item?.menu !== 'hidden' && item?.menu !== 'normal'
     )
 
     const uniqueDropdowns = dropdownArray?.reduce((a, b) => {
-      var i = a.findIndex((x: { menu: string }) => x.menu === b.menu)
+      var i = a.findIndex((x: RouteProps) => x.menu === b.menu)
       return (
         i === -1 ? a.push({ menu: b.menu, ...b, times: 1 }) : a[i].times++, a
       )
@@ -111,60 +101,52 @@ const Navigation = () => {
     return (
       <>
         <ul className='navbar-nav ms-auto'>
-          {menus() &&
-            menus().menuItems.map(
-              (menu: {
-                _id: string
-                path: string
-                name: string
-                menu: string
-                auth: boolean
-              }) =>
-                menu.menu === 'normal' && (
-                  <li key={menu._id} className='nav-item'>
-                    <Link href={menu.path}>
-                      <a className='nav-link' aria-current='page'>
-                        {menu.name}
-                      </a>
-                    </Link>
-                  </li>
-                )
-            )}
+          {menus()?.menuItems?.map(
+            (menu: RouteProps, index: number) =>
+              menu.menu === 'normal' && (
+                <li key={index} className='nav-item'>
+                  <Link href={menu.path}>
+                    <a className='nav-link' aria-current='page'>
+                      {menu.name}
+                    </a>
+                  </Link>
+                </li>
+              )
+          )}
 
-          {menus() &&
-            menus().uniqueDropdowns.map((item: { menu: string }) => (
-              <li key={item?.menu} className='nav-item dropdown'>
-                <a
-                  className='nav-link dropdown-toggle'
-                  href='#'
-                  id='navbarDropdownMenuLink'
-                  role='button'
-                  data-bs-toggle='dropdown'
-                  aria-expanded='false'
-                >
-                  {item?.menu === 'profile'
-                    ? user() && user().name
-                    : item?.menu.charAt(0).toUpperCase() +
-                      item?.menu.substring(1)}
-                </a>
-                <ul
-                  className='dropdown-menu border-0'
-                  aria-labelledby='navbarDropdownMenuLink'
-                >
-                  {menus() &&
-                    menus().menuItems.map(
-                      (menu) =>
-                        menu.menu === item?.menu && (
-                          <li key={menu._id}>
-                            <Link href={menu.path}>
-                              <a className='dropdown-item'>{menu.name}</a>
-                            </Link>
-                          </li>
-                        )
-                    )}
-                </ul>
-              </li>
-            ))}
+          {menus()?.uniqueDropdowns?.map((item: RouteProps) => (
+            <li key={item?.menu} className='nav-item dropdown'>
+              <a
+                className='nav-link dropdown-toggle'
+                href='#'
+                id='navbarDropdownMenuLink'
+                role='button'
+                data-bs-toggle='dropdown'
+                aria-expanded='false'
+              >
+                {item?.menu === 'profile'
+                  ? userInfo()?.userInfo?.name
+                  : item?.menu.charAt(0).toUpperCase() +
+                    item?.menu.substring(1)}
+              </a>
+              <ul
+                className='dropdown-menu border-0'
+                aria-labelledby='navbarDropdownMenuLink'
+              >
+                {menus() &&
+                  menus().menuItems.map(
+                    (menu) =>
+                      menu.menu === item?.menu && (
+                        <li key={menu._id}>
+                          <Link href={menu.path}>
+                            <a className='dropdown-item'>{menu.name}</a>
+                          </Link>
+                        </li>
+                      )
+                  )}
+              </ul>
+            </li>
+          ))}
 
           <li className='nav-item'>
             <Link href='/auth/login'>
@@ -210,7 +192,7 @@ const Navigation = () => {
           <span className='navbar-toggler-icon'></span>
         </button>
         <div className='collapse navbar-collapse' id='navbarNav'>
-          {userInfo ? authItems() : guestItems()}
+          {userInfo() ? authItems() : guestItems()}
         </div>
       </div>
     </nav>
