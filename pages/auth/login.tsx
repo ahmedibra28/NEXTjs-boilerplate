@@ -1,12 +1,12 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { FormContainer, Message } from '../../components'
 import { useForm } from 'react-hook-form'
-import useAuthHook from '../../utils/api/auth'
 import { userInfo } from '../../utils/helper'
 import Head from 'next/head'
 import { inputEmail, inputPassword } from '../../utils/dynamicForm'
+import apiHook from '../../api'
 
 const Login = () => {
   const router = useRouter()
@@ -18,25 +18,27 @@ const Login = () => {
     formState: { errors },
   } = useForm()
 
-  const { postLogin } = useAuthHook()
-
-  const { isLoading, isError, error, mutateAsync, isSuccess, data } = postLogin
+  const postApi = apiHook({
+    key: ['login'],
+    method: 'POST',
+    url: `auth/login`,
+  })?.post
 
   useEffect(() => {
-    if (isSuccess) {
+    if (postApi?.isSuccess) {
       typeof window !== undefined &&
-        localStorage.setItem('userInfo', JSON.stringify(data))
+        localStorage.setItem('userInfo', JSON.stringify(postApi?.data))
       router.push(pathName as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess])
+  }, [postApi?.isSuccess])
 
   useEffect(() => {
     userInfo() && userInfo().userInfo && router.push('/')
   }, [router])
 
   const submitHandler = async (data) => {
-    mutateAsync(data)
+    postApi?.mutateAsync(data)
   }
 
   return (
@@ -46,7 +48,7 @@ const Login = () => {
         <meta property='og:title' content='Login' key='title' />
       </Head>
       <h3 className='fw-light font-monospace text-center'>Sign In</h3>
-      {isError && <Message variant='danger'>{error}</Message>}
+      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
         {inputEmail({
@@ -66,9 +68,9 @@ const Login = () => {
         <button
           type='submit'
           className='btn btn-primary form-control '
-          disabled={isLoading}
+          disabled={postApi?.isLoading}
         >
-          {isLoading ? (
+          {postApi?.isLoading ? (
             <span className='spinner-border spinner-border-sm' />
           ) : (
             'Sign In'
@@ -77,8 +79,11 @@ const Login = () => {
       </form>
       <div className='row pt-3'>
         <div className='col'>
-          <Link href='/auth/forgot-password'>
-            <a className='ps-1 text-decoration-none'> Forgot Password?</a>
+          <Link
+            href='/auth/forgot-password'
+            className='ps-1 text-decoration-none'
+          >
+            Forgot Password?
           </Link>
         </div>
       </div>

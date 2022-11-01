@@ -1,3 +1,4 @@
+import React from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import withAuth from '../HOC/withAuth'
@@ -14,40 +15,54 @@ const Home: React.FC = () => {
             <li className='fw-bold'>Admin</li>
             <ul>
               <li>
-                <Link href='/admin/auth/users'>
-                  <a className='text-decoration-none text-muted'>Users</a>
+                <Link
+                  className='text-decoration-none text-muted'
+                  href='/admin/auth/users'
+                >
+                  Users
                 </Link>
               </li>
               <li>
-                <Link href='/admin/auth/permissions'>
-                  <a className='text-decoration-none text-muted'>Permissions</a>
+                <Link
+                  className='text-decoration-none text-muted'
+                  href='/admin/auth/permissions'
+                >
+                  Permissions
                 </Link>
               </li>
               <li>
-                <Link href='/admin/auth/client-permissions'>
-                  <a className='text-decoration-none text-muted'>
-                    Client permissions
-                  </a>
+                <Link
+                  className='text-decoration-none text-muted'
+                  href='/admin/auth/client-permissions'
+                >
+                  Client permissions
                 </Link>
               </li>
               <li>
-                <Link href='/admin/auth/user-roles'>
-                  <a className='text-decoration-none text-muted'>User roles</a>
+                <Link
+                  className='text-decoration-none text-muted'
+                  href='/admin/auth/user-roles'
+                >
+                  User roles
                 </Link>
               </li>
               <li>
-                <Link href='/admin/auth/user-profiles'>
-                  <a className='text-decoration-none text-muted'>
-                    User profiles
-                  </a>
+                <Link
+                  className='text-decoration-none text-muted'
+                  href='/admin/auth/user-profiles'
+                >
+                  User profiles
                 </Link>
               </li>
             </ul>
             <li className='fw-bold'>Username</li>
             <ul>
               <li>
-                <Link href='/account/profile'>
-                  <a className='text-decoration-none text-muted'>Profiles</a>
+                <Link
+                  className='text-decoration-none text-muted'
+                  href='/account/profile'
+                >
+                  Profiles
                 </Link>
               </li>
             </ul>

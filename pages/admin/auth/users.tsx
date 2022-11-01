@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import useUsersHook from '../../../utils/api/users'
 import {
   Spinner,
   Pagination,
@@ -21,6 +20,7 @@ import {
 import FormView from '../../../components/FormView'
 import { FaCheckCircle, FaPenAlt, FaTimesCircle, FaTrash } from 'react-icons/fa'
 import moment from 'moment'
+import apiHook from '../../../api'
 
 const Users = () => {
   const [page, setPage] = useState(1)
@@ -28,10 +28,29 @@ const Users = () => {
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
 
-  const { getUsers, postUser, updateUser, deleteUser } = useUsersHook({
-    page,
-    q,
-  })
+  const getApi = apiHook({
+    key: ['users'],
+    method: 'GET',
+    url: `auth/users?page=${page}&q=${q}&limit=${25}`,
+  })?.get
+
+  const postApi = apiHook({
+    key: ['users'],
+    method: 'POST',
+    url: `auth/users`,
+  })?.post
+
+  const updateApi = apiHook({
+    key: ['users'],
+    method: 'PUT',
+    url: `auth/users`,
+  })?.put
+
+  const deleteApi = apiHook({
+    key: ['users'],
+    method: 'DELETE',
+    url: `auth/users`,
+  })?.deleteObj
 
   const {
     register,
@@ -46,50 +65,26 @@ const Users = () => {
     },
   })
 
-  const { data, isLoading, isError, error, refetch } = getUsers
-
-  const {
-    isLoading: isLoadingUpdate,
-    isError: isErrorUpdate,
-    error: errorUpdate,
-    isSuccess: isSuccessUpdate,
-    mutateAsync: mutateAsyncUpdate,
-  } = updateUser
-
-  const {
-    isLoading: isLoadingDelete,
-    isError: isErrorDelete,
-    error: errorDelete,
-    isSuccess: isSuccessDelete,
-    mutateAsync: mutateAsyncDelete,
-  } = deleteUser
-
-  const {
-    isLoading: isLoadingPost,
-    isError: isErrorPost,
-    error: errorPost,
-    isSuccess: isSuccessPost,
-    mutateAsync: mutateAsyncPost,
-  } = postUser
-
   useEffect(() => {
-    if (isSuccessPost || isSuccessUpdate) formCleanHandler()
+    if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess)
+      formCleanHandler()
+    getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessPost, isSuccessUpdate])
+  }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
-    refetch()
+    getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page])
 
   useEffect(() => {
-    if (!q) refetch()
+    if (!q) getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
   const searchHandler = (e) => {
     e.preventDefault()
-    refetch()
+    getApi?.refetch()
     setPage(1)
   }
 
@@ -100,7 +95,7 @@ const Users = () => {
     createdAt: 'createdAt',
     confirmed: 'confirmed',
     blocked: 'blocked',
-    data: data,
+    data: getApi?.data,
   }
 
   interface Item {
@@ -115,11 +110,13 @@ const Users = () => {
     setId(item._id)
 
     table.body.map((t) => setValue(t as any, item[t]))
+    setValue('blocked', item?.blocked)
+    setValue('confirmed', item?.confirmed)
     setEdit(true)
   }
 
   const deleteHandler = (id: string) => {
-    confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
   const name = 'Users List'
@@ -133,11 +130,11 @@ const Users = () => {
 
   const submitHandler = (data: object) => {
     edit
-      ? mutateAsyncUpdate({
+      ? updateApi?.mutateAsync({
           _id: id,
           ...data,
         })
-      : mutateAsyncPost(data)
+      : postApi?.mutateAsync(data)
   }
 
   const form = [
@@ -209,24 +206,28 @@ const Users = () => {
         <meta property='og:title' content='Users' key='title' />
       </Head>
 
-      {isSuccessDelete && (
+      {deleteApi?.isSuccess && (
         <Message variant='success'>
           {label} has been deleted successfully.
         </Message>
       )}
-      {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
-      {isSuccessUpdate && (
+      {deleteApi?.isError && (
+        <Message variant='danger'>{deleteApi?.error}</Message>
+      )}
+      {updateApi?.isSuccess && (
         <Message variant='success'>
           {label} has been updated successfully.
         </Message>
       )}
-      {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
-      {isSuccessPost && (
+      {updateApi?.isError && (
+        <Message variant='danger'>{updateApi?.error}</Message>
+      )}
+      {postApi?.isSuccess && (
         <Message variant='success'>
           {label} has been Created successfully.
         </Message>
       )}
-      {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
+      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
 
       <div className='ms-auto text-end'>
         <Pagination data={table.data} setPage={setPage} />
@@ -236,8 +237,8 @@ const Users = () => {
         edit={edit}
         formCleanHandler={formCleanHandler}
         form={form}
-        isLoadingUpdate={isLoadingUpdate}
-        isLoadingPost={isLoadingPost}
+        isLoadingUpdate={updateApi?.isLoading}
+        isLoadingPost={postApi?.isLoading}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
         modal={modal}
@@ -245,10 +246,10 @@ const Users = () => {
         modalSize={modalSize}
       />
 
-      {isLoading ? (
+      {getApi?.isLoading ? (
         <Spinner />
-      ) : isError ? (
-        <Message variant='danger'>{error}</Message>
+      ) : getApi?.isError ? (
+        <Message variant='danger'>{getApi?.error}</Message>
       ) : (
         <div className='table-responsive bg-light p-3 mt-2'>
           <div className='d-flex align-items-center flex-column mb-2'>
@@ -284,7 +285,7 @@ const Users = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map((item: Item) => (
+              {getApi?.data?.data?.map((item: Item) => (
                 <tr key={item?._id}>
                   <td>{item?.name}</td>
                   <td>{item?.email}</td>
@@ -317,9 +318,9 @@ const Users = () => {
                       <button
                         className='btn btn-danger btn-sm ms-1 rounded-pill'
                         onClick={() => deleteHandler(item._id)}
-                        disabled={isLoadingDelete}
+                        disabled={deleteApi?.isLoading}
                       >
-                        {isLoadingDelete ? (
+                        {deleteApi?.isLoading ? (
                           <span className='spinner-border spinner-border-sm' />
                         ) : (
                           <span>

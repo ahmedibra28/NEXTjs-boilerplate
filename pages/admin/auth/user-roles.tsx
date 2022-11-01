@@ -1,10 +1,9 @@
-import { useState, useEffect, FormEvent } from 'react'
+import React, { useState, useEffect, FormEvent } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import useUserRolesHook from '../../../utils/api/userRoles'
 import {
   Spinner,
   Pagination,
@@ -14,10 +13,9 @@ import {
 } from '../../../components'
 import { dynamicInputSelect } from '../../../utils/dynamicForm'
 import FormView from '../../../components/FormView'
-import useRolesHook from '../../../utils/api/roles'
-import useUsersHook from '../../../utils/api/users'
 import moment from 'moment'
 import { FaPenAlt, FaTrash } from 'react-icons/fa'
+import apiHook from '../../../api'
 
 const UserRoles = () => {
   const [page, setPage] = useState(1)
@@ -25,25 +23,44 @@ const UserRoles = () => {
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
 
-  const { getUserRoles, postUserRole, updateUserRole, deleteUserRole } =
-    useUserRolesHook({
-      page,
-      q,
-    })
-  const { getRoles } = useRolesHook({
-    limit: 100000,
-    page: 1,
-  })
+  const getRolesApi = apiHook({
+    key: ['roles'],
+    method: 'GET',
+    url: `auth/roles?page=${page}&q=${q}&limit=${25}`,
+  })?.get
+  const getUsersApi = apiHook({
+    key: ['users'],
+    method: 'GET',
+    url: `auth/users?page=${page}&q=${q}&limit=${25}`,
+  })?.get
 
-  const { getUsers } = useUsersHook({
-    limit: 100000,
-    page: 1,
-  })
+  const getApi = apiHook({
+    key: ['user-roles'],
+    method: 'GET',
+    url: `auth/user-roles?page=${page}&q=${q}&limit=${25}`,
+  })?.get
+
+  const postApi = apiHook({
+    key: ['user-roles'],
+    method: 'POST',
+    url: `auth/user-roles`,
+  })?.post
+
+  const updateApi = apiHook({
+    key: ['user-roles'],
+    method: 'PUT',
+    url: `auth/user-roles`,
+  })?.put
+
+  const deleteApi = apiHook({
+    key: ['user-roles'],
+    method: 'DELETE',
+    url: `auth/user-roles`,
+  })?.deleteObj
 
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     reset,
     formState: { errors },
@@ -53,52 +70,27 @@ const UserRoles = () => {
     },
   })
 
-  const { data, isLoading, isError, error, refetch } = getUserRoles
-  const { data: dataRoles } = getRoles
-  const { data: dataUsers } = getUsers
-
-  const {
-    isLoading: isLoadingUpdate,
-    isError: isErrorUpdate,
-    error: errorUpdate,
-    isSuccess: isSuccessUpdate,
-    mutateAsync: mutateAsyncUpdate,
-  } = updateUserRole
-
-  const {
-    isLoading: isLoadingDelete,
-    isError: isErrorDelete,
-    error: errorDelete,
-    isSuccess: isSuccessDelete,
-    mutateAsync: mutateAsyncDelete,
-  } = deleteUserRole
-
-  const {
-    isLoading: isLoadingPost,
-    isError: isErrorPost,
-    error: errorPost,
-    isSuccess: isSuccessPost,
-    mutateAsync: mutateAsyncPost,
-  } = postUserRole
-
   useEffect(() => {
-    if (isSuccessPost || isSuccessUpdate) formCleanHandler()
+    if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
+      formCleanHandler()
+      getApi?.refetch()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessPost, isSuccessUpdate])
+  }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
-    refetch()
+    getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page])
 
   useEffect(() => {
-    if (!q) refetch()
+    if (!q) getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
   const searchHandler = (e: FormEvent) => {
     e.preventDefault()
-    refetch()
+    getApi?.refetch()
     setPage(1)
   }
 
@@ -107,7 +99,7 @@ const UserRoles = () => {
     header: ['Name', 'Email', 'Role', 'Role Type'],
     body: ['role.name', 'user.email', 'role.name', 'role.type'],
     createdAt: 'createdAt',
-    data: data,
+    data: getApi?.data,
   }
   interface Item {
     _id: string
@@ -124,7 +116,7 @@ const UserRoles = () => {
   }
 
   const deleteHandler = (id: string) => {
-    confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
   const name = 'User Roles List'
@@ -139,11 +131,11 @@ const UserRoles = () => {
 
   const submitHandler = (data) => {
     edit
-      ? mutateAsyncUpdate({
+      ? updateApi?.mutateAsync({
           _id: id,
           ...data,
         })
-      : mutateAsyncPost(data)
+      : postApi?.mutateAsync(data)
   }
 
   const form = [
@@ -155,13 +147,10 @@ const UserRoles = () => {
         name: 'user',
         placeholder: 'User',
         value: 'name',
-        data:
-          dataUsers &&
-          dataUsers.data &&
-          dataUsers.data.filter(
-            (user: { confirmed: boolean; blocked: boolean }) =>
-              user.confirmed && !user.blocked
-          ),
+        data: getUsersApi?.data?.data.filter(
+          (user: { confirmed: boolean; blocked: boolean }) =>
+            user.confirmed && !user.blocked
+        ),
       })}
     </div>,
 
@@ -172,7 +161,7 @@ const UserRoles = () => {
         label: 'Role',
         name: 'role',
         placeholder: 'Role',
-        data: dataRoles && dataRoles.data,
+        data: getRolesApi?.data?.data,
         value: 'name',
       })}
     </div>,
@@ -187,24 +176,28 @@ const UserRoles = () => {
         <meta property='og:title' content='User Roles' key='title' />
       </Head>
 
-      {isSuccessDelete && (
+      {deleteApi?.isSuccess && (
         <Message variant='success'>
           {label} has been deleted successfully.
         </Message>
       )}
-      {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
-      {isSuccessUpdate && (
+      {deleteApi?.isError && (
+        <Message variant='danger'>{deleteApi?.error}</Message>
+      )}
+      {updateApi?.isSuccess && (
         <Message variant='success'>
           {label} has been updated successfully.
         </Message>
       )}
-      {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
-      {isSuccessPost && (
+      {updateApi?.isError && (
+        <Message variant='danger'>{updateApi?.error}</Message>
+      )}
+      {postApi?.isSuccess && (
         <Message variant='success'>
           {label} has been Created successfully.
         </Message>
       )}
-      {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
+      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
 
       <div className='ms-auto text-end'>
         <Pagination data={table.data} setPage={setPage} />
@@ -214,8 +207,8 @@ const UserRoles = () => {
         edit={edit}
         formCleanHandler={formCleanHandler}
         form={form}
-        isLoadingUpdate={isLoadingUpdate}
-        isLoadingPost={isLoadingPost}
+        isLoadingUpdate={updateApi?.isLoading}
+        isLoadingPost={postApi?.isLoading}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
         modal={modal}
@@ -223,10 +216,10 @@ const UserRoles = () => {
         modalSize={modalSize}
       />
 
-      {isLoading ? (
+      {getApi?.isLoading ? (
         <Spinner />
-      ) : isError ? (
-        <Message variant='danger'>{error}</Message>
+      ) : getApi?.isError ? (
+        <Message variant='danger'>{getApi?.error}</Message>
       ) : (
         <div className='table-responsive bg-light p-3 mt-2'>
           <div className='d-flex align-items-center flex-column mb-2'>
@@ -262,7 +255,7 @@ const UserRoles = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map((item: Item) => (
+              {getApi?.data?.data?.map((item: Item) => (
                 <tr key={item?._id}>
                   <td>{item?.user?.name}</td>
                   <td>{item?.user?.email}</td>
@@ -284,9 +277,9 @@ const UserRoles = () => {
                       <button
                         className='btn btn-danger btn-sm ms-1 rounded-pill'
                         onClick={() => deleteHandler(item._id)}
-                        disabled={isLoadingDelete}
+                        disabled={deleteApi?.isLoading}
                       >
-                        {isLoadingDelete ? (
+                        {deleteApi?.isLoading ? (
                           <span className='spinner-border spinner-border-sm' />
                         ) : (
                           <span>

@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import useClientPermissionsHook from '../../../utils/api/clientPermissions'
 import {
   Spinner,
   Pagination,
@@ -20,6 +19,7 @@ import {
 import FormView from '../../../components/FormView'
 import { FaPenAlt, FaTrash } from 'react-icons/fa'
 import moment from 'moment'
+import apiHook from '../../../api'
 
 const ClientPermissions = () => {
   const [page, setPage] = useState(1)
@@ -28,19 +28,8 @@ const ClientPermissions = () => {
   const [q, setQ] = useState('')
 
   const {
-    getClientPermissions,
-    postClientPermission,
-    updateClientPermission,
-    deleteClientPermission,
-  } = useClientPermissionsHook({
-    page,
-    q,
-  })
-
-  const {
     register,
     handleSubmit,
-    watch,
     setValue,
     reset,
     formState: { errors },
@@ -50,50 +39,51 @@ const ClientPermissions = () => {
     },
   })
 
-  const { data, isLoading, isError, error, refetch } = getClientPermissions
+  const getApi = apiHook({
+    key: ['client-permissions'],
+    method: 'GET',
+    url: `auth/client-permissions?page=${page}&q=${q}&limit=${25}`,
+  })?.get
 
-  const {
-    isLoading: isLoadingUpdate,
-    isError: isErrorUpdate,
-    error: errorUpdate,
-    isSuccess: isSuccessUpdate,
-    mutateAsync: mutateAsyncUpdate,
-  } = updateClientPermission
+  const postApi = apiHook({
+    key: ['client-permissions'],
+    method: 'POST',
+    url: `auth/client-permissions`,
+  })?.post
 
-  const {
-    isLoading: isLoadingDelete,
-    isError: isErrorDelete,
-    error: errorDelete,
-    isSuccess: isSuccessDelete,
-    mutateAsync: mutateAsyncDelete,
-  } = deleteClientPermission
+  const updateApi = apiHook({
+    key: ['client-permissions'],
+    method: 'PUT',
+    url: `auth/client-permissions`,
+  })?.put
 
-  const {
-    isLoading: isLoadingPost,
-    isError: isErrorPost,
-    error: errorPost,
-    isSuccess: isSuccessPost,
-    mutateAsync: mutateAsyncPost,
-  } = postClientPermission
+  const deleteApi = apiHook({
+    key: ['client-permissions'],
+    method: 'DELETE',
+    url: `auth/client-permissions`,
+  })?.deleteObj
 
   useEffect(() => {
-    if (isSuccessPost || isSuccessUpdate) formCleanHandler()
+    if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
+      formCleanHandler()
+      getApi?.refetch()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessPost, isSuccessUpdate])
+  }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
-    refetch()
+    getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page])
 
   useEffect(() => {
-    if (!q) refetch()
+    if (!q) getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
   const searchHandler = (e) => {
     e.preventDefault()
-    refetch()
+    getApi?.refetch()
     setPage(1)
   }
 
@@ -102,7 +92,7 @@ const ClientPermissions = () => {
     header: ['Sort By', 'Name', 'Menu', 'Path', 'Description'],
     body: ['sort', 'name', 'menu', 'path', 'description'],
     createdAt: 'createdAt',
-    data: data,
+    data: getApi?.data,
   }
 
   interface Item {
@@ -122,7 +112,7 @@ const ClientPermissions = () => {
   }
 
   const deleteHandler = (id) => {
-    confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
   const name = 'Client Permissions List'
@@ -136,11 +126,11 @@ const ClientPermissions = () => {
 
   const submitHandler = (data) => {
     edit
-      ? mutateAsyncUpdate({
+      ? updateApi?.mutateAsync({
           _id: id,
           ...data,
         })
-      : mutateAsyncPost(data)
+      : postApi?.mutateAsync(data)
   }
 
   const form = [
@@ -201,24 +191,28 @@ const ClientPermissions = () => {
         <meta property='og:title' content='Client Permissions' key='title' />
       </Head>
 
-      {isSuccessDelete && (
+      {deleteApi?.isSuccess && (
         <Message variant='success'>
           {label} has been deleted successfully.
         </Message>
       )}
-      {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
-      {isSuccessUpdate && (
+      {deleteApi?.isError && (
+        <Message variant='danger'>{deleteApi?.error}</Message>
+      )}
+      {updateApi?.isSuccess && (
         <Message variant='success'>
           {label} has been updated successfully.
         </Message>
       )}
-      {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
-      {isSuccessPost && (
+      {updateApi?.isError && (
+        <Message variant='danger'>{updateApi?.error}</Message>
+      )}
+      {postApi?.isSuccess && (
         <Message variant='success'>
           {label} has been Created successfully.
         </Message>
       )}
-      {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
+      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
 
       <div className='ms-auto text-end'>
         <Pagination data={table.data} setPage={setPage} />
@@ -228,8 +222,8 @@ const ClientPermissions = () => {
         edit={edit}
         formCleanHandler={formCleanHandler}
         form={form}
-        isLoadingUpdate={isLoadingUpdate}
-        isLoadingPost={isLoadingPost}
+        isLoadingUpdate={updateApi?.isLoading}
+        isLoadingPost={postApi?.isLoading}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
         modal={modal}
@@ -237,10 +231,10 @@ const ClientPermissions = () => {
         modalSize={modalSize}
       />
 
-      {isLoading ? (
+      {getApi?.isLoading ? (
         <Spinner />
-      ) : isError ? (
-        <Message variant='danger'>{error}</Message>
+      ) : getApi?.isError ? (
+        <Message variant='danger'>{getApi?.error}</Message>
       ) : (
         <div className='table-responsive bg-light p-3 mt-2'>
           <div className='d-flex align-items-center flex-column mb-2'>
@@ -277,7 +271,7 @@ const ClientPermissions = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map((item: Item) => (
+              {getApi?.data?.data?.map((item: Item) => (
                 <tr key={item?._id}>
                   <td>{item?.sort}</td>
                   <td>{item?.name}</td>
@@ -299,9 +293,9 @@ const ClientPermissions = () => {
                       <button
                         className='btn btn-danger btn-sm ms-1 rounded-pill'
                         onClick={() => deleteHandler(item._id)}
-                        disabled={isLoadingDelete}
+                        disabled={deleteApi?.isLoading}
                       >
-                        {isLoadingDelete ? (
+                        {deleteApi?.isLoading ? (
                           <span className='spinner-border spinner-border-sm' />
                         ) : (
                           <span>

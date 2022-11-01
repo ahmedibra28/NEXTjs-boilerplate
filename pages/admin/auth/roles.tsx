@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import useRolesHook from '../../../utils/api/roles'
 import {
   Spinner,
   Pagination,
@@ -18,10 +17,9 @@ import {
   inputTextArea,
 } from '../../../utils/dynamicForm'
 import FormView from '../../../components/FormView'
-import usePermissionsHook from '../../../utils/api/permissions'
-import useClientPermissionsHook from '../../../utils/api/clientPermissions'
 import { FaPenAlt, FaTrash } from 'react-icons/fa'
 import moment from 'moment'
+import apiHook from '../../../api'
 
 const Roles = () => {
   const [page, setPage] = useState(1)
@@ -29,17 +27,41 @@ const Roles = () => {
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
 
-  const { getRoles, postRole, updateRole, deleteRole } = useRolesHook({
-    page,
-    q,
-  })
+  const getApi = apiHook({
+    key: ['roles'],
+    method: 'GET',
+    url: `auth/roles?page=${page}&q=${q}&limit=${25}`,
+  })?.get
 
-  const { getPermissions } = usePermissionsHook({
-    limit: 1000000,
-  })
-  const { getClientPermissions } = useClientPermissionsHook({
-    limit: 1000000,
-  })
+  const postApi = apiHook({
+    key: ['roles'],
+    method: 'POST',
+    url: `auth/roles`,
+  })?.post
+
+  const updateApi = apiHook({
+    key: ['roles'],
+    method: 'PUT',
+    url: `auth/roles`,
+  })?.put
+
+  const deleteApi = apiHook({
+    key: ['roles'],
+    method: 'DELETE',
+    url: `auth/roles`,
+  })?.deleteObj
+
+  const getClientPermissionsApi = apiHook({
+    key: ['client-permissions'],
+    method: 'GET',
+    url: `auth/client-permissions?page=${page}&q=${q}&limit=${25}`,
+  })?.get
+
+  const getPermissionsApi = apiHook({
+    key: ['permissions'],
+    method: 'GET',
+    url: `auth/permissions?page=${page}&q=${q}&limit=${25}`,
+  })?.get
 
   const {
     register,
@@ -54,72 +76,49 @@ const Roles = () => {
     },
   })
 
-  const { data, isLoading, isError, error, refetch } = getRoles
-  const { data: permissionData } = getPermissions
-  const { data: clientPermissionData } = getClientPermissions
-
   const uniquePermissions = [
     ...(new Set(
-      permissionData?.data?.map((item: { name: string }) => item.name)
+      getPermissionsApi?.data?.data?.map((item: { name: string }) => item.name)
     ) as any),
   ]?.map((group) => ({
-    [group]: permissionData?.data?.filter(
+    [group]: getPermissionsApi?.data?.data?.filter(
       (permission: { name: string }) => permission?.name === group
     ),
   }))
 
   const uniqueClientPermissions = [
     ...(new Set(
-      clientPermissionData?.data?.map((item: { menu: string }) => item.menu)
+      getClientPermissionsApi?.data?.data?.map(
+        (item: { menu: string }) => item.menu
+      )
     ) as any),
   ]?.map((group) => ({
-    [group]: clientPermissionData?.data?.filter(
+    [group]: getClientPermissionsApi?.data?.data?.filter(
       (clientPermission: { menu: string }) => clientPermission?.menu === group
     ),
   }))
 
-  const {
-    isLoading: isLoadingUpdate,
-    isError: isErrorUpdate,
-    error: errorUpdate,
-    isSuccess: isSuccessUpdate,
-    mutateAsync: mutateAsyncUpdate,
-  } = updateRole
-
-  const {
-    isLoading: isLoadingDelete,
-    isError: isErrorDelete,
-    error: errorDelete,
-    isSuccess: isSuccessDelete,
-    mutateAsync: mutateAsyncDelete,
-  } = deleteRole
-
-  const {
-    isLoading: isLoadingPost,
-    isError: isErrorPost,
-    error: errorPost,
-    isSuccess: isSuccessPost,
-    mutateAsync: mutateAsyncPost,
-  } = postRole
-
   useEffect(() => {
-    if (isSuccessPost || isSuccessUpdate) formCleanHandler()
+    if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
+      formCleanHandler()
+      getApi?.refetch()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessPost, isSuccessUpdate])
+  }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
-    refetch()
+    getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page])
 
   useEffect(() => {
-    if (!q) refetch()
+    if (!q) getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
   const searchHandler = (e: { preventDefault: () => void }) => {
     e.preventDefault()
-    refetch()
+    getApi?.refetch()
     setPage(1)
   }
 
@@ -128,7 +127,7 @@ const Roles = () => {
     header: ['Name', 'Type', 'Description'],
     body: ['name', 'type', 'description'],
     createdAt: 'createdAt',
-    data: data,
+    data: getApi?.data,
   }
 
   interface Item {
@@ -180,7 +179,7 @@ const Roles = () => {
   }
 
   const deleteHandler = (id: string) => {
-    confirmAlert(Confirm(() => mutateAsyncDelete(id)))
+    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
   const name = 'Roles List'
@@ -212,14 +211,14 @@ const Roles = () => {
       .split(',')
 
     edit
-      ? mutateAsyncUpdate({
+      ? updateApi?.mutateAsync({
           _id: id,
           name: data.name,
           permission,
           clientPermission,
           description: data.description,
         })
-      : mutateAsyncPost({
+      : postApi?.mutateAsync({
           _id: id,
           name: data.name,
           permission,
@@ -325,24 +324,28 @@ const Roles = () => {
         <meta property='og:title' content='Roles' key='title' />
       </Head>
 
-      {isSuccessDelete && (
+      {deleteApi?.isSuccess && (
         <Message variant='success'>
           {label} has been cancelled successfully.
         </Message>
       )}
-      {isErrorDelete && <Message variant='danger'>{errorDelete}</Message>}
-      {isSuccessUpdate && (
+      {deleteApi?.isError && (
+        <Message variant='danger'>{deleteApi?.error}</Message>
+      )}
+      {updateApi?.isSuccess && (
         <Message variant='success'>
           {label} has been updated successfully.
         </Message>
       )}
-      {isErrorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
-      {isSuccessPost && (
+      {updateApi?.isError && (
+        <Message variant='danger'>{updateApi?.error}</Message>
+      )}
+      {postApi?.isSuccess && (
         <Message variant='success'>
           {label} has been Created successfully.
         </Message>
       )}
-      {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
+      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
 
       <div className='ms-auto text-end'>
         <Pagination data={table.data} setPage={setPage} />
@@ -352,8 +355,8 @@ const Roles = () => {
         edit={edit}
         formCleanHandler={formCleanHandler}
         form={form}
-        isLoadingUpdate={isLoadingUpdate}
-        isLoadingPost={isLoadingPost}
+        isLoadingUpdate={updateApi?.isLoading}
+        isLoadingPost={postApi?.isLoading}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
         modal={modal}
@@ -361,10 +364,10 @@ const Roles = () => {
         modalSize={modalSize}
       />
 
-      {isLoading ? (
+      {getApi?.isLoading ? (
         <Spinner />
-      ) : isError ? (
-        <Message variant='danger'>{error}</Message>
+      ) : getApi?.isError ? (
+        <Message variant='danger'>{getApi?.error}</Message>
       ) : (
         <div className='table-responsive bg-light p-3 mt-2'>
           <div className='d-flex align-items-center flex-column mb-2'>
@@ -399,7 +402,7 @@ const Roles = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map((item: Item) => (
+              {getApi?.data?.data?.map((item: Item) => (
                 <tr key={item?._id}>
                   <td>{item?.name}</td>
                   <td>{item?.type}</td>
@@ -419,9 +422,9 @@ const Roles = () => {
                       <button
                         className='btn btn-danger btn-sm ms-1 rounded-pill'
                         onClick={() => deleteHandler(item._id)}
-                        disabled={isLoadingDelete}
+                        disabled={deleteApi?.isLoading}
                       >
-                        {isLoadingDelete ? (
+                        {deleteApi?.isLoading ? (
                           <span className='spinner-border spinner-border-sm' />
                         ) : (
                           <span>

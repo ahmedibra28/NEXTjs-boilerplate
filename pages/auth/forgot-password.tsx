@@ -1,14 +1,13 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { FormContainer, Message } from '../../components'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { userInfo } from '../../utils/helper'
 import Head from 'next/head'
 import { inputEmail } from '../../utils/dynamicForm'
-import useAuthHook from '../../utils/api/auth'
+import apiHook from '../../api'
 
 const Forgot = () => {
-  const { postForgotPassword } = useAuthHook()
   const router = useRouter()
   const {
     register,
@@ -17,20 +16,23 @@ const Forgot = () => {
     formState: { errors },
   } = useForm()
 
-  const { isLoading, isError, error, isSuccess, mutateAsync } =
-    postForgotPassword
+  const postApi = apiHook({
+    key: ['forgot-password'],
+    method: 'POST',
+    url: `auth/forgot-password`,
+  })?.post
 
   useEffect(() => {
-    isSuccess && reset()
+    postApi?.isSuccess && reset()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess])
+  }, [postApi?.isSuccess])
 
   useEffect(() => {
     userInfo() && userInfo().userInfo && router.push('/')
   }, [router])
 
   const submitHandler = (data) => {
-    mutateAsync(data)
+    postApi?.mutateAsync(data)
   }
   return (
     <FormContainer>
@@ -39,12 +41,12 @@ const Forgot = () => {
         <meta property='og:title' content='Forgot' key='title' />
       </Head>
       <h3 className='fw-light font-monospace text-center'>Forgot Password</h3>
-      {isSuccess && (
+      {postApi?.isSuccess && (
         <Message variant='success'>
           An email has been sent with further instructions.
         </Message>
       )}
-      {isError && <Message variant='danger'>{error}</Message>}
+      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
 
       <form onSubmit={handleSubmit(submitHandler)}>
         {inputEmail({
@@ -58,9 +60,9 @@ const Forgot = () => {
         <button
           type='submit'
           className='btn btn-primary form-control '
-          disabled={isLoading}
+          disabled={postApi?.isLoading}
         >
-          {isLoading ? (
+          {postApi?.isLoading ? (
             <span className='spinner-border spinner-border-sm' />
           ) : (
             'Send'

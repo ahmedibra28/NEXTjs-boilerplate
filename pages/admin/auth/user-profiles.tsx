@@ -1,11 +1,11 @@
-import { useState, useEffect, FormEvent } from 'react'
+import React, { useState, useEffect, FormEvent } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../../HOC/withAuth'
-import useProfilesHook from '../../../utils/api/profiles'
 import { Spinner, Pagination, Message, Search } from '../../../components'
 import moment from 'moment'
 import Image from 'next/image'
+import apiHook from '../../../api'
 
 interface Item {
   _id: string
@@ -22,26 +22,25 @@ const UserProfiles = () => {
   const [page, setPage] = useState(1)
   const [q, setQ] = useState('')
 
-  const { getUserProfiles } = useProfilesHook({
-    page,
-    q,
-  })
-
-  const { data, isLoading, isError, error, refetch } = getUserProfiles
+  const getApi = apiHook({
+    key: ['user-profiles'],
+    method: 'GET',
+    url: `auth/user-profiles?page=${page}&q=${q}&limit=${25}`,
+  })?.get
 
   useEffect(() => {
-    refetch()
+    getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page])
 
   useEffect(() => {
-    if (!q) refetch()
+    if (!q) getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
   const searchHandler = (e: FormEvent) => {
     e.preventDefault()
-    refetch()
+    getApi?.refetch()
     setPage(1)
   }
 
@@ -51,14 +50,12 @@ const UserProfiles = () => {
     body: ['name', 'address', 'phone', 'user.email'],
     createdAt: 'createdAt',
     image: 'image',
-    data: data,
+    data: getApi?.data,
   }
 
   const name = 'User Profiles List'
   const label = 'User Profile'
   const modal = 'userProfile'
-  const searchPlaceholder = 'Search by name'
-  const addBtn = false
 
   return (
     <>
@@ -71,10 +68,10 @@ const UserProfiles = () => {
         <Pagination data={table.data} setPage={setPage} />
       </div>
 
-      {isLoading ? (
+      {getApi?.isLoading ? (
         <Spinner />
-      ) : isError ? (
-        <Message variant='danger'>{error}</Message>
+      ) : getApi?.isError ? (
+        <Message variant='danger'>{getApi?.error}</Message>
       ) : (
         <div className='table-responsive bg-light p-3 mt-2'>
           <div className='d-flex align-items-center flex-column mb-2'>
@@ -110,7 +107,7 @@ const UserProfiles = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map((item: Item) => (
+              {getApi?.data?.data?.map((item: Item) => (
                 <tr key={item?._id}>
                   <td>
                     <Image

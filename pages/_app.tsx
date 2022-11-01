@@ -1,13 +1,12 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
-import '../styles/globals.css'
-// import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
+import '../styles/globals.scss'
 
 import { Layout } from '../components'
 import 'animate.css'
 
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 

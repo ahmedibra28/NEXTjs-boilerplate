@@ -1,13 +1,9 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { FaSignInAlt, FaPowerOff } from 'react-icons/fa'
-import useAuthHook from '../utils/api/auth'
-import { useMutation } from 'react-query'
-import { useRouter } from 'next/router'
 import { userInfo } from '../utils/helper'
-// import { Access, UnlockAccess } from '../utils/UnlockAccess'
 
 export interface AuthProps {
   block: boolean
@@ -26,16 +22,14 @@ interface RouteProps {
   sort: number
 }
 
+const Logout = () => {
+  typeof window !== undefined && localStorage.removeItem('userRole')
+  return typeof window !== undefined && localStorage.removeItem('userInfo')
+}
+
 const Navigation = () => {
-  const router = useRouter()
-  const { postLogout } = useAuthHook()
-
-  const { mutateAsync } = useMutation(postLogout, {
-    onSuccess: () => router.push('/auth/login'),
-  })
-
   const logoutHandler = () => {
-    mutateAsync()
+    Logout()
   }
 
   const guestItems = () => {
@@ -51,10 +45,8 @@ const Navigation = () => {
           </li>
             */}
           <li className='nav-item'>
-            <Link href='/auth/login'>
-              <a className='nav-link' aria-current='page'>
-                <FaSignInAlt className='mb-1' /> Login
-              </a>
+            <Link href='/auth/login' className='nav-link' aria-current='page'>
+              <FaSignInAlt className='mb-1' /> Login
             </Link>
           </li>
         </ul>
@@ -70,7 +62,9 @@ const Navigation = () => {
       })
     )
 
-    const menuItems = userInfo()?.userInfo?.routes?.map((route) => route)
+    const menuItems = userInfo()?.userInfo?.routes?.map(
+      (route: RouteProps) => route
+    )
 
     const dropdownArray = dropdownItems?.filter(
       (item: RouteProps) => item?.menu !== 'hidden' && item?.menu !== 'normal'
@@ -105,17 +99,19 @@ const Navigation = () => {
             (menu: RouteProps, index: number) =>
               menu.menu === 'normal' && (
                 <li key={index} className='nav-item'>
-                  <Link href={menu.path}>
-                    <a className='nav-link' aria-current='page'>
-                      {menu.name}
-                    </a>
+                  <Link
+                    href={menu.path}
+                    className='nav-link'
+                    aria-current='page'
+                  >
+                    {menu.name}
                   </Link>
                 </li>
               )
           )}
 
-          {menus()?.uniqueDropdowns?.map((item: RouteProps) => (
-            <li key={item?.menu} className='nav-item dropdown'>
+          {menus()?.uniqueDropdowns?.map((item: RouteProps, index: number) => (
+            <li key={index} className='nav-item dropdown'>
               <a
                 className='nav-link dropdown-toggle'
                 href='#'
@@ -135,11 +131,11 @@ const Navigation = () => {
               >
                 {menus() &&
                   menus().menuItems.map(
-                    (menu) =>
+                    (menu: RouteProps, index: number) =>
                       menu.menu === item?.menu && (
-                        <li key={menu._id}>
-                          <Link href={menu.path}>
-                            <a className='dropdown-item'>{menu.name}</a>
+                        <li key={index}>
+                          <Link href={menu.path} className='dropdown-item'>
+                            {menu.name}
                           </Link>
                         </li>
                       )
@@ -149,14 +145,13 @@ const Navigation = () => {
           ))}
 
           <li className='nav-item'>
-            <Link href='/auth/login'>
-              <a
-                className='nav-link'
-                aria-current='page'
-                onClick={logoutHandler}
-              >
-                <FaPowerOff className='mb-1' /> Logout
-              </a>
+            <Link
+              href='/auth/login'
+              className='nav-link'
+              aria-current='page'
+              onClick={logoutHandler}
+            >
+              <FaPowerOff className='mb-1' /> Logout
             </Link>
           </li>
         </ul>
@@ -168,16 +163,14 @@ const Navigation = () => {
     <nav className='navbar navbar-expand-md navbar-light bg-light'>
       <div className='container'>
         <Link href='/'>
-          <a>
-            <Image
-              priority
-              width='40'
-              height='40'
-              src='/favicon.png'
-              className='img-fluid brand-logos'
-              alt='logo'
-            />
-          </a>
+          <Image
+            priority
+            width='40'
+            height='40'
+            src='/favicon.png'
+            className='img-fluid brand-logos'
+            alt='logo'
+          />
         </Link>
 
         <button

@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HOC/withAuth'
 import { FormContainer, Message } from '../../components'
 import { useForm } from 'react-hook-form'
-import useProfilesHook from '../../utils/api/profiles'
-import useUploadHook from '../../utils/api/upload'
 import {
   inputFile,
   inputPassword,
@@ -15,6 +13,7 @@ import {
 } from '../../utils/dynamicForm'
 import Image from 'next/image'
 import { Spinner } from '../../components'
+import apiHook from '../../api'
 
 const Profile = () => {
   const [file, setFile] = useState(null)
@@ -27,54 +26,50 @@ const Profile = () => {
     formState: { errors },
   } = useForm()
 
-  const { getProfile, postProfile } = useProfilesHook({
-    page: 1,
-    q: '',
-    limit: 25,
-  })
-  const { postUpload } = useUploadHook()
-
-  const { data, isLoading, isError, error } = getProfile
-  const {
-    data: dataUpload,
-    isLoading: isLoadingUpload,
-    isError: isErrorUpload,
-    error: errorUpload,
-    mutateAsync: mutateAsyncUpload,
-    isSuccess: isSuccessUpload,
-  } = postUpload
-
-  const {
-    isSuccess,
-    isLoading: isLoadingPost,
-    isError: isErrorPost,
-    error: errorPost,
-    mutateAsync,
-  } = postProfile
+  const getApi = apiHook({
+    key: ['profiles'],
+    method: 'GET',
+    url: `auth/profile`,
+  })?.get
+  const postApi = apiHook({
+    key: ['profiles'],
+    method: 'POST',
+    url: `auth/profile`,
+  })?.post
+  const updateApi = apiHook({
+    key: ['upload'],
+    method: 'UPLOAD',
+    url: `upload?type=image`,
+  })?.upload
 
   useEffect(() => {
-    setValue('name', !isLoading ? data && data.name : '')
-    setValue('address', !isLoading ? data && data.address : '')
-    setValue('phone', !isLoading ? data && data.phone : '')
-    setValue('bio', !isLoading ? data && data.bio : '')
-  }, [isLoading, setValue, data])
+    if (postApi?.isSuccess) {
+      getApi?.refetch()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postApi?.isSuccess])
+
+  useEffect(() => {
+    setValue('name', !getApi?.isLoading ? getApi?.data?.name : '')
+    setValue('address', !getApi?.isLoading ? getApi?.data?.address : '')
+    setValue('phone', !getApi?.isLoading ? getApi?.data?.phone : '')
+    setValue('bio', !getApi?.isLoading ? getApi?.data?.bio : '')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getApi?.isLoading, setValue])
 
   const submitHandler = (data) => {
+    console.log(data)
     if (!file && !fileLink) {
-      mutateAsync({
-        name: data.name,
-        phone: data.phone,
-        address: data.address,
-        bio: data.bio,
-        password: data.password,
+      postApi?.mutateAsync({
+        name: data?.name,
+        address: data?.address,
+        phone: data?.phone,
+        bio: data?.bio,
+        password: data?.password,
       })
     } else {
-      mutateAsync({
-        name: data.name,
-        phone: data.phone,
-        address: data.address,
-        bio: data.bio,
-        password: data.password,
+      postApi?.mutateAsync({
+        ...data,
         image: fileLink,
       })
     }
@@ -84,22 +79,22 @@ const Profile = () => {
     if (file) {
       const formData = new FormData()
       formData.append('file', file)
-      mutateAsyncUpload({ type: 'image', formData })
+      updateApi?.mutateAsync(formData)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file])
 
   useEffect(() => {
-    if (isSuccessUpload) {
+    if (updateApi?.isSuccess) {
       setFileLink(
-        dataUpload &&
-          dataUpload.filePaths &&
-          dataUpload.filePaths[0] &&
-          dataUpload.filePaths[0].path
+        updateApi?.data &&
+          updateApi?.data.filePaths &&
+          updateApi?.data.filePaths[0] &&
+          updateApi?.data.filePaths[0].path
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessUpload])
+  }, [updateApi?.isSuccess])
 
   return (
     <FormContainer>
@@ -109,19 +104,21 @@ const Profile = () => {
       </Head>
       <h3 className='fw-light font-monospace text-center'>User Profile</h3>
 
-      {isErrorPost && <Message variant='danger'>{errorPost}</Message>}
-      {isErrorUpload && <Message variant='danger'>{errorUpload}</Message>}
-      {isError && <Message variant='danger'>{error}</Message>}
-      {isSuccess && (
+      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
+      {updateApi?.isError && (
+        <Message variant='danger'>{updateApi?.error}</Message>
+      )}
+      {getApi?.isError && <Message variant='danger'>{getApi?.error}</Message>}
+      {postApi?.isSuccess && (
         <Message variant='success'>User has been updated successfully</Message>
       )}
 
-      {isLoading && <Spinner />}
+      {getApi?.isLoading && <Spinner />}
       <form onSubmit={handleSubmit(submitHandler)}>
-        {data && data.image && (
+        {getApi?.data?.image && (
           <div className='d-flex justify-content-center'>
             <Image
-              src={data && data.image}
+              src={getApi?.data?.image}
               alt='avatar'
               className='rounded-circle'
               width='200'
@@ -208,9 +205,9 @@ const Profile = () => {
         <button
           type='submit'
           className='btn btn-primary form-control'
-          disabled={isLoadingPost || isLoadingUpload}
+          disabled={postApi?.isLoading || updateApi?.isLoading}
         >
-          {isLoadingPost || isLoadingUpload ? (
+          {postApi?.isLoading || updateApi?.isLoading ? (
             <span className='spinner-border spinner-border-sm' />
           ) : (
             'Update'
