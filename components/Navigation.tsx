@@ -160,7 +160,10 @@ const Navigation = () => {
   }
 
   return (
-    <nav className='navbar navbar-expand-md navbar-light bg-light'>
+    <nav
+      className='navbar navbar-expand-md navbar-light bg-light'
+      style={{ minHeight: 55 }}
+    >
       <div className='container'>
         <Link href='/'>
           <Image
@@ -185,7 +188,7 @@ const Navigation = () => {
           <span className='navbar-toggler-icon'></span>
         </button>
         <div className='collapse navbar-collapse' id='navbarNav'>
-          {userInfo() ? authItems() : guestItems()}
+          {userInfo()?.userInfo ? authItems() : guestItems()}
         </div>
       </div>
     </nav>

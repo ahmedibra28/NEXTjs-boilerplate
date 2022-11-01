@@ -25,6 +25,14 @@ const Home: React.FC = () => {
               <li>
                 <Link
                   className='text-decoration-none text-muted'
+                  href='/admin/auth/roles'
+                >
+                  Roles
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className='text-decoration-none text-muted'
                   href='/admin/auth/permissions'
                 >
                   Permissions

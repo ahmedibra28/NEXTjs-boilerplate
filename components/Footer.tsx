@@ -5,7 +5,7 @@ const Footer = () => {
   // const currentYear = date.getFullYear()
 
   return (
-    <footer className='text-primary'>
+    <footer className='text-primary container-fluid' style={{ minHeight: 55 }}>
       <div className='row '>
         <div className='col text-center py-1 footer font-monospace bg-light my-auto'>
           {/* Copyright {currentYear} &copy; All Rights Reserved -  */}
@@ -15,7 +15,6 @@ const Footer = () => {
           </a>
           <br />
           <Image src='/favicon.png' width='30' height='30' alt='logo' />
-          <span id='watermark' className='ms-3' />
         </div>
       </div>
     </footer>
