@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { FormContainer, Message } from '../../../components'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import { userInfo } from '../../../utils/helper'
 import Head from 'next/head'
-import { inputPassword } from '../../../utils/dynamicForm'
 import apiHook from '../../../api'
+import { userInfo } from '../../../api/api'
+import { DynamicFormProps, inputPassword } from '../../../utils/dForms'
 
 const Reset = () => {
   const router = useRouter()
@@ -18,10 +18,7 @@ const Reset = () => {
     reset: resetForm,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      admin: false,
-      user: false,
-    },
+    defaultValues: {},
   })
 
   const postApi = apiHook({
@@ -42,7 +39,7 @@ const Reset = () => {
     userInfo() && userInfo().userInfo && router.push('/')
   }, [router])
 
-  const submitHandler = (data) => {
+  const submitHandler = (data: { password?: string; resetToken?: string }) => {
     const password = data.password
     postApi?.mutateAsync({ password, resetToken })
   }
@@ -51,14 +48,14 @@ const Reset = () => {
     <FormContainer>
       <Head>
         <title>Reset</title>
-        <meta property='og:title' content='Reset' key='title' />
+        <meta property="og:title" content="Reset" key="title" />
       </Head>
-      <h3 className=''>Reset Password</h3>
+      <h3 className="">Reset Password</h3>
       {postApi?.isSuccess && (
-        <Message variant='success'>Password Updated Successfully</Message>
+        <Message variant="success" value="Password Updated Successfully" />
       )}
 
-      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
+      {postApi?.isError && <Message variant="danger" value={postApi?.error} />}
 
       <form onSubmit={handleSubmit(submitHandler)}>
         {inputPassword({
@@ -69,7 +66,7 @@ const Reset = () => {
           minLength: true,
           isRequired: true,
           placeholder: 'Password',
-        })}
+        } as DynamicFormProps)}
 
         {inputPassword({
           register,
@@ -80,15 +77,15 @@ const Reset = () => {
           validate: true,
           minLength: true,
           placeholder: 'Confirm Password',
-        })}
+        } as DynamicFormProps)}
 
         <button
-          type='submit'
-          className='btn btn-primary form-control'
+          type="submit"
+          className="btn btn-primary form-control"
           disabled={postApi?.isLoading}
         >
           {postApi?.isLoading ? (
-            <span className='spinner-border spinner-border-sm' />
+            <span className="spinner-border spinner-border-sm" />
           ) : (
             'Change'
           )}

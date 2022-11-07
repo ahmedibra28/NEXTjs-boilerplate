@@ -3,10 +3,10 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { FormContainer, Message } from '../../components'
 import { useForm } from 'react-hook-form'
-import { userInfo } from '../../utils/helper'
 import Head from 'next/head'
-import { inputEmail, inputPassword } from '../../utils/dynamicForm'
 import apiHook from '../../api'
+import { userInfo } from '../../api/api'
+import { DynamicFormProps, inputEmail, inputPassword } from '../../utils/dForms'
 
 const Login = () => {
   const router = useRouter()
@@ -14,7 +14,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm()
 
@@ -37,7 +36,7 @@ const Login = () => {
     userInfo() && userInfo().userInfo && router.push('/')
   }, [router])
 
-  const submitHandler = async (data) => {
+  const submitHandler = async (data: { email?: string; password?: string }) => {
     postApi?.mutateAsync(data)
   }
 
@@ -45,10 +44,10 @@ const Login = () => {
     <FormContainer>
       <Head>
         <title>Login</title>
-        <meta property='og:title' content='Login' key='title' />
+        <meta property="og:title" content="Login" key="title" />
       </Head>
-      <h3 className='fw-light font-monospace text-center'>Sign In</h3>
-      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
+      <h3 className="fw-light font-monospace text-center">Sign In</h3>
+      {postApi?.isError && <Message variant="danger" value={postApi?.error} />}
 
       <form onSubmit={handleSubmit(submitHandler)}>
         {inputEmail({
@@ -57,31 +56,31 @@ const Login = () => {
           label: 'Email',
           name: 'email',
           placeholder: 'Email',
-        })}
+        } as DynamicFormProps)}
         {inputPassword({
           register,
           errors,
           label: 'Password',
           name: 'password',
           placeholder: 'Password',
-        })}
+        } as DynamicFormProps)}
         <button
-          type='submit'
-          className='btn btn-primary form-control '
+          type="submit"
+          className="btn btn-primary form-control "
           disabled={postApi?.isLoading}
         >
           {postApi?.isLoading ? (
-            <span className='spinner-border spinner-border-sm' />
+            <span className="spinner-border spinner-border-sm" />
           ) : (
             'Sign In'
           )}
         </button>
       </form>
-      <div className='row pt-3'>
-        <div className='col'>
+      <div className="row pt-3">
+        <div className="col">
           <Link
-            href='/auth/forgot-password'
-            className='ps-1 text-decoration-none'
+            href="/auth/forgot-password"
+            className="ps-1 text-decoration-none"
           >
             Forgot Password?
           </Link>

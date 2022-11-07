@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { FormContainer, Message } from '../../components'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
-import { userInfo } from '../../utils/helper'
 import Head from 'next/head'
-import { inputEmail } from '../../utils/dynamicForm'
 import apiHook from '../../api'
+import { userInfo } from '../../api/api'
+import { DynamicFormProps, inputEmail } from '../../utils/dForms'
 
 const Forgot = () => {
   const router = useRouter()
@@ -31,22 +31,23 @@ const Forgot = () => {
     userInfo() && userInfo().userInfo && router.push('/')
   }, [router])
 
-  const submitHandler = (data) => {
+  const submitHandler = (data: { email?: string }) => {
     postApi?.mutateAsync(data)
   }
   return (
     <FormContainer>
       <Head>
         <title>Forgot</title>
-        <meta property='og:title' content='Forgot' key='title' />
+        <meta property="og:title" content="Forgot" key="title" />
       </Head>
-      <h3 className='fw-light font-monospace text-center'>Forgot Password</h3>
+      <h3 className="fw-light font-monospace text-center">Forgot Password</h3>
       {postApi?.isSuccess && (
-        <Message variant='success'>
-          An email has been sent with further instructions.
-        </Message>
+        <Message
+          variant="success"
+          value="An email has been sent with further instructions."
+        />
       )}
-      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
+      {postApi?.isError && <Message variant="danger" value={postApi?.error} />}
 
       <form onSubmit={handleSubmit(submitHandler)}>
         {inputEmail({
@@ -55,15 +56,15 @@ const Forgot = () => {
           label: 'Email',
           name: 'email',
           placeholder: 'Email',
-        })}
+        } as DynamicFormProps)}
 
         <button
-          type='submit'
-          className='btn btn-primary form-control '
+          type="submit"
+          className="btn btn-primary form-control "
           disabled={postApi?.isLoading}
         >
           {postApi?.isLoading ? (
-            <span className='spinner-border spinner-border-sm' />
+            <span className="spinner-border spinner-border-sm" />
           ) : (
             'Send'
           )}

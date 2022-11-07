@@ -1,21 +1,31 @@
-import mongoose from 'mongoose'
+import { Schema, model, models } from 'mongoose'
 import ClientPermission from './ClientPermission'
 import Permission from './Permission'
 
-const roleScheme = new mongoose.Schema(
+export interface IRole {
+  _id: Schema.Types.ObjectId
+  name: string
+  type: string
+  description?: string
+  permission: Schema.Types.ObjectId[]
+  clientPermission: Schema.Types.ObjectId[]
+  createdAt?: Date
+}
+
+const roleSchema = new Schema<IRole>(
   {
     name: { type: String, required: true, unique: true },
     type: { type: String, required: true, unique: true, toUpperCase: true },
     description: String,
     permission: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: Permission,
       },
     ],
     clientPermission: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: ClientPermission,
       },
     ],
@@ -23,5 +33,6 @@ const roleScheme = new mongoose.Schema(
   { timestamps: true }
 )
 
-const Role = mongoose.models.Role || mongoose.model('Role', roleScheme)
+const Role = models.Role || model('Role', roleSchema)
+
 export default Role

@@ -1,12 +1,22 @@
-import mongoose from 'mongoose'
+import { Schema, model, models } from 'mongoose'
 
-const permissionScheme = new mongoose.Schema(
+export interface IPermission {
+  _id: Schema.Types.ObjectId
+  name: string
+  method: string
+  route: string
+  auth: boolean
+  description?: boolean
+  createdAt?: Date
+}
+
+const permissionSchema = new Schema<IPermission>(
   {
     name: { type: String, required: true },
     method: {
       type: String,
-      toUpperCase: true,
       enum: ['GET', 'POST', 'PUT', 'DELETE'],
+      toUpperCase: true,
       required: true,
     },
     route: { type: String, required: true, toLowerCase: true },
@@ -16,6 +26,6 @@ const permissionScheme = new mongoose.Schema(
   { timestamps: true }
 )
 
-const Permission =
-  mongoose.models.Permission || mongoose.model('Permission', permissionScheme)
+const Permission = models.Permission || model('Permission', permissionSchema)
+
 export default Permission

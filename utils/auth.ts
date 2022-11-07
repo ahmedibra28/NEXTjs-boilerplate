@@ -1,13 +1,10 @@
 import jwt from 'jsonwebtoken'
-import User from '../models/User'
 import UserRole from '../models/UserRole'
 import db from '../config/db'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { IPermission } from '../models/Permission'
 
-interface PermissionsType {
-  route: string
-  method: string
-  auth: boolean
+interface JwtPayload {
+  id: string
 }
 
 export const generateToken = (id: string) => {
@@ -17,12 +14,12 @@ export const generateToken = (id: string) => {
 }
 
 export const isAuth = async (
-  req: NextApiRequest,
-  res: NextApiResponse,
+  req: NextApiRequestExtended,
+  res: NextApiResponseExtended,
   next: any
 ) => {
   await db()
-  let token: string
+  let token = ''
 
   if (
     req.headers.authorization &&
@@ -30,19 +27,21 @@ export const isAuth = async (
   ) {
     try {
       token = req.headers.authorization.split(' ')[1]
-      const decoded = jwt.verify(token, process.env.JWT_SECRET)
-      req.user = await User.findById(decoded.id).select('-password')
-      const userRole = await UserRole.findOne(
-        { user: req.user._id },
-        { role: 1 }
-      ).populate({
-        path: 'role',
-        populate: {
-          path: 'permission',
-        },
-      })
+      const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload
+      // req.user = await User.findById(decoded.id).select('-password')
+      const userRole = await UserRole.findOne({ user: decoded.id }, { role: 1 })
+        .populate({
+          path: 'role',
+          populate: {
+            path: 'permission',
+          },
+        })
+        .populate('user')
+
+      req.user = userRole?.user
+
       const permissions = userRole?.role?.permission?.map(
-        (per: PermissionsType) => ({
+        (per: IPermission) => ({
           route: per?.route,
           method: per?.method,
           auth: per?.auth,
@@ -54,7 +53,7 @@ export const isAuth = async (
       const urlArray = url.split('/')
       const lastIndex = urlArray.pop()
 
-      const queryValue =
+      const queryValue: any =
         Object.values(req.query)?.length > 0 && Object.values(req.query)[0]
 
       if (queryValue?.length === 24 && !lastIndex.includes('q')) {
@@ -71,7 +70,7 @@ export const isAuth = async (
       }
       if (
         permissions?.find(
-          (permission: PermissionsType) =>
+          (permission: IPermission) =>
             permission.route === url &&
             permission.method === method &&
             permission.auth === false
@@ -81,7 +80,7 @@ export const isAuth = async (
       }
       if (
         !permissions.find(
-          (permission: PermissionsType) =>
+          (permission: IPermission) =>
             permission.route === url &&
             permission.method === method &&
             permission.auth === true

@@ -1,74 +1,74 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import withAuth from '../HOC/withAuth'
+import withAuth from '../hoc/withAuth'
 
-const Home: React.FC = () => {
+const Home = () => {
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col-6 mx-auto'>
-          <h6 className='fw-bold text-uppercase mb-3'>
+    <div className="container">
+      <div className="row">
+        <div className="col-6 mx-auto">
+          <h6 className="fw-bold text-uppercase mb-3">
             Restricted Available Routes
           </h6>
           <ol>
-            <li className='fw-bold'>Admin</li>
+            <li className="fw-bold">Admin</li>
             <ul>
               <li>
                 <Link
-                  className='text-decoration-none text-muted'
-                  href='/admin/auth/users'
+                  className="text-decoration-none text-muted"
+                  href="/admin/users"
                 >
                   Users
                 </Link>
               </li>
               <li>
                 <Link
-                  className='text-decoration-none text-muted'
-                  href='/admin/auth/roles'
+                  className="text-decoration-none text-muted"
+                  href="/admin/roles"
                 >
                   Roles
                 </Link>
               </li>
               <li>
                 <Link
-                  className='text-decoration-none text-muted'
-                  href='/admin/auth/permissions'
+                  className="text-decoration-none text-muted"
+                  href="/admin/permissions"
                 >
                   Permissions
                 </Link>
               </li>
               <li>
                 <Link
-                  className='text-decoration-none text-muted'
-                  href='/admin/auth/client-permissions'
+                  className="text-decoration-none text-muted"
+                  href="/admin/client-permissions"
                 >
                   Client permissions
                 </Link>
               </li>
               <li>
                 <Link
-                  className='text-decoration-none text-muted'
-                  href='/admin/auth/user-roles'
+                  className="text-decoration-none text-muted"
+                  href="/admin/user-roles"
                 >
                   User roles
                 </Link>
               </li>
               <li>
                 <Link
-                  className='text-decoration-none text-muted'
-                  href='/admin/auth/user-profiles'
+                  className="text-decoration-none text-muted"
+                  href="/admin/user-profiles"
                 >
                   User profiles
                 </Link>
               </li>
             </ul>
-            <li className='fw-bold'>Username</li>
+            <li className="fw-bold">Username</li>
             <ul>
               <li>
                 <Link
-                  className='text-decoration-none text-muted'
-                  href='/account/profile'
+                  className="text-decoration-none text-muted"
+                  href="/account/profile"
                 >
                   Profiles
                 </Link>

@@ -2,7 +2,26 @@ import axios from 'axios'
 
 const baseUrl = 'http://localhost:3000/api'
 
-import { config } from '../utils/helper'
+export const userInfo = () => {
+  return {
+    userInfo:
+      typeof window !== 'undefined' && localStorage.getItem('userInfo')
+        ? JSON.parse(
+            typeof window !== 'undefined' &&
+              (localStorage.getItem('userInfo') as string | any)
+          )
+        : null,
+  }
+}
+
+export const config = () => {
+  return {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${userInfo()?.userInfo?.token}`,
+    },
+  }
+}
 
 const axiosApi = async (method: string, url: string, obj = {}) => {
   try {
@@ -27,7 +46,7 @@ const axiosApi = async (method: string, url: string, obj = {}) => {
           .delete(`${baseUrl}/${url}`, config())
           .then((res) => res.data)
     }
-  } catch (error) {
+  } catch (error: any) {
     throw error?.response?.data?.error
   }
 }

@@ -2,43 +2,44 @@ import nc from 'next-connect'
 import crypto from 'crypto'
 import db from '../../../../config/db'
 import User from '../../../../models/User'
-import { NextApiRequest, NextApiResponse } from 'next'
 
 const schemaName = User
 
 const handler = nc()
 
-handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
-  await db()
+handler.post(
+  async (req: NextApiRequestExtended, res: NextApiResponseExtended) => {
+    await db()
 
-  try {
-    const { password, resetToken } = req.body
+    try {
+      const { password, resetToken } = req.body
 
-    if (!resetToken || !password)
-      return res.status(400).json({ error: 'Invalid Request' })
+      if (!resetToken || !password)
+        return res.status(400).json({ error: 'Invalid Request' })
 
-    const resetPasswordToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex')
+      const resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex')
 
-    const user = await schemaName.findOne({
-      resetPasswordToken,
-      resetPasswordExpire: { $gt: Date.now() },
-    })
+      const user = await schemaName.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() },
+      })
 
-    if (!user)
-      return res.status(400).json({ error: 'Invalid Token or expired' })
+      if (!user)
+        return res.status(400).json({ error: 'Invalid Token or expired' })
 
-    user.password = password
-    user.resetPasswordToken = undefined
-    user.resetPasswordExpire = undefined
+      user.password = password
+      user.resetPasswordToken = undefined
+      user.resetPasswordExpire = undefined
 
-    await user.save()
+      await user.save()
 
-    res.status(200).json({ message: 'Password has been reset' })
-  } catch (error) {
-    res.status(500).json({ error: error.message })
+      res.status(200).json({ message: 'Password has been reset' })
+    } catch (error: any) {
+      res.status(500).json({ error: error.message })
+    }
   }
-})
+)
 export default handler

@@ -1,19 +1,25 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
-import axiosApi from './axiosApi'
+import api from './api'
 
-export default function apiHook({ key, method, url }) {
+interface Props {
+  key: string[]
+  method: string
+  url: string
+}
+
+export default function apiHook({ key, method, url }: Props) {
   const queryClient = new QueryClient()
   switch (method) {
     case 'GET':
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const get = useQuery(key, () => axiosApi(method, url, {}), {
+      const get = useQuery(key, () => api(method, url, {}), {
         retry: 0,
       })
       return { get }
 
     case 'POST':
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const post = useMutation((obj) => axiosApi(method, url, obj), {
+      const post = useMutation((obj: any) => api(method, url, obj), {
         retry: 0,
         onSuccess: () => queryClient.invalidateQueries(key),
       })
@@ -22,7 +28,7 @@ export default function apiHook({ key, method, url }) {
     case 'PUT':
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const put = useMutation(
-        (obj: { _id: string }) => axiosApi(method, `${url}/${obj?._id}`, obj),
+        (obj: any) => api(method, `${url}/${obj?._id}`, obj),
         {
           retry: 0,
 
@@ -34,16 +40,19 @@ export default function apiHook({ key, method, url }) {
 
     case 'DELETE':
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const deleteObj = useMutation((id) => axiosApi(method, `${url}/${id}`), {
-        retry: 0,
-        onSuccess: () => queryClient.invalidateQueries(key),
-      })
+      const deleteObj = useMutation(
+        (id: string) => api(method, `${url}/${id}`),
+        {
+          retry: 0,
+          onSuccess: () => queryClient.invalidateQueries(key),
+        }
+      )
       return { deleteObj }
 
     case 'UPLOAD':
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const upload = useMutation(
-        (obj: { _id: string }) => axiosApi('POST', url, obj),
+        (obj: { _id: string }) => api('POST', url, obj),
         {
           retry: 0,
 

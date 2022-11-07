@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
 
-const Message = ({ variant, children }) => {
+interface Props {
+  variant: string
+  value: any
+}
+
+const Message = ({ variant, value }: Props) => {
   const [alert, setAlert] = useState(true)
 
   useEffect(() => {
@@ -15,27 +20,29 @@ const Message = ({ variant, children }) => {
   }, [alert])
 
   return (
-    alert && (
-      <div
-        className='position-fixed top-0 end-0 p-2 animate__animated animate__lightSpeedInRight '
-        style={{ zIndex: 900000 }}
-      >
+    <>
+      {alert && (
         <div
-          className={`toast show text-${variant}`}
-          role='alert'
-          style={{ width: 'fit-content' }}
+          className="position-fixed top-0 end-0 p-2 animate__animated animate__lightSpeedInRight "
+          style={{ zIndex: 900000 }}
         >
-          <div className='toast-body text-center '>
-            {variant === 'success' ? (
-              <FaCheckCircle className='fs-4 mr-3 mb-1' />
-            ) : (
-              <FaTimesCircle className='fs-4 mr-3 mb-1' />
-            )}{' '}
-            {children}
+          <div
+            className={`toast show text-${variant}`}
+            role="alert"
+            style={{ width: 'fit-content' }}
+          >
+            <div className="toast-body text-center ">
+              {variant === 'success' ? (
+                <FaCheckCircle className="fs-4 mr-3 mb-1" />
+              ) : (
+                <FaTimesCircle className="fs-4 mr-3 mb-1" />
+              )}{' '}
+              {value}
+            </div>
           </div>
         </div>
-      </div>
-    )
+      )}
+    </>
   )
 }
 

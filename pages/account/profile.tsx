@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
-import withAuth from '../../HOC/withAuth'
+import withAuth from '../../hoc/withAuth'
 import { FormContainer, Message } from '../../components'
 import { useForm } from 'react-hook-form'
 import {
+  DynamicFormProps,
   inputFile,
   inputPassword,
   inputTel,
   inputText,
   inputTextArea,
-} from '../../utils/dynamicForm'
+} from '../../utils/dForms'
 import Image from 'next/image'
 import { Spinner } from '../../components'
 import apiHook from '../../api'
+import { IProfile } from '../../models/Profile'
+
+interface IProfileFormValueProps extends Omit<IProfile, '_id' | 'user'> {
+  password?: string
+}
 
 const Profile = () => {
   const [file, setFile] = useState(null)
@@ -57,8 +63,7 @@ const Profile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getApi?.isLoading, setValue])
 
-  const submitHandler = (data) => {
-    console.log(data)
+  const submitHandler = (data: IProfileFormValueProps) => {
     if (!file && !fileLink) {
       postApi?.mutateAsync({
         name: data?.name,
@@ -79,7 +84,7 @@ const Profile = () => {
     if (file) {
       const formData = new FormData()
       formData.append('file', file)
-      updateApi?.mutateAsync(formData)
+      updateApi?.mutateAsync({ _id: getApi?.data?.data?._id, ...formData })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file])
@@ -100,72 +105,73 @@ const Profile = () => {
     <FormContainer>
       <Head>
         <title>Profile</title>
-        <meta property='og:title' content='Profile' key='title' />
+        <meta property="og:title" content="Profile" key="title" />
       </Head>
-      <h3 className='fw-light font-monospace text-center'>User Profile</h3>
+      <h3 className="fw-light font-monospace text-center">User Profile</h3>
 
-      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
+      {postApi?.isError && <Message variant="danger" value={postApi?.error} />}
+
       {updateApi?.isError && (
-        <Message variant='danger'>{updateApi?.error}</Message>
+        <Message variant="danger" value={updateApi?.error} />
       )}
-      {getApi?.isError && <Message variant='danger'>{getApi?.error}</Message>}
+      {getApi?.isError && <Message variant="danger" value={getApi?.error} />}
       {postApi?.isSuccess && (
-        <Message variant='success'>User has been updated successfully</Message>
+        <Message variant="danger" value="User has been updated successfully" />
       )}
 
       {getApi?.isLoading && <Spinner />}
       <form onSubmit={handleSubmit(submitHandler)}>
         {getApi?.data?.image && (
-          <div className='d-flex justify-content-center'>
+          <div className="d-flex justify-content-center">
             <Image
               src={getApi?.data?.image}
-              alt='avatar'
-              className='rounded-circle'
-              width='200'
-              height='200'
+              alt="avatar"
+              className="rounded-circle"
+              width="200"
+              height="200"
             />
           </div>
         )}
 
-        <div className='row'>
-          <div className='col-12'>
+        <div className="row">
+          <div className="col-12">
             {inputText({
               register,
               errors,
               label: 'Name',
               name: 'name',
               placeholder: 'Name',
-            })}
+            } as DynamicFormProps)}
           </div>
-          <div className='col-md-6 col-12'>
+          <div className="col-md-6 col-12">
             {inputText({
               register,
               errors,
               label: 'Address',
               name: 'address',
               placeholder: 'Address',
-            })}
+            } as DynamicFormProps)}
           </div>
-          <div className='col-md-6 col-12'>
+          <div className="col-md-6 col-12">
             {inputTel({
               register,
               errors,
               label: 'Phone',
               name: 'phone',
               placeholder: '+252 (61) 530-1507',
-            })}
+            } as DynamicFormProps)}
           </div>
-          <div className='col-12'>
+          <div className="col-12">
             {inputTextArea({
               register,
               errors,
               label: 'Bio',
               name: 'bio',
               placeholder: 'Tell us about yourself',
-            })}
+            } as DynamicFormProps)}
           </div>
 
-          <div className='col-12'>
+          <div className="col-12">
             {inputFile({
               register,
               errors,
@@ -174,9 +180,9 @@ const Profile = () => {
               setFile,
               isRequired: false,
               placeholder: 'Choose an image',
-            })}
+            } as DynamicFormProps)}
           </div>
-          <div className='col-md-6 col-12'>
+          <div className="col-md-6 col-12">
             {inputPassword({
               register,
               errors,
@@ -185,9 +191,9 @@ const Profile = () => {
               minLength: true,
               isRequired: false,
               placeholder: "Leave blank if you don't want to change",
-            })}
+            } as DynamicFormProps)}
           </div>
-          <div className='col-md-6 col-12'>
+          <div className="col-md-6 col-12">
             {inputPassword({
               register,
               errors,
@@ -198,17 +204,17 @@ const Profile = () => {
               minLength: true,
               isRequired: false,
               placeholder: 'Confirm Password',
-            })}
+            } as DynamicFormProps)}
           </div>
         </div>
 
         <button
-          type='submit'
-          className='btn btn-primary form-control'
+          type="submit"
+          className="btn btn-primary form-control"
           disabled={postApi?.isLoading || updateApi?.isLoading}
         >
           {postApi?.isLoading || updateApi?.isLoading ? (
-            <span className='spinner-border spinner-border-sm' />
+            <span className="spinner-border spinner-border-sm" />
           ) : (
             'Update'
           )}

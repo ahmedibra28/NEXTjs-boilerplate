@@ -43,74 +43,73 @@ const profile = {
   bio: 'Full Stack Developer',
 }
 
+const sort = {
+  hidden: 0,
+  profile: 1,
+  admin: 2,
+}
+
 const clientPermissions = [
   {
     name: 'Home',
     path: '/',
     menu: 'hidden',
-    sort: 0,
-    auth: true,
+    sort: sort.hidden,
     description: 'Home page',
   },
   {
     name: 'Users',
-    path: '/admin/auth/users',
+    path: '/admin/users',
     menu: 'admin',
-    sort: 2,
-    auth: true,
+    sort: sort.admin,
     description: 'Users page',
   },
   {
     name: 'Roles',
-    path: '/admin/auth/roles',
+    path: '/admin/roles',
     menu: 'admin',
-    sort: 2,
-    auth: true,
+    sort: sort.admin,
     description: 'Roles page',
   },
   {
     name: 'Profile',
     path: '/account/profile',
     menu: 'profile',
-    sort: 1,
-    auth: true,
+    sort: sort.profile,
     description: 'Profile page',
   },
   {
     name: 'Permissions',
-    path: '/admin/auth/permissions',
+    path: '/admin/permissions',
     menu: 'admin',
-    sort: 2,
-    auth: true,
+    sort: sort.admin,
     description: 'Permissions page',
   },
   {
     name: 'Client Permissions',
-    path: '/admin/auth/client-permissions',
+    path: '/admin/client-permissions',
     menu: 'admin',
-    sort: 2,
-    auth: true,
+    sort: sort.admin,
     description: 'Client Permissions page',
   },
   {
     name: 'User Roles',
-    path: '/admin/auth/user-roles',
+    path: '/admin/user-roles',
     menu: 'admin',
-    sort: 2,
-    auth: true,
+    sort: sort.admin,
     description: 'User Roles page',
   },
   {
     name: 'User Profiles',
-    path: '/admin/auth/user-profiles',
+    path: '/admin/user-profiles',
     menu: 'admin',
-    sort: 2,
-    auth: true,
+    sort: sort.admin,
     description: 'User Profiles page',
   },
 ]
 
 const permissions = [
+  // Users
   {
     description: 'Get All Users',
     route: '/api/auth/users',
@@ -146,27 +145,8 @@ const permissions = [
     name: 'Users',
     method: 'DELETE',
   },
-  {
-    description: 'Login',
-    route: '/api/auth/login',
-    auth: false,
-    name: 'Login',
-    method: 'POST',
-  },
-  {
-    description: 'Forgot Password',
-    route: '/api/auth/forgot-password',
-    auth: false,
-    name: 'Forgot Password',
-    method: 'POST',
-  },
-  {
-    description: 'Reset Password',
-    route: '/api/auth/reset-password',
-    auth: false,
-    name: 'Reset Password',
-    method: 'POST',
-  },
+
+  //   User Profile
   {
     description: 'Get All User Profiles',
     route: '/api/auth/user-profiles',
@@ -188,6 +168,8 @@ const permissions = [
     name: 'User Profile',
     method: 'POST',
   },
+
+  //   Role
   {
     description: 'Get All Roles',
     route: '/api/auth/roles',
@@ -216,6 +198,8 @@ const permissions = [
     name: 'Roles',
     method: 'DELETE',
   },
+
+  //   Permission
   {
     description: 'Get All Permissions',
     route: '/api/auth/permissions',
@@ -244,6 +228,8 @@ const permissions = [
     name: 'Permissions',
     method: 'DELETE',
   },
+
+  //   User Role
   {
     description: 'Get All User Roles',
     route: '/api/auth/user-roles',
@@ -272,6 +258,8 @@ const permissions = [
     name: 'User Roles',
     method: 'DELETE',
   },
+
+  //   Client Permission
   {
     description: 'Get All ClientPermissions',
     route: '/api/auth/client-permissions',

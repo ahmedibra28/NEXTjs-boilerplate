@@ -1,71 +1,34 @@
-# NEXT.js typescript Boilerplate
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-![Boilerplate](./boilerplate.gif)
+## Getting Started
 
-## Features
+First, run the development server:
 
-- Typescript
-- Login
-- Signup
-- Forgot Password
-- Reset Password with Email
-- Users Management
-- Permissions Management
-- Roles Management
-- Users Role Management based on roles and permission\
-- User Profile
-- All Users Profile Page
-- Welcome Page
-- Pagination
-- Search
-
-## Tech
-
-I used number of different technologies
-
-- Nodemailer
-- MongoDB
-- NextJS
-- Moment.js
-- React Query
-- axios
-- react-confirm-alert
-- Bootstrap v5
-- React-Hook-Form
-- Yandex Mail
-- react-icons
-- and so on
-
-## Installation
-
-This NEXT.js typescript boilerplate requires these technologies to run:
-
-- [Node.js](https://nodejs.org/) v12+
-- [MongoDB](https://mongodb.com/) ether local MongoDB or MongoDB Atlas
-
-```sh
-cd NEXTjs-boilerplate
-npm install
+```bash
 npm run dev
+# or
+yarn dev
 ```
 
-### To insert default seed data
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Copy and paste the below url/route into your browser url bar.
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-```sh
-http://localhost:3000/api/auth/seeds?secret=js
-```
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-Your can find the default `super admin` and `password` in the below directory
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-```sh
-/config/data.js
-```
+## Learn More
 
-### Default super admin authentication is:
+To learn more about Next.js, take a look at the following resources:
 
-- Email: _ahmaat19@gmail.com_
-- Password: _123456_
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-**_Free NEXT.js Boilerplate, Hell Yeah!_**
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

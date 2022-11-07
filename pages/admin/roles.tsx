@@ -1,29 +1,33 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FormEvent } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
-import withAuth from '../../../HOC/withAuth'
+import withAuth from '../../hoc/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
+import { Spinner, Pagination, Message, Confirm, Search } from '../../components'
 import {
-  Spinner,
-  Pagination,
-  Message,
-  Confirm,
-  Search,
-} from '../../../components'
-import {
+  DynamicFormProps,
   inputMultipleCheckBox,
   inputText,
   inputTextArea,
-} from '../../../utils/dynamicForm'
-import FormView from '../../../components/FormView'
+} from '../../utils/dForms'
+import FormView from '../../components/FormView'
 import { FaPenAlt, FaTrash } from 'react-icons/fa'
 import moment from 'moment'
-import apiHook from '../../../api'
+import apiHook from '../../api'
+import { IPermission } from '../../models/Permission'
+import { IClientPermission } from '../../models/ClientPermission'
+import { IRole } from '../../models/Role'
+
+interface Item extends Omit<IRole, 'user'> {
+  user: { _id: string; email: string }
+  permission: any[]
+  clientPermission: any[]
+}
 
 const Roles = () => {
   const [page, setPage] = useState(1)
-  const [id, setId] = useState(null)
+  const [id, setId] = useState<any>(null)
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
 
@@ -66,35 +70,30 @@ const Roles = () => {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      auth: true,
-    },
-  })
+  } = useForm({})
 
   const uniquePermissions = [
     ...(new Set(
-      getPermissionsApi?.data?.data?.map((item: { name: string }) => item.name)
+      getPermissionsApi?.data?.data?.map((item: IPermission) => item.name)
     ) as any),
   ]?.map((group) => ({
     [group]: getPermissionsApi?.data?.data?.filter(
-      (permission: { name: string }) => permission?.name === group
+      (permission: IPermission) => permission?.name === group
     ),
   }))
 
   const uniqueClientPermissions = [
     ...(new Set(
       getClientPermissionsApi?.data?.data?.map(
-        (item: { menu: string }) => item.menu
+        (item: IClientPermission) => item.menu
       )
     ) as any),
   ]?.map((group) => ({
     [group]: getClientPermissionsApi?.data?.data?.filter(
-      (clientPermission: { menu: string }) => clientPermission?.menu === group
+      (clientPermission: IClientPermission) => clientPermission?.menu === group
     ),
   }))
 
@@ -116,7 +115,7 @@ const Roles = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
-  const searchHandler = (e: { preventDefault: () => void }) => {
+  const searchHandler = (e: FormEvent) => {
     e.preventDefault()
     getApi?.refetch()
     setPage(1)
@@ -130,19 +129,11 @@ const Roles = () => {
     data: getApi?.data,
   }
 
-  interface Item {
-    _id: string
-    name: string
-    type: string
-    description: string
-    createdAt: string
-    permission: any[]
-    clientPermission: any[]
-  }
   const editHandler = (item: Item) => {
     setId(item._id)
 
-    table.body.map((t) => setValue(t as any, item[t]))
+    setValue('name', item?.name)
+    setValue('description', item?.description)
     setEdit(true)
 
     const permission = [
@@ -176,9 +167,12 @@ const Roles = () => {
           Object.values(per)[0]?.map((p: any) => p?._id)
         )
       })
+
+    permission
+    clientPermission
   }
 
-  const deleteHandler = (id: string) => {
+  const deleteHandler = (id: any) => {
     confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
@@ -228,21 +222,21 @@ const Roles = () => {
   }
 
   const form = [
-    <div key={0} className='col-12'>
+    <div key={0} className="col-12">
       {inputText({
         register,
         errors,
         label: 'Name',
         name: 'name',
         placeholder: 'Enter name',
-      })}
+      } as DynamicFormProps)}
     </div>,
 
-    <div key={1} className='col-12'>
+    <div key={1} className="col-12">
       {uniquePermissions?.length > 0 &&
         uniquePermissions?.map((g, i) => (
-          <div key={i} className='mb-1'>
-            <label className='fw-bold text-uppercase'>
+          <div key={i} className="mb-1">
+            <label className="fw-bold text-uppercase">
               {uniquePermissions?.length > 0 && Object.keys(g)[0]}
             </label>
 
@@ -265,26 +259,26 @@ const Roles = () => {
                   })
                 ),
               isRequired: false,
-            })}
+            } as DynamicFormProps)}
           </div>
         ))}
     </div>,
 
-    <div key={2} className='col-12'>
+    <div key={2} className="col-12">
       {inputTextArea({
         register,
         errors,
         label: 'Description',
         name: 'description',
         placeholder: 'Description',
-      })}
+      } as DynamicFormProps)}
     </div>,
 
-    <div key={3} className='col-12'>
+    <div key={3} className="col-12">
       {uniqueClientPermissions?.length > 0 &&
         uniqueClientPermissions?.map((g, i) => (
-          <div key={i} className='mb-1'>
-            <label className='fw-bold text-uppercase'>
+          <div key={i} className="mb-1">
+            <label className="fw-bold text-uppercase">
               {uniqueClientPermissions?.length > 0 && Object.keys(g)[0]}
             </label>
 
@@ -309,7 +303,7 @@ const Roles = () => {
                   })
                 ),
               isRequired: false,
-            })}
+            } as DynamicFormProps)}
           </div>
         ))}
     </div>,
@@ -321,33 +315,36 @@ const Roles = () => {
     <>
       <Head>
         <title>Roles</title>
-        <meta property='og:title' content='Roles' key='title' />
+        <meta property="og:title" content="Roles" key="title" />
       </Head>
 
       {deleteApi?.isSuccess && (
-        <Message variant='success'>
-          {label} has been cancelled successfully.
-        </Message>
+        <Message
+          variant="success"
+          value={`${label} has been cancelled successfully.`}
+        />
       )}
       {deleteApi?.isError && (
-        <Message variant='danger'>{deleteApi?.error}</Message>
+        <Message variant="danger" value={deleteApi?.error} />
       )}
       {updateApi?.isSuccess && (
-        <Message variant='success'>
-          {label} has been updated successfully.
-        </Message>
+        <Message
+          variant="success"
+          value={`${label} has been updated successfully.`}
+        />
       )}
       {updateApi?.isError && (
-        <Message variant='danger'>{updateApi?.error}</Message>
+        <Message variant="danger" value={updateApi?.error} />
       )}
       {postApi?.isSuccess && (
-        <Message variant='success'>
-          {label} has been Created successfully.
-        </Message>
+        <Message
+          variant="success"
+          value={`${label} has been Created successfully.`}
+        />
       )}
-      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
+      {postApi?.isError && <Message variant="danger" value={postApi?.error} />}
 
-      <div className='ms-auto text-end'>
+      <div className="ms-auto text-end">
         <Pagination data={table.data} setPage={setPage} />
       </div>
 
@@ -367,32 +364,32 @@ const Roles = () => {
       {getApi?.isLoading ? (
         <Spinner />
       ) : getApi?.isError ? (
-        <Message variant='danger'>{getApi?.error}</Message>
+        <Message variant="danger" value={getApi?.error} />
       ) : (
-        <div className='table-responsive bg-light p-3 mt-2'>
-          <div className='d-flex align-items-center flex-column mb-2'>
-            <h3 className='fw-light text-muted'>
+        <div className="table-responsive bg-light p-3 mt-2">
+          <div className="d-flex align-items-center flex-column mb-2">
+            <h3 className="fw-light text-muted">
               {name}
-              <sup className='fs-6'> [{table?.data?.total}] </sup>
+              <sup className="fs-6"> [{table?.data?.total}] </sup>
             </h3>
             <button
-              className='btn btn-outline-primary btn-sm shadow my-2'
-              data-bs-toggle='modal'
+              className="btn btn-outline-primary btn-sm shadow my-2"
+              data-bs-toggle="modal"
               data-bs-target={`#${modal}`}
             >
               Add New {label}
             </button>
-            <div className='col-auto'>
+            <div className="col-auto">
               <Search
-                placeholder='Search by name'
+                placeholder="Search by name"
                 setQ={setQ}
                 q={q}
                 searchHandler={searchHandler}
               />
             </div>
           </div>
-          <table className='table table-sm table-border'>
-            <thead className='border-0'>
+          <table className="table table-sm table-border">
+            <thead className="border-0">
               <tr>
                 <th>Name</th>
                 <th>Type</th>
@@ -402,30 +399,30 @@ const Roles = () => {
               </tr>
             </thead>
             <tbody>
-              {getApi?.data?.data?.map((item: Item) => (
-                <tr key={item?._id}>
+              {getApi?.data?.data?.map((item: Item, i: number) => (
+                <tr key={i}>
                   <td>{item?.name}</td>
                   <td>{item?.type}</td>
                   <td>{item?.description}</td>
                   <td>{moment(item?.createdAt).format('lll')}</td>
                   <td>
-                    <div className='btn-group'>
+                    <div className="btn-group">
                       <button
-                        className='btn btn-primary btn-sm rounded-pill'
+                        className="btn btn-primary btn-sm rounded-pill"
                         onClick={() => editHandler(item)}
-                        data-bs-toggle='modal'
+                        data-bs-toggle="modal"
                         data-bs-target={`#${modal}`}
                       >
                         <FaPenAlt />
                       </button>
 
                       <button
-                        className='btn btn-danger btn-sm ms-1 rounded-pill'
+                        className="btn btn-danger btn-sm ms-1 rounded-pill"
                         onClick={() => deleteHandler(item._id)}
                         disabled={deleteApi?.isLoading}
                       >
                         {deleteApi?.isLoading ? (
-                          <span className='spinner-border spinner-border-sm' />
+                          <span className="spinner-border spinner-border-sm" />
                         ) : (
                           <span>
                             <FaTrash />

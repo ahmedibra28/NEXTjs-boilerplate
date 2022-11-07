@@ -1,7 +1,7 @@
-interface Props {
+export interface DynamicFormProps {
   register: any
   placeholder: string
-  errors: string
+  errors: any
   name: string
   label: string
   isRequired: boolean
@@ -10,92 +10,92 @@ interface Props {
   watch: any
   data: any
   value: string
-  setFile: any
+  setFile: (e: any) => void
 }
 
-export const inputText = (args: Props) => {
+export const inputText = (args: DynamicFormProps) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='text'
+        type="text"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputTel = (args: Props) => {
+export const inputTel = (args: DynamicFormProps) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='tel'
+        type="tel"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputTextArea = (args: Props) => {
+export const inputTextArea = (args: DynamicFormProps) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <textarea
-        rows='5'
-        cols='30'
+        rows="5"
+        cols="30"
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='text'
+        type="text"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputNumber = (args: Props) => {
+export const inputNumber = (args: DynamicFormProps) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='number'
+        type="number"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputEmail = (args: Props) => {
+export const inputEmail = (args: DynamicFormProps) => {
   const { register, placeholder, errors, label, name } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <input
         {...register(name, {
@@ -105,18 +105,18 @@ export const inputEmail = (args: Props) => {
             message: 'Entered value does not match email format',
           },
         })}
-        type='email'
+        type="email"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputPassword = (args: Props) => {
+export const inputPassword = (args: DynamicFormProps) => {
   const {
     register,
     placeholder,
@@ -130,7 +130,7 @@ export const inputPassword = (args: Props) => {
   } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <input
         {...register(name, {
@@ -146,18 +146,18 @@ export const inputPassword = (args: Props) => {
                 value === watch().password || 'The passwords do not match'
             : null,
         })}
-        type='password'
+        type="password"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const dynamicInputSelect = (args: Props) => {
+export const dynamicInputSelect = (args: DynamicFormProps) => {
   const {
     register,
     placeholder,
@@ -170,30 +170,30 @@ export const dynamicInputSelect = (args: Props) => {
   } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='text'
+        type="text"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       >
-        <option value=''>-------</option>
+        <option value="">-------</option>
         {data &&
-          data.map((d: { _id: string }) => (
+          data.map((d: any) => (
             <option key={d._id} value={d._id}>
               {d[value]}
             </option>
           ))}
       </select>
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const staticInputSelect = (args: Props) => {
+export const staticInputSelect = (args: DynamicFormProps) => {
   const {
     register,
     placeholder,
@@ -205,77 +205,77 @@ export const staticInputSelect = (args: Props) => {
   } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='text'
+        type="text"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       >
-        <option value=''>-------</option>
+        <option value="">-------</option>
         {data &&
-          data.map((d) => (
+          data.map((d: { _id: string; name: string }) => (
             <option key={d.name} value={d.name}>
               {d.name}
             </option>
           ))}
       </select>
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputCheckBox = (args: Props) => {
+export const inputCheckBox = (args: DynamicFormProps) => {
   const { register, errors, name, label, isRequired = true } = args
 
   return (
-    <div className='mb-3'>
-      <div className='form-check form-switch'>
+    <div className="mb-3">
+      <div className="form-check form-switch">
         <input
-          className='form-check-input'
-          type='checkbox'
+          className="form-check-input"
+          type="checkbox"
           id={name}
           {...register(
             name,
             isRequired && { required: `${label} is required` }
           )}
         />
-        <label className='form-check-label' htmlFor={name}>
+        <label className="form-check-label" htmlFor={name}>
           {label}
         </label>
       </div>
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputMultipleCheckBox = (args: Props) => {
+export const inputMultipleCheckBox = (args: DynamicFormProps) => {
   const { register, errors, name, data, label, isRequired = true } = args
 
   return (
-    <div className='mb-3'>
-      <div className='row g-1 mb-3'>
+    <div className="mb-3">
+      <div className="row g-1 mb-3">
         {data &&
-          data.map((d) => (
-            <div key={d._id} className='col-12'>
-              <div className='form-check form-switch'>
+          data.map((d: any) => (
+            <div key={d._id} className="col-12">
+              <div className="form-check form-switch">
                 <input
                   {...register(
                     name,
                     isRequired && { required: `${label} is required` }
                   )}
-                  className='form-check-input'
-                  type='checkbox'
+                  className="form-check-input"
+                  type="checkbox"
                   value={d._id}
                   id={`flexCheck${d._id}`}
                 />
                 <label
-                  className='form-check-label'
+                  className="form-check-label"
                   htmlFor={`flexCheck${d._id}`}
                 >
                   {d.name}
@@ -285,13 +285,13 @@ export const inputMultipleCheckBox = (args: Props) => {
           ))}
       </div>
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputFile = (args: Props) => {
+export const inputFile = (args: DynamicFormProps) => {
   const {
     register,
     placeholder,
@@ -303,43 +303,43 @@ export const inputFile = (args: Props) => {
   } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='file'
+        type="file"
         placeholder={placeholder}
-        className='form-control'
-        id='formFile'
-        onChange={(e) => setFile(e.target.files[0])}
+        className="form-control"
+        id="formFile"
+        onChange={(e: any) => setFile(e.target.files[0])}
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const inputDate = (args: Props) => {
+export const inputDate = (args: DynamicFormProps) => {
   const { register, placeholder, errors, name, label, isRequired = true } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='date'
+        type="date"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const InputAutoCompleteSelect = (args: Props) => {
+export const InputAutoCompleteSelect = (args: DynamicFormProps) => {
   const {
     register,
     placeholder,
@@ -351,23 +351,23 @@ export const InputAutoCompleteSelect = (args: Props) => {
   } = args
 
   return (
-    <div className='mb-3'>
-      <label htmlFor='exampleDataList' className='form-label'>
+    <div className="mb-3">
+      <label htmlFor="exampleDataList" className="form-label">
         {label}
       </label>
       <input
-        list='datalistOptions'
-        autoComplete='off'
-        id='exampleDataList'
+        list="datalistOptions"
+        autoComplete="off"
+        id="exampleDataList"
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='text'
+        type="text"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       />
-      <datalist id='datalistOptions'>
-        <option value=''>-------------</option>
+      <datalist id="datalistOptions">
+        <option value="">-------------</option>
         {data &&
-          data.map((d) => (
+          data.map((d: { _id: string; name: string }) => (
             <option key={d._id} value={d._id}>
               {d.name}
             </option>
@@ -375,13 +375,13 @@ export const InputAutoCompleteSelect = (args: Props) => {
       </datalist>
 
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )
 }
 
-export const dynamicInputSelectNumber = (args: Props) => {
+export const dynamicInputSelectNumber = (args: DynamicFormProps) => {
   const {
     register,
     placeholder,
@@ -393,15 +393,15 @@ export const dynamicInputSelectNumber = (args: Props) => {
   } = args
 
   return (
-    <div className='mb-3'>
+    <div className="mb-3">
       <label htmlFor={name}>{label}</label>
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
-        type='text'
+        type="text"
         placeholder={placeholder}
-        className='form-control'
+        className="form-control"
       >
-        <option value=''>-------</option>
+        <option value="">-------</option>
 
         {[...(Array(data).keys() as any)].map((num) => (
           <option key={num + 1} value={num + 1}>
@@ -410,7 +410,7 @@ export const dynamicInputSelectNumber = (args: Props) => {
         ))}
       </select>
       {errors && errors[name] && (
-        <span className='text-danger'>{errors[name].message}</span>
+        <span className="text-danger">{errors[name].message}</span>
       )}
     </div>
   )

@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
-import '../styles/globals.scss'
+import type { AppProps } from 'next/app'
+import '../styles/index.scss'
+import '../styles/globals.css'
+import Layout from '../components/Layout'
 
-import { Layout } from '../components'
 import 'animate.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -9,12 +11,13 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 
-function MyApp({ Component, pageProps }) {
+export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     typeof document !== undefined
       ? require('bootstrap/dist/js/bootstrap')
       : null
   }, [])
+
   return (
     <QueryClientProvider client={queryClient}>
       <Layout>
@@ -24,5 +27,3 @@ function MyApp({ Component, pageProps }) {
     </QueryClientProvider>
   )
 }
-
-export default MyApp

@@ -1,25 +1,20 @@
 import React, { useState, useEffect, FormEvent } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
-import withAuth from '../../../HOC/withAuth'
+import withAuth from '../../hoc/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import {
-  Spinner,
-  Pagination,
-  Message,
-  Confirm,
-  Search,
-} from '../../../components'
-import { dynamicInputSelect } from '../../../utils/dynamicForm'
-import FormView from '../../../components/FormView'
+import { Spinner, Pagination, Message, Confirm, Search } from '../../components'
+import { DynamicFormProps, dynamicInputSelect } from '../../utils/dForms'
+import FormView from '../../components/FormView'
 import moment from 'moment'
 import { FaPenAlt, FaTrash } from 'react-icons/fa'
-import apiHook from '../../../api'
+import apiHook from '../../api'
+import { IUserRole } from '../../models/UserRole'
 
 const UserRoles = () => {
   const [page, setPage] = useState(1)
-  const [id, setId] = useState(null)
+  const [id, setId] = useState<any>(null)
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
 
@@ -64,11 +59,7 @@ const UserRoles = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      auth: true,
-    },
-  })
+  } = useForm({})
 
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
@@ -94,13 +85,6 @@ const UserRoles = () => {
     setPage(1)
   }
 
-  // TableView
-  const table = {
-    header: ['Name', 'Email', 'Role', 'Role Type'],
-    body: ['role.name', 'user.email', 'role.name', 'role.type'],
-    createdAt: 'createdAt',
-    data: getApi?.data,
-  }
   interface Item {
     _id: string
     user: { _id: string; name: string; email: string }
@@ -115,21 +99,20 @@ const UserRoles = () => {
     setValue('role' as any, item?.role?._id)
   }
 
-  const deleteHandler = (id: string) => {
+  const deleteHandler = (id: any) => {
     confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
   const name = 'User Roles List'
   const label = 'User Role'
   const modal = 'userRole'
-  const searchPlaceholder = 'Search by name'
 
   // FormView
   const formCleanHandler = () => {
     reset(), setEdit(false)
   }
 
-  const submitHandler = (data) => {
+  const submitHandler = (data: Omit<IUserRole, '_id'>) => {
     edit
       ? updateApi?.mutateAsync({
           _id: id,
@@ -139,7 +122,7 @@ const UserRoles = () => {
   }
 
   const form = [
-    <div key={0} className='col-12'>
+    <div key={0} className="col-12">
       {dynamicInputSelect({
         register,
         errors,
@@ -151,10 +134,10 @@ const UserRoles = () => {
           (user: { confirmed: boolean; blocked: boolean }) =>
             user.confirmed && !user.blocked
         ),
-      })}
+      } as DynamicFormProps)}
     </div>,
 
-    <div key={1} className='col-12'>
+    <div key={1} className="col-12">
       {dynamicInputSelect({
         register,
         errors,
@@ -163,7 +146,7 @@ const UserRoles = () => {
         placeholder: 'Role',
         data: getRolesApi?.data?.data,
         value: 'name',
-      })}
+      } as DynamicFormProps)}
     </div>,
   ]
 
@@ -173,34 +156,37 @@ const UserRoles = () => {
     <>
       <Head>
         <title>User Roles</title>
-        <meta property='og:title' content='User Roles' key='title' />
+        <meta property="og:title" content="User Roles" key="title" />
       </Head>
 
       {deleteApi?.isSuccess && (
-        <Message variant='success'>
-          {label} has been deleted successfully.
-        </Message>
+        <Message
+          variant="success"
+          value={`${label} has been deleted successfully.`}
+        />
       )}
       {deleteApi?.isError && (
-        <Message variant='danger'>{deleteApi?.error}</Message>
+        <Message variant="danger" value={deleteApi?.error} />
       )}
       {updateApi?.isSuccess && (
-        <Message variant='success'>
-          {label} has been updated successfully.
-        </Message>
+        <Message
+          variant="success"
+          value={`${label} has been updated successfully.`}
+        />
       )}
       {updateApi?.isError && (
-        <Message variant='danger'>{updateApi?.error}</Message>
+        <Message variant="danger" value={updateApi?.error} />
       )}
       {postApi?.isSuccess && (
-        <Message variant='success'>
-          {label} has been Created successfully.
-        </Message>
+        <Message
+          variant="success"
+          value={`${label} has been Created successfully.`}
+        />
       )}
-      {postApi?.isError && <Message variant='danger'>{postApi?.error}</Message>}
+      {postApi?.isError && <Message variant="danger" value={postApi?.error} />}
 
-      <div className='ms-auto text-end'>
-        <Pagination data={table.data} setPage={setPage} />
+      <div className="ms-auto text-end">
+        <Pagination data={getApi?.data} setPage={setPage} />
       </div>
 
       <FormView
@@ -219,32 +205,32 @@ const UserRoles = () => {
       {getApi?.isLoading ? (
         <Spinner />
       ) : getApi?.isError ? (
-        <Message variant='danger'>{getApi?.error}</Message>
+        <Message variant="danger" value={getApi?.error} />
       ) : (
-        <div className='table-responsive bg-light p-3 mt-2'>
-          <div className='d-flex align-items-center flex-column mb-2'>
-            <h3 className='fw-light text-muted'>
+        <div className="table-responsive bg-light p-3 mt-2">
+          <div className="d-flex align-items-center flex-column mb-2">
+            <h3 className="fw-light text-muted">
               {name}
-              <sup className='fs-6'> [{table?.data?.total}] </sup>
+              <sup className="fs-6"> [{getApi?.data?.total}] </sup>
             </h3>
             <button
-              className='btn btn-outline-primary btn-sm shadow my-2'
-              data-bs-toggle='modal'
+              className="btn btn-outline-primary btn-sm shadow my-2"
+              data-bs-toggle="modal"
               data-bs-target={`#${modal}`}
             >
               Add New {label}
             </button>
-            <div className='col-auto'>
+            <div className="col-auto">
               <Search
-                placeholder='Search by name'
+                placeholder="Search by name"
                 setQ={setQ}
                 q={q}
                 searchHandler={searchHandler}
               />
             </div>
           </div>
-          <table className='table table-sm table-border'>
-            <thead className='border-0'>
+          <table className="table table-sm table-border">
+            <thead className="border-0">
               <tr>
                 <th>User</th>
                 <th>Email</th>
@@ -264,23 +250,23 @@ const UserRoles = () => {
 
                   <td>{moment(item?.createdAt).format('lll')}</td>
                   <td>
-                    <div className='btn-group'>
+                    <div className="btn-group">
                       <button
-                        className='btn btn-primary btn-sm rounded-pill'
+                        className="btn btn-primary btn-sm rounded-pill"
                         onClick={() => editHandler(item)}
-                        data-bs-toggle='modal'
+                        data-bs-toggle="modal"
                         data-bs-target={`#${modal}`}
                       >
                         <FaPenAlt />
                       </button>
 
                       <button
-                        className='btn btn-danger btn-sm ms-1 rounded-pill'
+                        className="btn btn-danger btn-sm ms-1 rounded-pill"
                         onClick={() => deleteHandler(item._id)}
                         disabled={deleteApi?.isLoading}
                       >
                         {deleteApi?.isLoading ? (
-                          <span className='spinner-border spinner-border-sm' />
+                          <span className="spinner-border spinner-border-sm" />
                         ) : (
                           <span>
                             <FaTrash />

@@ -1,17 +1,24 @@
-import mongoose from 'mongoose'
+import { Schema, model, models } from 'mongoose'
 import Role from './Role'
 import User from './User'
 
-const userRoleScheme = new mongoose.Schema(
+export interface IUserRole {
+  _id: Schema.Types.ObjectId
+  user: Schema.Types.ObjectId
+  role: Schema.Types.ObjectId
+  createdAt?: Date
+}
+
+const userRoleSchema = new Schema<IUserRole>(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: User,
       required: true,
       unique: true,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: Role,
       required: true,
     },
@@ -19,6 +26,6 @@ const userRoleScheme = new mongoose.Schema(
   { timestamps: true }
 )
 
-const UserRole =
-  mongoose.models.UserRole || mongoose.model('UserRole', userRoleScheme)
+const UserRole = models.UserRole || model('UserRole', userRoleSchema)
+
 export default UserRole

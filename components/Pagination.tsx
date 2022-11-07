@@ -1,16 +1,27 @@
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
-const Pagination = ({ data, setPage }) => {
+interface Props {
+  data: {
+    startIndex: number
+    endIndex: number
+    total: number
+    page: number
+    pages: number
+  }
+  setPage: (page: number) => void
+}
+
+const Pagination = ({ data, setPage }: Props) => {
   return data ? (
-    <div className='text-end my-1'>
-      <span className='btn bg-light shadow'>
+    <div className="text-end my-1">
+      <span className="btn bg-light shadow">
         {data.startIndex} - {data.endIndex} of {data.total}
       </span>
       <span
         onClick={() => setPage(data.page - 1)}
         className={`btn bg-light shadow mx-1 ${data.page === 1 && 'disabled'}`}
       >
-        <FaChevronLeft className='mb-1' />
+        <FaChevronLeft className="mb-1" />
       </span>
       <span
         onClick={() => setPage(data.page + 1)}
@@ -18,7 +29,7 @@ const Pagination = ({ data, setPage }) => {
           data.page === data.pages && 'disabled'
         }`}
       >
-        <FaChevronRight className='mb-1' />
+        <FaChevronRight className="mb-1" />
       </span>
     </div>
   ) : null

@@ -1,21 +1,17 @@
 import React, { useState, useEffect, FormEvent } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
-import withAuth from '../../../HOC/withAuth'
-import { Spinner, Pagination, Message, Search } from '../../../components'
+import withAuth from '../../hoc/withAuth'
+import { Spinner, Pagination, Message, Search } from '../../components'
 import moment from 'moment'
 import Image from 'next/image'
-import apiHook from '../../../api'
+import apiHook from '../../api'
+import { IProfile } from '../../models/Profile'
 
-interface Item {
-  _id: string
-  name: string
-  image: string
-  address: string
-  phone: string
-  bio: string
+interface Item extends Omit<IProfile, 'user'> {
   user: { _id: string; email: string }
-  createdAt: string
+  image: string
+  name: string
 }
 
 const UserProfiles = () => {
@@ -54,49 +50,41 @@ const UserProfiles = () => {
   }
 
   const name = 'User Profiles List'
-  const label = 'User Profile'
-  const modal = 'userProfile'
 
   return (
     <>
       <Head>
         <title>User Profiles</title>
-        <meta property='og:title' content='User Profiles' key='title' />
+        <meta property="og:title" content="User Profiles" key="title" />
       </Head>
 
-      <div className='ms-auto text-end'>
+      <div className="ms-auto text-end">
         <Pagination data={table.data} setPage={setPage} />
       </div>
 
       {getApi?.isLoading ? (
         <Spinner />
       ) : getApi?.isError ? (
-        <Message variant='danger'>{getApi?.error}</Message>
+        <Message variant="danger" value={getApi?.error} />
       ) : (
-        <div className='table-responsive bg-light p-3 mt-2'>
-          <div className='d-flex align-items-center flex-column mb-2'>
-            <h3 className='fw-light text-muted'>
+        <div className="table-responsive bg-light p-3 mt-2">
+          <div className="d-flex align-items-center flex-column mb-2">
+            <h3 className="fw-light text-muted">
               {name}
-              <sup className='fs-6'> [{table?.data?.total}] </sup>
+              <sup className="fs-6"> [{table?.data?.total}] </sup>
             </h3>
-            <button
-              className='btn btn-outline-primary btn-sm shadow my-2'
-              data-bs-toggle='modal'
-              data-bs-target={`#${modal}`}
-            >
-              Add New {label}
-            </button>
-            <div className='col-auto'>
+
+            <div className="col-auto">
               <Search
-                placeholder='Search by name'
+                placeholder="Search by name"
                 setQ={setQ}
                 q={q}
                 searchHandler={searchHandler}
               />
             </div>
           </div>
-          <table className='table table-sm table-border'>
-            <thead className='border-0'>
+          <table className="table table-sm table-border">
+            <thead className="border-0">
               <tr>
                 <th>Image</th>
                 <th>Name</th>
@@ -107,15 +95,15 @@ const UserProfiles = () => {
               </tr>
             </thead>
             <tbody>
-              {getApi?.data?.data?.map((item: Item) => (
-                <tr key={item?._id}>
+              {getApi?.data?.data?.map((item: Item, i: number) => (
+                <tr key={i}>
                   <td>
                     <Image
-                      width='30'
-                      height='30'
+                      width="30"
+                      height="30"
                       src={item?.image}
                       alt={item?.name}
-                      className='img-fluid rounded-pill'
+                      className="img-fluid rounded-pill"
                     />
                   </td>
                   <td>{item?.name}</td>

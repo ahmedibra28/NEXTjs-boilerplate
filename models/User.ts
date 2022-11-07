@@ -1,8 +1,20 @@
+import { Schema, model, models } from 'mongoose'
 import crypto from 'crypto'
-import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
-const userScheme = new mongoose.Schema(
+export interface IUser {
+  _id: Schema.Types.ObjectId
+  name: string
+  email: string
+  password: string
+  resetPasswordToken?: string
+  resetPasswordExpire?: string
+  confirmed: boolean
+  blocked: boolean
+  createdAt?: Date
+}
+
+const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
@@ -15,17 +27,16 @@ const userScheme = new mongoose.Schema(
   { timestamps: true }
 )
 
-userScheme.methods.matchPassword = async function (enteredPassword: string) {
+userSchema.methods.matchPassword = async function (enteredPassword: string) {
   return await bcrypt.compare(enteredPassword, this.password)
 }
 
-// encrypt password before saving into mongoDB
-userScheme.methods.encryptPassword = async function (password: string) {
+userSchema.methods.encryptPassword = async function (password: string) {
   const salt = await bcrypt.genSalt(10)
   return await bcrypt.hash(password, salt)
 }
 
-userScheme.pre('save', async function (next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next()
   }
@@ -33,7 +44,7 @@ userScheme.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt)
 })
 
-userScheme.methods.getResetPasswordToken = function () {
+userSchema.methods.getResetPasswordToken = function () {
   const resetToken = crypto.randomBytes(20).toString('hex')
 
   this.resetPasswordToken = crypto
@@ -46,5 +57,6 @@ userScheme.methods.getResetPasswordToken = function () {
   return resetToken
 }
 
-const User = mongoose.models.User || mongoose.model('User', userScheme)
+const User = models.User || model('User', userSchema)
+
 export default User

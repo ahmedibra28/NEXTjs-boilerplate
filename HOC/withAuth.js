@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { userInfo } from '../utils/helper'
+import { userInfo } from '../api/api'
 
 const withAuth = async (WrappedComponent) => {
   // eslint-disable-next-line react/display-name

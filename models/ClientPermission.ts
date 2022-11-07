@@ -1,6 +1,16 @@
-import mongoose from 'mongoose'
+import { Schema, model, models } from 'mongoose'
 
-const ClientPermissionScheme = new mongoose.Schema(
+export interface IClientPermission {
+  _id: Schema.Types.ObjectId
+  name: string
+  sort: number
+  menu: string
+  path: string
+  description?: boolean
+  createdAt?: Date
+}
+
+const ClientPermissionSchema = new Schema<IClientPermission>(
   {
     name: { type: String, required: true },
     sort: { type: Number, required: true },
@@ -12,6 +22,6 @@ const ClientPermissionScheme = new mongoose.Schema(
 )
 
 const ClientPermission =
-  mongoose.models.ClientPermission ||
-  mongoose.model('ClientPermission', ClientPermissionScheme)
+  models.ClientPermission || model('ClientPermission', ClientPermissionSchema)
+
 export default ClientPermission
