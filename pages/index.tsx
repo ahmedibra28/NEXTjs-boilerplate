@@ -1,7 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import withAuth from '../hoc/withAuth'
+import withAuth from '../HoC/withAuth'
 
 const Home = () => {
   return (
