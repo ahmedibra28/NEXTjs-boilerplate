@@ -1,10 +1,16 @@
 import React, { useState, useEffect, FormEvent } from 'react'
-import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HoC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import { Spinner, Pagination, Message, Confirm, Search } from '../../components'
+import {
+  Spinner,
+  Pagination,
+  Message,
+  Confirm,
+  Search,
+  Meta,
+} from '../../components'
 import {
   DynamicFormProps,
   inputCheckBox,
@@ -174,10 +180,7 @@ const Permissions = () => {
 
   return (
     <>
-      <Head>
-        <title>Permissions</title>
-        <meta property="og:title" content="Permissions" key="title" />
-      </Head>
+      <Meta title="Permissions" />
 
       {deleteApi?.isSuccess && (
         <Message

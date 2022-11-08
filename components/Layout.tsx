@@ -1,7 +1,7 @@
 import Navigation from './Navigation'
-import Head from 'next/head'
 import Footer from './Footer'
 import { ReactNode } from 'react'
+import Meta from './Meta'
 
 type Props = {
   children: ReactNode
@@ -9,10 +9,7 @@ type Props = {
 
 const Layout: React.FC<Props> = ({ children }) => (
   <div>
-    <Head>
-      <title>NEXT.JS TS Boilerplate</title>
-      <meta property="og:title" content="NEXT.JS TS Boilerplate" key="title" />
-    </Head>
+    <Meta />
     <Navigation />
     <div className="d-flex justify-content-between">
       <main

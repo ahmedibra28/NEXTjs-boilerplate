@@ -4,6 +4,7 @@ import FormContainer from './FormContainer'
 import FormView from './FormView'
 import Layout from './Layout'
 import Message from './Message'
+import Meta from './Meta'
 import Navigation from './Navigation'
 import Pagination from './Pagination'
 import Search from './Search'
@@ -22,4 +23,5 @@ export {
   Search,
   SideBar,
   Spinner,
+  Meta,
 }

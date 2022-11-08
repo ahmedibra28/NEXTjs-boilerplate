@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HoC/withAuth'
-import { FormContainer, Message } from '../../components'
+import { FormContainer, Message, Meta } from '../../components'
 import { useForm } from 'react-hook-form'
 import {
   DynamicFormProps,
@@ -103,10 +102,7 @@ const Profile = () => {
 
   return (
     <FormContainer>
-      <Head>
-        <title>Profile</title>
-        <meta property="og:title" content="Profile" key="title" />
-      </Head>
+      <Meta title="Profile" />
       <h3 className="fw-light font-monospace text-center">User Profile</h3>
 
       {postApi?.isError && <Message variant="danger" value={postApi?.error} />}

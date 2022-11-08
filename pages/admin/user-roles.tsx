@@ -1,10 +1,16 @@
 import React, { useState, useEffect, FormEvent } from 'react'
-import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HoC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import { Spinner, Pagination, Message, Confirm, Search } from '../../components'
+import {
+  Spinner,
+  Pagination,
+  Message,
+  Confirm,
+  Search,
+  Meta,
+} from '../../components'
 import { DynamicFormProps, dynamicInputSelect } from '../../utils/dForms'
 import FormView from '../../components/FormView'
 import moment from 'moment'
@@ -154,10 +160,7 @@ const UserRoles = () => {
 
   return (
     <>
-      <Head>
-        <title>User Roles</title>
-        <meta property="og:title" content="User Roles" key="title" />
-      </Head>
+      <Meta title="User Roles" />
 
       {deleteApi?.isSuccess && (
         <Message

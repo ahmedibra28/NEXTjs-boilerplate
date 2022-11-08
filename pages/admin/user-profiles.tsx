@@ -1,8 +1,7 @@
 import React, { useState, useEffect, FormEvent } from 'react'
-import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import withAuth from '../../HoC/withAuth'
-import { Spinner, Pagination, Message, Search } from '../../components'
+import { Spinner, Pagination, Message, Search, Meta } from '../../components'
 import moment from 'moment'
 import Image from 'next/image'
 import apiHook from '../../api'
@@ -53,10 +52,7 @@ const UserProfiles = () => {
 
   return (
     <>
-      <Head>
-        <title>User Profiles</title>
-        <meta property="og:title" content="User Profiles" key="title" />
-      </Head>
+      <Meta title="User Profiles" />
 
       <div className="ms-auto text-end">
         <Pagination data={table.data} setPage={setPage} />
