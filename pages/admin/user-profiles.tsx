@@ -41,8 +41,8 @@ const UserProfiles = () => {
 
   // TableView
   const table = {
-    header: ['Name', 'Address', 'Phone', 'Email'],
-    body: ['name', 'address', 'phone', 'user.email'],
+    header: ['Name', 'Address', 'Mobile', 'Email'],
+    body: ['name', 'address', 'mobile', 'user.email'],
     createdAt: 'createdAt',
     image: 'image',
     data: getApi?.data,
@@ -85,9 +85,9 @@ const UserProfiles = () => {
                 <th>Image</th>
                 <th>Name</th>
                 <th>Address</th>
-                <th>Phone</th>
+                <th>Mobile</th>
                 <th>Email</th>
-                <th>Created At</th>
+                <th>DateTime</th>
               </tr>
             </thead>
             <tbody>
@@ -104,7 +104,7 @@ const UserProfiles = () => {
                   </td>
                   <td>{item?.name}</td>
                   <td>{item?.address}</td>
-                  <td>{item?.phone}</td>
+                  <td>{item?.mobile}</td>
                   <td>{item?.user?.email}</td>
 
                   <td>{moment(item?.createdAt).format('lll')}</td>

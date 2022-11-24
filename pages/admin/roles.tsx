@@ -188,7 +188,8 @@ const Roles = () => {
 
   // FormView
   const formCleanHandler = () => {
-    reset(), setEdit(false)
+    reset()
+    setEdit(false)
   }
 
   const submitHandler = (data: {
@@ -303,8 +304,13 @@ const Roles = () => {
               data:
                 uniqueClientPermissions?.length > 0 &&
                 Object.values(g)[0]?.map(
-                  (item: { menu: any; path: any; _id: any }) => ({
-                    name: `${item.menu} - ${item.path}`,
+                  (item: {
+                    menu: any
+                    path: any
+                    _id: any
+                    description: string
+                  }) => ({
+                    name: `${item.description}`,
                     _id: item._id,
                   })
                 ),
@@ -397,7 +403,7 @@ const Roles = () => {
                 <th>Name</th>
                 <th>Type</th>
                 <th>Description</th>
-                <th>Created At</th>
+                <th>DateTime</th>
                 <th>Actions</th>
               </tr>
             </thead>

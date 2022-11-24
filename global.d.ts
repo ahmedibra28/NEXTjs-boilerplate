@@ -18,6 +18,7 @@ declare global {
   interface NextApiRequestExtended extends NextApiRequest {
     user: IUser
     url: any
+    // method: GET | POST | DELETE | PUT
     files: { file: string }
     query: {
       limit: string

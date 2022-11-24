@@ -105,7 +105,8 @@ const ClientPermissions = () => {
 
   // FormView
   const formCleanHandler = () => {
-    reset(), setEdit(false)
+    reset()
+    setEdit(false)
   }
 
   const submitHandler = (data: Omit<IClientPermission, '_id'>) => {
@@ -250,7 +251,7 @@ const ClientPermissions = () => {
                 <th>Menu</th>
                 <th>Path</th>
                 <th>Description</th>
-                <th>Created At</th>
+                <th>DateTime</th>
                 <th>Actions</th>
               </tr>
             </thead>

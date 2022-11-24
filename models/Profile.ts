@@ -6,7 +6,7 @@ export interface IProfile {
   name?: string
   image?: string
   address?: string
-  phone?: string
+  mobile?: number
   bio?: string
   user: Schema.Types.ObjectId
   createdAt?: Date
@@ -17,7 +17,7 @@ const profileSchema = new Schema<IProfile>(
     name: String,
     image: String,
     address: String,
-    phone: String,
+    mobile: Number,
     bio: String,
     user: {
       type: Schema.Types.ObjectId,

@@ -17,7 +17,6 @@ export const userInfo = () => {
 export const config = () => {
   return {
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${userInfo()?.userInfo?.token}`,
     },
   }

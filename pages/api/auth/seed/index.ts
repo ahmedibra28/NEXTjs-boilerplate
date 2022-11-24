@@ -19,13 +19,13 @@ import {
 
 const handler = nc()
 
-const secret = 'js'
-
 handler.get(
   async (req: NextApiRequestExtended, res: NextApiResponseExtended) => {
     await db()
     try {
-      if (!req.query.secret || req.query.secret !== secret)
+      const { secret } = req.query
+
+      if (!secret || secret !== 'js')
         return res.status(401).json({ error: 'Unauthorized' })
 
       // Delete all existing data
@@ -38,6 +38,7 @@ handler.get(
 
       // Create users
       const userObject = await User.create({
+        _id: users._id,
         name: users.name,
         email: users.email,
         password: users.password,
@@ -47,10 +48,11 @@ handler.get(
 
       // Create profiles for users
       await Profile.create({
+        _id: profile._id,
         user: userObject._id,
         name: userObject.name,
         address: profile.address,
-        phone: profile.phone,
+        mobile: profile.mobile,
         bio: profile.bio,
         image: `https://ui-avatars.com/api/?uppercase=true&name=${userObject.name}&background=random&color=random&size=128`,
       })
@@ -70,34 +72,39 @@ handler.get(
       })
 
       // Create permissions
-      const permissionObjects = await Permission.create(permissions)
+      const permissionsObj = Promise.all(
+        permissions?.map(async (obj) => await Permission.create(obj))
+      )
+      const permissionsObjects = await permissionsObj
 
       // Create client permissions
-      const clientPermissionObjects = await ClientPermission.create(
-        clientPermissions
+      const clientPermissionsObj = Promise.all(
+        clientPermissions?.map(
+          async (obj) => await ClientPermission.create(obj)
+        )
       )
+      const clientPermissionsObjects = await clientPermissionsObj
 
       // Create roles
-      const roleObjects = await Role.create(roles)
+      const roleObj = Promise.all(
+        roles?.map(async (obj) => await Role.create(obj))
+      )
+      const roleObjects = await roleObj
 
       // Create user roles
-      roleObjects.map(
-        async (r) =>
-          r.type === 'SUPER_ADMIN' &&
-          (await UserRole.create({
-            user: userObject._id,
-            role: r._id,
-          }))
-      )
+      await UserRole.create({
+        user: users._id,
+        role: roles[0]._id,
+      })
 
       // Find super admin role
       const superAdminRole = roleObjects.find((r) => r.type === 'SUPER_ADMIN')
 
       // Create permissions for super admin role
-      superAdminRole.permission = permissionObjects.map((p) => p._id)
+      superAdminRole.permission = permissionsObjects.map((p) => p._id)
 
       // create client permissions for super admin role
-      superAdminRole.clientPermission = clientPermissionObjects.map(
+      superAdminRole.clientPermission = clientPermissionsObjects.map(
         (p) => p._id
       )
 
@@ -106,6 +113,12 @@ handler.get(
 
       res.status(200).json({
         message: 'Database seeded successfully',
+        users: await User.countDocuments({}),
+        profiles: await Profile.countDocuments({}),
+        permissions: await Permission.countDocuments({}),
+        clientPermissions: await ClientPermission.countDocuments({}),
+        roles: await Role.countDocuments({}),
+        userRoles: await UserRole.countDocuments({}),
       })
     } catch (error: any) {
       res.status(500).json({ error: error.message })

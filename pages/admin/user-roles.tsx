@@ -115,7 +115,8 @@ const UserRoles = () => {
 
   // FormView
   const formCleanHandler = () => {
-    reset(), setEdit(false)
+    reset()
+    setEdit(false)
   }
 
   const submitHandler = (data: Omit<IUserRole, '_id'>) => {
@@ -239,7 +240,7 @@ const UserRoles = () => {
                 <th>Email</th>
                 <th>Role</th>
                 <th>Role Type</th>
-                <th>Created At</th>
+                <th>DateTime</th>
                 <th>Actions</th>
               </tr>
             </thead>

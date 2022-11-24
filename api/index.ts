@@ -49,19 +49,6 @@ export default function apiHook({ key, method, url }: Props) {
       )
       return { deleteObj }
 
-    case 'UPLOAD':
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const upload = useMutation(
-        (obj: { _id: string }) => api('POST', url, obj),
-        {
-          retry: 0,
-
-          onSuccess: () => queryClient.invalidateQueries(key),
-        }
-      )
-
-      return { upload }
-
     default:
       break
   }

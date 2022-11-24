@@ -5,7 +5,6 @@ export interface IPermission {
   name: string
   method: string
   route: string
-  auth: boolean
   description?: boolean
   createdAt?: Date
 }
@@ -20,7 +19,6 @@ const permissionSchema = new Schema<IPermission>(
       required: true,
     },
     route: { type: String, required: true, toLowerCase: true },
-    auth: { type: Boolean, default: true },
     description: String,
   },
   { timestamps: true }

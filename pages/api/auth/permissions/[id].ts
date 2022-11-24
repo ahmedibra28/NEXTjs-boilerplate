@@ -8,6 +8,7 @@ const schemaName = Permission
 const schemaNameString = 'Permission'
 
 const handler = nc()
+
 handler.use(isAuth)
 handler.put(
   async (req: NextApiRequestExtended, res: NextApiResponseExtended) => {

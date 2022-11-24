@@ -115,7 +115,8 @@ const Users = () => {
 
   // FormView
   const formCleanHandler = () => {
-    reset(), setEdit(false)
+    reset()
+    setEdit(false)
   }
 
   const submitHandler = (data: object) => {
@@ -270,7 +271,7 @@ const Users = () => {
                 <th>Email</th>
                 <th>Confirmed</th>
                 <th>Blocked</th>
-                <th>Created At</th>
+                <th>DateTime</th>
                 <th>Actions</th>
               </tr>
             </thead>

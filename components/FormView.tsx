@@ -1,3 +1,5 @@
+import { FaPaperPlane, FaTimesCircle } from 'react-icons/fa'
+
 interface Props {
   edit: boolean
   formCleanHandler: () => void
@@ -54,11 +56,13 @@ const FormView = ({
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-secondary "
+                  className="btn btn-secondary"
                   data-bs-dismiss="modal"
                   onClick={formCleanHandler}
                 >
-                  Close
+                  <>
+                    <FaTimesCircle className="mb-1" /> Close
+                  </>
                 </button>
                 <button
                   type="submit"
@@ -68,7 +72,9 @@ const FormView = ({
                   {isLoadingPost || isLoadingUpdate ? (
                     <span className="spinner-border spinner-border-sm" />
                   ) : (
-                    'Submit'
+                    <>
+                      <FaPaperPlane className="mb-1" /> Submit
+                    </>
                   )}
                 </button>
               </div>

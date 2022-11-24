@@ -108,7 +108,8 @@ const Permissions = () => {
 
   // FormView
   const formCleanHandler = () => {
-    reset(), setEdit(false)
+    reset()
+    setEdit(false)
   }
 
   const submitHandler = (data: Omit<IPermission, '_id'>) => {
@@ -161,17 +162,6 @@ const Permissions = () => {
         label: 'Description',
         name: 'description',
         placeholder: 'Description',
-      } as DynamicFormProps)}
-    </div>,
-    <div key={4} className="col-12">
-      {inputCheckBox({
-        register,
-        errors,
-        watch,
-        name: 'auth',
-        label: 'Auth',
-        isRequired: false,
-        placeholder: 'Auth',
       } as DynamicFormProps)}
     </div>,
   ]
@@ -258,8 +248,7 @@ const Permissions = () => {
                 <th>Name</th>
                 <th>Method</th>
                 <th>Route</th>
-                <th>Auth</th>
-                <th>Created At</th>
+                <th>DateTime</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -289,13 +278,6 @@ const Permissions = () => {
                     )}
                   </td>
                   <td>{item?.route}</td>
-                  <td>
-                    {item?.auth ? (
-                      <FaCheckCircle className="text-success" />
-                    ) : (
-                      <FaTimesCircle className="text-danger" />
-                    )}
-                  </td>
                   <td>{moment(item?.createdAt).format('lll')}</td>
                   <td>
                     <div className="btn-group">

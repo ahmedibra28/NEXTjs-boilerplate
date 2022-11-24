@@ -1,27 +1,13 @@
 const roles = [
   {
+    _id: '5e0af1c63b6482125c1b22cb',
     name: 'Super Admin',
     description:
       'Super Admins can access and manage all features and settings.',
     type: 'SUPER_ADMIN',
   },
   {
-    name: 'Author',
-    description: 'Authors can manage the content they have created.',
-    type: 'AUTHOR',
-  },
-  {
-    name: 'Editor',
-    description:
-      'Editors can manage and publish contents including those of other users.',
-    type: 'EDITOR',
-  },
-  {
-    name: 'Public',
-    description: 'Default role given to unauthenticated user.',
-    type: 'PUBLIC',
-  },
-  {
+    _id: '5e0af1c63b6482125c1b44cb',
     name: 'Authenticated',
     description: 'Default role given to authenticated user.',
     type: 'AUTHENTICATED',
@@ -29,6 +15,7 @@ const roles = [
 ]
 
 const users = {
+  _id: '5063114bd386d8fadbd6b00a',
   name: 'Ahmed Ibrahim',
   email: 'info@ahmedibra.com',
   password: '123456',
@@ -37,7 +24,8 @@ const users = {
 }
 
 const profile = {
-  phone: '+252615301507',
+  _id: '5063114bd386d8fadbd6b00b',
+  mobile: 252615301507,
   address: 'Mogadishu',
   image: 'https://github.com/ahmaat19.png',
   bio: 'Full Stack Developer',
@@ -51,6 +39,7 @@ const sort = {
 
 const clientPermissions = [
   {
+    _id: '637e0261fadbdf65bba856b6',
     name: 'Home',
     path: '/',
     menu: 'hidden',
@@ -58,6 +47,7 @@ const clientPermissions = [
     description: 'Home page',
   },
   {
+    _id: '637e0261fadbdf65bba856b7',
     name: 'Users',
     path: '/admin/users',
     menu: 'admin',
@@ -65,6 +55,7 @@ const clientPermissions = [
     description: 'Users page',
   },
   {
+    _id: '637e0261fadbdf65bba856b8',
     name: 'Roles',
     path: '/admin/roles',
     menu: 'admin',
@@ -72,6 +63,7 @@ const clientPermissions = [
     description: 'Roles page',
   },
   {
+    _id: '637e0261fadbdf65bba856b9',
     name: 'Profile',
     path: '/account/profile',
     menu: 'profile',
@@ -79,6 +71,7 @@ const clientPermissions = [
     description: 'Profile page',
   },
   {
+    _id: '637e0261fadbdf65bba856bb',
     name: 'Permissions',
     path: '/admin/permissions',
     menu: 'admin',
@@ -86,6 +79,7 @@ const clientPermissions = [
     description: 'Permissions page',
   },
   {
+    _id: '637e0261fadbdf65bba856ba',
     name: 'Client Permissions',
     path: '/admin/client-permissions',
     menu: 'admin',
@@ -93,6 +87,7 @@ const clientPermissions = [
     description: 'Client Permissions page',
   },
   {
+    _id: '637e0261fadbdf65bba856bc',
     name: 'User Roles',
     path: '/admin/user-roles',
     menu: 'admin',
@@ -100,6 +95,7 @@ const clientPermissions = [
     description: 'User Roles page',
   },
   {
+    _id: '637e0261fadbdf65bba856bd',
     name: 'User Profiles',
     path: '/admin/user-profiles',
     menu: 'admin',
@@ -111,180 +107,180 @@ const clientPermissions = [
 const permissions = [
   // Users
   {
-    description: 'Get All Users',
+    _id: '637e01fbfadbdf65bba855e2',
+    description: 'Users',
     route: '/api/auth/users',
-    auth: true,
     name: 'Users',
     method: 'GET',
   },
   {
-    description: 'Get User By Id',
+    _id: '637e01fbfadbdf65bba855e3',
+    description: 'User By Id',
     route: '/api/auth/users/:id',
-    auth: true,
     name: 'Users',
     method: 'GET',
   },
   {
-    description: 'Create User',
+    _id: '637e01fbfadbdf65bba855e4',
+    description: 'User',
     route: '/api/auth/users',
-    auth: true,
     name: 'Users',
     method: 'POST',
   },
   {
-    description: 'Update User',
+    _id: '637e01fbfadbdf65bba855e6',
+    description: 'User',
     route: '/api/auth/users/:id',
-    auth: true,
     name: 'Users',
     method: 'PUT',
   },
   {
-    description: 'Delete User',
+    _id: '637e01fbfadbdf65bba855e7',
+    description: 'User',
     route: '/api/auth/users/:id',
-    auth: true,
     name: 'Users',
     method: 'DELETE',
   },
 
   //   User Profile
   {
-    description: 'Get All User Profiles',
+    _id: '637e01fbfadbdf65bba855e5',
+    description: 'Profiles',
     route: '/api/auth/user-profiles',
-    auth: true,
     name: 'User Profiles',
     method: 'GET',
   },
   {
-    description: 'Get Profile',
+    _id: '637e01fbfadbdf65bba855e8',
+    description: 'Profile',
     route: '/api/auth/profile',
-    auth: true,
     name: 'User Profile',
     method: 'GET',
   },
   {
-    description: 'Update Profile',
-    route: '/api/auth/profile',
-    auth: true,
+    _id: '637e01fbfadbdf65bba855e9',
+    description: 'Profile',
+    route: '/api/auth/profile/:id',
     name: 'User Profile',
-    method: 'POST',
+    method: 'PUT',
   },
 
   //   Role
   {
-    description: 'Get All Roles',
+    _id: '637e01fbfadbdf65bba855ea',
+    description: 'Roles',
     route: '/api/auth/roles',
-    auth: true,
     name: 'Roles',
     method: 'GET',
   },
   {
-    description: 'Create Role',
+    _id: '637e01fbfadbdf65bba855eb',
+    description: 'Role',
     route: '/api/auth/roles',
-    auth: true,
     name: 'Roles',
     method: 'POST',
   },
   {
-    description: 'Update Role',
+    _id: '637e01fbfadbdf65bba855ec',
+    description: 'Role',
     route: '/api/auth/roles/:id',
-    auth: true,
     name: 'Roles',
     method: 'PUT',
   },
   {
-    description: 'Delete Role',
+    _id: '637e01fbfadbdf65bba855ed',
+    description: 'Role',
     route: '/api/auth/roles/:id',
-    auth: true,
     name: 'Roles',
     method: 'DELETE',
   },
 
   //   Permission
   {
-    description: 'Get All Permissions',
+    _id: '637e01fbfadbdf65bba855ee',
+    description: 'Permissions',
     route: '/api/auth/permissions',
-    auth: true,
     name: 'Permissions',
     method: 'GET',
   },
   {
-    description: 'Create Permission',
+    _id: '637e01fbfadbdf65bba855ef',
+    description: 'Permission',
     route: '/api/auth/permissions',
-    auth: true,
     name: 'Permissions',
     method: 'POST',
   },
   {
-    description: 'Update Permission',
+    _id: '637e01fbfadbdf65bba855f0',
+    description: 'Permission',
     route: '/api/auth/permissions/:id',
-    auth: true,
     name: 'Permissions',
     method: 'PUT',
   },
   {
-    description: 'Delete Permission',
+    _id: '637e01fbfadbdf65bba855f1',
+    description: 'Permission',
     route: '/api/auth/permissions/:id',
-    auth: true,
     name: 'Permissions',
     method: 'DELETE',
   },
 
   //   User Role
   {
-    description: 'Get All User Roles',
+    _id: '637e01fbfadbdf65bba855f2',
+    description: 'User Roles',
     route: '/api/auth/user-roles',
-    auth: true,
     name: 'User Roles',
     method: 'GET',
   },
   {
-    description: 'Create User Role',
+    _id: '637e01fbfadbdf65bba855f4',
+    description: 'User Role',
     route: '/api/auth/user-roles',
-    auth: true,
     name: 'User Roles',
     method: 'POST',
   },
   {
-    description: 'Update User Role',
+    _id: '637e01fbfadbdf65bba855f3',
+    description: 'User Role',
     route: '/api/auth/user-roles/:id',
-    auth: true,
     name: 'User Roles',
     method: 'PUT',
   },
   {
-    description: 'Delete User Role',
+    _id: '637e01fbfadbdf65bba855f5',
+    description: 'User Role',
     route: '/api/auth/user-roles/:id',
-    auth: true,
     name: 'User Roles',
     method: 'DELETE',
   },
 
   //   Client Permission
   {
-    description: 'Get All ClientPermissions',
+    _id: '637e01fbfadbdf65bba855f6',
+    description: 'Client Permissions',
     route: '/api/auth/client-permissions',
-    auth: true,
     name: 'ClientPermissions',
     method: 'GET',
   },
   {
-    description: 'Create Permission',
+    _id: '637e01fbfadbdf65bba855f7',
+    description: 'Client Permission',
     route: '/api/auth/client-permissions',
-    auth: true,
     name: 'ClientPermissions',
     method: 'POST',
   },
   {
-    description: 'Update Permission',
+    _id: '637e01fbfadbdf65bba855f8',
+    description: 'Client Permission',
     route: '/api/auth/client-permissions/:id',
-    auth: true,
     name: 'ClientPermissions',
     method: 'PUT',
   },
   {
-    description: 'Delete Permission',
+    _id: '637e01fbfadbdf65bba855f9',
+    description: 'Client Permission',
     route: '/api/auth/client-permissions/:id',
-    auth: true,
     name: 'ClientPermissions',
     method: 'DELETE',
   },

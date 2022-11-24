@@ -36,44 +36,46 @@ const Profile = () => {
     method: 'GET',
     url: `auth/profile`,
   })?.get
-  const postApi = apiHook({
-    key: ['profiles'],
-    method: 'POST',
-    url: `auth/profile`,
-  })?.post
   const updateApi = apiHook({
+    key: ['profiles'],
+    method: 'PUT',
+    url: `auth/profile`,
+  })?.put
+  const uploadApi = apiHook({
     key: ['upload'],
-    method: 'UPLOAD',
+    method: 'POST',
     url: `upload?type=image`,
-  })?.upload
+  })?.post
 
   useEffect(() => {
-    if (postApi?.isSuccess) {
+    if (updateApi?.isSuccess) {
       getApi?.refetch()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postApi?.isSuccess])
+  }, [updateApi?.isSuccess])
 
   useEffect(() => {
     setValue('name', !getApi?.isLoading ? getApi?.data?.name : '')
     setValue('address', !getApi?.isLoading ? getApi?.data?.address : '')
-    setValue('phone', !getApi?.isLoading ? getApi?.data?.phone : '')
+    setValue('mobile', !getApi?.isLoading ? getApi?.data?.mobile : '')
     setValue('bio', !getApi?.isLoading ? getApi?.data?.bio : '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getApi?.isLoading, setValue])
 
   const submitHandler = (data: IProfileFormValueProps) => {
     if (!file && !fileLink) {
-      postApi?.mutateAsync({
+      updateApi?.mutateAsync({
+        _id: getApi?.data?.user?._id,
         name: data?.name,
         address: data?.address,
-        phone: data?.phone,
+        mobile: data?.mobile,
         bio: data?.bio,
         password: data?.password,
       })
     } else {
-      postApi?.mutateAsync({
+      updateApi?.mutateAsync({
         ...data,
+        _id: getApi?.data?.user?._id,
         image: fileLink,
       })
     }
@@ -83,48 +85,46 @@ const Profile = () => {
     if (file) {
       const formData = new FormData()
       formData.append('file', file)
-      updateApi?.mutateAsync({ _id: getApi?.data?.data?._id, ...formData })
+      uploadApi?.mutateAsync(formData)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file])
 
   useEffect(() => {
-    if (updateApi?.isSuccess) {
-      setFileLink(
-        updateApi?.data &&
-          updateApi?.data.filePaths &&
-          updateApi?.data.filePaths[0] &&
-          updateApi?.data.filePaths[0].path
-      )
+    if (uploadApi?.isSuccess) {
+      setFileLink(uploadApi?.data.filePaths?.[0]?.path)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateApi?.isSuccess])
+  }, [uploadApi?.isSuccess])
 
   return (
     <FormContainer>
       <Meta title="Profile" />
       <h3 className="fw-light font-monospace text-center">User Profile</h3>
 
-      {postApi?.isError && <Message variant="danger" value={postApi?.error} />}
-
       {updateApi?.isError && (
         <Message variant="danger" value={updateApi?.error} />
       )}
+
+      {uploadApi?.isError && (
+        <Message variant="danger" value={uploadApi?.error} />
+      )}
       {getApi?.isError && <Message variant="danger" value={getApi?.error} />}
-      {postApi?.isSuccess && (
-        <Message variant="danger" value="User has been updated successfully" />
+      {updateApi?.isSuccess && (
+        <Message variant="success" value="User has been updated successfully" />
       )}
 
       {getApi?.isLoading && <Spinner />}
       <form onSubmit={handleSubmit(submitHandler)}>
         {getApi?.data?.image && (
-          <div className="d-flex justify-content-center">
+          <div className="text-center rounded-pill">
             <Image
               src={getApi?.data?.image}
               alt="avatar"
-              className="rounded-circle"
-              width="200"
-              height="200"
+              width="100"
+              height="100"
+              style={{ objectFit: 'cover' }}
+              className="rounded-pill"
             />
           </div>
         )}
@@ -152,8 +152,8 @@ const Profile = () => {
             {inputTel({
               register,
               errors,
-              label: 'Phone',
-              name: 'phone',
+              label: 'Mobile',
+              name: 'mobile',
               placeholder: '+252 (61) 530-1507',
             } as DynamicFormProps)}
           </div>
@@ -207,9 +207,9 @@ const Profile = () => {
         <button
           type="submit"
           className="btn btn-primary form-control"
-          disabled={postApi?.isLoading || updateApi?.isLoading}
+          disabled={updateApi?.isLoading || uploadApi?.isLoading}
         >
-          {postApi?.isLoading || updateApi?.isLoading ? (
+          {updateApi?.isLoading || uploadApi?.isLoading ? (
             <span className="spinner-border spinner-border-sm" />
           ) : (
             'Update'
