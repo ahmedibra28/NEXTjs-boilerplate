@@ -4,12 +4,15 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import apiHook from '../../../api'
-import { userInfo } from '../../../api/api'
 import { DynamicFormProps, inputPassword } from '../../../utils/dForms'
+import useStore from '../../../zustand/useStore'
 
 const Reset = () => {
   const router = useRouter()
   const { resetToken } = router.query
+  const { userInfo } = useStore((state) => state) as {
+    userInfo: any
+  }
 
   const {
     register,
@@ -36,7 +39,8 @@ const Reset = () => {
   }, [postApi?.isSuccess])
 
   useEffect(() => {
-    userInfo() && userInfo().userInfo && router.push('/')
+    userInfo && router.push('/')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
   const submitHandler = (data: { password?: string; resetToken?: string }) => {

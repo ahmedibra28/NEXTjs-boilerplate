@@ -2,18 +2,48 @@ import React, { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { FaSignInAlt, FaPowerOff } from 'react-icons/fa'
-import { userInfo } from '../api/api'
+import { FaSignInAlt, FaPowerOff, FaBars, FaUser } from 'react-icons/fa'
 import { IClientPermission } from '../models/ClientPermission'
+import useStore from '../zustand/useStore'
+// import apiHook from '../api'
+// import { useRouter } from 'next/router'
 
 const Logout = () => {
   typeof window !== undefined && localStorage.removeItem('userRole')
   return typeof window !== undefined && localStorage.removeItem('userInfo')
 }
 
-const Navigation = () => {
+const Navigation = ({ toggle }: { toggle: () => void }) => {
+  const { userInfo, logout } = useStore((state) => state) as {
+    userInfo: any
+    logout: () => void
+  }
+  // const { route } = useRouter()
+
+  // const getApi = apiHook({
+  //   key: ['routes'],
+  //   method: 'GET',
+  //   url: `auth/client-permissions/routes?id=${userInfo?._id}`,
+  // })?.get
+
+  // useEffect(() => {
+  //   if (getApi?.isSuccess && userInfo) {
+  //     typeof window !== undefined &&
+  //       localStorage.setItem(
+  //         'userInfo',
+  //         JSON.stringify({
+  //           ...userInfo,
+  //           role: getApi?.data?.role,
+  //           routes: getApi?.data?.routes,
+  //         })
+  //       )
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [getApi?.isSuccess, route])
+
   const logoutHandler = () => {
     Logout()
+    logout()
   }
 
   const guestItems = () => {
@@ -31,16 +61,12 @@ const Navigation = () => {
   }
 
   const menus = () => {
-    const dropdownItems = userInfo()?.userInfo?.routes?.map(
-      (route: IClientPermission) => ({
-        menu: route.menu,
-        sort: route.sort,
-      })
-    )
+    const dropdownItems = userInfo?.routes?.map((route: IClientPermission) => ({
+      menu: route.menu,
+      sort: route.sort,
+    }))
 
-    const menuItems = userInfo()?.userInfo?.routes?.map(
-      (route: IClientPermission) => route
-    )
+    const menuItems = userInfo?.routes?.map((route: IClientPermission) => route)
 
     const dropdownArray = dropdownItems?.filter(
       (item: IClientPermission) =>
@@ -66,72 +92,50 @@ const Navigation = () => {
 
   useEffect(() => {
     menus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const authItems = () => {
     return (
       <>
         <ul className="navbar-nav ms-auto">
-          {menus()?.menuItems?.map(
-            (menu: IClientPermission, index: number) =>
-              menu.menu === 'normal' && (
-                <li key={index} className="nav-item">
-                  <Link
-                    href={menu.path}
-                    className="nav-link"
-                    aria-current="page"
-                  >
-                    {menu.name}
-                  </Link>
-                </li>
-              )
-          )}
-
-          {menus()?.uniqueDropdowns?.map(
-            (item: IClientPermission, index: number) => (
-              <li key={index} className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  id="navbarDropdownMenuLink"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {item?.menu === 'profile'
-                    ? userInfo()?.userInfo?.name
-                    : item?.menu.charAt(0).toUpperCase() +
-                      item?.menu.substring(1)}
-                </a>
-                <ul
-                  className="dropdown-menu border-0"
-                  aria-labelledby="navbarDropdownMenuLink"
-                >
-                  {menus() &&
-                    menus().menuItems.map(
-                      (menu: IClientPermission, index: number) =>
-                        menu.menu === item?.menu && (
-                          <li key={index}>
-                            <Link href={menu.path} className="dropdown-item">
-                              {menu.name}
-                            </Link>
-                          </li>
-                        )
-                    )}
-                </ul>
-              </li>
-            )
-          )}
-
-          <li className="nav-item">
-            <Link
-              href="/auth/login"
-              className="nav-link"
-              aria-current="page"
-              onClick={logoutHandler}
+          <li className="nav-item dropdown profile-dropdown dropstart profile-dropdown">
+            <a
+              className="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
             >
-              <FaPowerOff className="mb-1" /> Logout
-            </Link>
+              <Image
+                src="https://github.com/ahmaat19.png"
+                alt="Ahmed"
+                className="rounded-pill me-1"
+                width={30}
+                height={30}
+              />
+            </a>
+            <ul className="dropdown-menu border-0 shadow-lg">
+              <li>
+                <Link
+                  href="/account/profile"
+                  className="dropdown-item"
+                  aria-current="page"
+                >
+                  <FaUser className="mb-1" /> {userInfo?.name}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/auth/login"
+                  className="dropdown-item"
+                  aria-current="page"
+                  onClick={logoutHandler}
+                >
+                  <FaPowerOff className="mb-1" /> Logout
+                </Link>
+              </li>
+            </ul>
           </li>
         </ul>
       </>
@@ -140,20 +144,13 @@ const Navigation = () => {
 
   return (
     <nav
-      className="navbar navbar-expand-md navbar-light bg-light"
-      style={{ minHeight: 55 }}
+      className="navbar navbar-expand-md navbar-light bg-light position-fixed w-100"
+      style={{ minHeight: 55, zIndex: 1 }}
     >
-      <div className="container">
-        <Link href="/">
-          <Image
-            priority
-            width="40"
-            height="40"
-            src="/favicon.png"
-            className="img-fluid brand-logos"
-            alt="logo"
-          />
-        </Link>
+      <div className="container-fluid">
+        {/* {userInfo && <FaBars onClick={toggle} className="fs-5 ms-1s" />} */}
+
+        <FaBars onClick={userInfo && toggle} className="fs-5 ms-1s" />
 
         <button
           className="navbar-toggler"
@@ -167,7 +164,7 @@ const Navigation = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          {userInfo()?.userInfo ? authItems() : guestItems()}
+          {userInfo ? authItems() : guestItems()}
         </div>
       </div>
     </nav>

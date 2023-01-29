@@ -22,7 +22,7 @@ export const config = () => {
   }
 }
 
-const axiosApi = async (method: string, url: string, obj = {}) => {
+const api = async (method: string, url: string, obj = {}) => {
   try {
     switch (method) {
       case 'GET':
@@ -50,4 +50,4 @@ const axiosApi = async (method: string, url: string, obj = {}) => {
   }
 }
 
-export default axiosApi
+export default api

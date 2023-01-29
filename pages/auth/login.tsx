@@ -5,12 +5,17 @@ import { FormContainer, Message } from '../../components'
 import { useForm } from 'react-hook-form'
 import Head from 'next/head'
 import apiHook from '../../api'
-import { userInfo } from '../../api/api'
 import { DynamicFormProps, inputEmail, inputPassword } from '../../utils/dForms'
+import useStore from '../../zustand/useStore'
 
 const Login = () => {
   const router = useRouter()
   const pathName = router.query.next || '/'
+  const { userInfo, login } = useStore((state) => state) as {
+    userInfo: any
+    login: () => void
+  }
+
   const {
     register,
     handleSubmit,
@@ -27,13 +32,15 @@ const Login = () => {
     if (postApi?.isSuccess) {
       typeof window !== undefined &&
         localStorage.setItem('userInfo', JSON.stringify(postApi?.data))
+
+      login()
       router.push(pathName as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postApi?.isSuccess])
 
   useEffect(() => {
-    userInfo() && userInfo().userInfo && router.push('/')
+    userInfo && router.push('/')
   }, [router])
 
   const submitHandler = async (data: { email?: string; password?: string }) => {

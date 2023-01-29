@@ -4,11 +4,13 @@ import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import Head from 'next/head'
 import apiHook from '../../api'
-import { userInfo } from '../../api/api'
 import { DynamicFormProps, inputEmail } from '../../utils/dForms'
+import useStore from '../../zustand/useStore'
 
 const Forgot = () => {
   const router = useRouter()
+  const { userInfo } = useStore((state) => state) as any
+
   const {
     register,
     handleSubmit,
@@ -28,7 +30,8 @@ const Forgot = () => {
   }, [postApi?.isSuccess])
 
   useEffect(() => {
-    userInfo() && userInfo().userInfo && router.push('/')
+    userInfo && router.push('/')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
   const submitHandler = (data: { email?: string }) => {

@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 export interface DynamicFormProps {
   register: any
   placeholder: string
@@ -10,15 +12,107 @@ export interface DynamicFormProps {
   watch: any
   data: any
   value: string
+  format: any
+  hasLabel: boolean
+  max?: number
+  setSearch: (e: string) => void
+  setValue: (e: string, v2: string) => void
   setFile: (e: any) => void
+  edit: boolean
+}
+
+export const AutoCompleteInput = (args: DynamicFormProps) => {
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    isRequired = true,
+    hasLabel = true,
+    data = [],
+    value,
+    setValue,
+    setSearch,
+    format,
+    edit = true,
+  } = args
+
+  const [visible, setVisible] = useState(true)
+  const [selectedValue, setSelectedValue] = useState('')
+
+  useEffect(() => {
+    if (selectedValue !== value) {
+      setVisible(true)
+    }
+
+    setSearch(value)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
+
+  useEffect(() => {
+    if (edit) {
+      setVisible(false)
+    }
+  }, [edit])
+
+  const selectedItem = (item: string) => {
+    setValue(name, item)
+    setSelectedValue(item)
+    setVisible(false)
+  }
+
+  return (
+    <div className="mb-3 position-relative">
+      {hasLabel && <label htmlFor={name}>{label}</label>}
+      <input
+        {...register(name, isRequired && { required: `${label} is required` })}
+        type="text"
+        placeholder={placeholder}
+        className="form-control shadow-none specialInput"
+        autoComplete="off"
+      />
+      {visible && value && data?.length > 0 && (
+        <div
+          className="bg-light position-absolute start-0 end-0 animate__animated  animate__fadeIn border border-top-0"
+          style={{ zIndex: 10 }}
+        >
+          <ul className="list-inline px-2 mx-1">
+            {value &&
+              data?.map((d) => (
+                <li
+                  key={d?._id}
+                  className="border border-top-0 border-start-0 border-end-0 my-1  py-1"
+                  onClick={() => selectedItem(d?.name)}
+                >
+                  {format(d)}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+
+      {errors && errors[name] && (
+        <span className="text-danger">{errors[name].message}</span>
+      )}
+    </div>
+  )
 }
 
 export const inputText = (args: DynamicFormProps) => {
-  const { register, placeholder, errors, name, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    isRequired = true,
+    hasLabel = true,
+  } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type="text"
@@ -33,11 +127,19 @@ export const inputText = (args: DynamicFormProps) => {
 }
 
 export const inputTel = (args: DynamicFormProps) => {
-  const { register, placeholder, errors, name, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    isRequired = true,
+    hasLabel = true,
+  } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type="tel"
@@ -52,11 +154,19 @@ export const inputTel = (args: DynamicFormProps) => {
 }
 
 export const inputTextArea = (args: DynamicFormProps) => {
-  const { register, placeholder, errors, name, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    isRequired = true,
+    hasLabel = true,
+  } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <textarea
         rows="5"
         cols="30"
@@ -73,16 +183,27 @@ export const inputTextArea = (args: DynamicFormProps) => {
 }
 
 export const inputNumber = (args: DynamicFormProps) => {
-  const { register, placeholder, errors, name, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    isRequired = true,
+    hasLabel = true,
+    max = 100000000000,
+  } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type="number"
+        step={0.01}
         placeholder={placeholder}
         className="form-control"
+        max={max}
       />
       {errors && errors[name] && (
         <span className="text-danger">{errors[name].message}</span>
@@ -92,11 +213,11 @@ export const inputNumber = (args: DynamicFormProps) => {
 }
 
 export const inputEmail = (args: DynamicFormProps) => {
-  const { register, placeholder, errors, label, name } = args
+  const { register, placeholder, errors, label, name, hasLabel = true } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <input
         {...register(name, {
           required: `${label} is required`,
@@ -127,11 +248,12 @@ export const inputPassword = (args: DynamicFormProps) => {
     validate = false,
     isRequired = true,
     minLength = false,
+    hasLabel = true,
   } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <input
         {...register(name, {
           required: isRequired ? `${label} is required` : null,
@@ -167,11 +289,12 @@ export const dynamicInputSelect = (args: DynamicFormProps) => {
     data,
     isRequired = true,
     value,
+    hasLabel = true,
   } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type="text"
@@ -182,7 +305,9 @@ export const dynamicInputSelect = (args: DynamicFormProps) => {
         {data &&
           data.map((d: any) => (
             <option key={d._id} value={d._id}>
-              {d[value]}
+              {['warehouse'].includes(name)
+                ? `${d?.branch?.name} - ${d[value]}`
+                : d[value]}
             </option>
           ))}
       </select>
@@ -202,11 +327,12 @@ export const staticInputSelect = (args: DynamicFormProps) => {
     data,
     label,
     isRequired = true,
+    hasLabel = true,
   } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type="text"
@@ -300,11 +426,12 @@ export const inputFile = (args: DynamicFormProps) => {
     isRequired = true,
     label,
     setFile,
+    hasLabel = true,
   } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type="file"
@@ -321,11 +448,19 @@ export const inputFile = (args: DynamicFormProps) => {
 }
 
 export const inputDate = (args: DynamicFormProps) => {
-  const { register, placeholder, errors, name, label, isRequired = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    name,
+    label,
+    isRequired = true,
+    hasLabel = true,
+  } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <input
         {...register(name, isRequired && { required: `${label} is required` })}
         type="date"
@@ -390,11 +525,12 @@ export const dynamicInputSelectNumber = (args: DynamicFormProps) => {
     label,
     data,
     isRequired = true,
+    hasLabel = true,
   } = args
 
   return (
     <div className="mb-3">
-      <label htmlFor={name}>{label}</label>
+      {hasLabel && <label htmlFor={name}>{label}</label>}
       <select
         {...register(name, isRequired && { required: `${label} is required` })}
         type="text"

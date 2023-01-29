@@ -1,13 +1,19 @@
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useInfiniteQuery,
+} from '@tanstack/react-query'
 import api from './api'
 
 interface Props {
   key: string[]
   method: string
   url: string
+  scrollMethod?: string
 }
 
-export default function apiHook({ key, method, url }: Props) {
+export default function apiHook({ key, method, scrollMethod, url }: Props) {
   const queryClient = new QueryClient()
   switch (method) {
     case 'GET':
@@ -15,6 +21,7 @@ export default function apiHook({ key, method, url }: Props) {
       const get = useQuery(key, () => api(method, url, {}), {
         retry: 0,
       })
+
       return { get }
 
     case 'POST':
@@ -48,6 +55,25 @@ export default function apiHook({ key, method, url }: Props) {
         }
       )
       return { deleteObj }
+
+    case 'InfiniteScroll':
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const infinite = useInfiniteQuery(
+        key,
+        ({ pageParam = 1 }) =>
+          api(scrollMethod, `${url}&page=${pageParam}`, {}),
+        {
+          getNextPageParam: (lastPage, allPages) => {
+            const maxPage = lastPage?.pages
+            const nextPage = allPages?.length + 1
+
+            return nextPage <= maxPage ? nextPage : undefined
+          },
+          retry: 0,
+        }
+      )
+
+      return { infinite }
 
     default:
       break
