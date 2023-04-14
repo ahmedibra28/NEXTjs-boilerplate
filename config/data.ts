@@ -27,7 +27,7 @@ const profile = {
   _id: '5063114bd386d8fadbd6b00b',
   mobile: 252615301507,
   address: 'Mogadishu',
-  image: 'https://github.com/ahmaat19.png',
+  image: 'https://github.com/ahmedibradotcom.png',
   bio: 'Full Stack Developer',
 }
 

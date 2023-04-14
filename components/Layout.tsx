@@ -26,7 +26,7 @@ const Layout: React.FC<Props> = ({ children }) => {
         <main
           className="container mt-5 py-4"
           style={{
-            minHeight: 'calc(100vh - 110px)',
+            minHeight: 'calc(100vh - 80px)',
             marginLeft: toggler ? 220 : 'auto',
           }}
         >

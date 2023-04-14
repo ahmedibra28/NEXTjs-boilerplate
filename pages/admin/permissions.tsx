@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
-import withAuth from '../../HoC/withAuth'
+import withAuth from '../../HOC/withAuth'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import {
@@ -166,7 +166,7 @@ const Permissions = () => {
     </div>,
   ]
 
-  const modalSize = 'modal-lg'
+  const modalSize = 'modal-md'
 
   return (
     <>

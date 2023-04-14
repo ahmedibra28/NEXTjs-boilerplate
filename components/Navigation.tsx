@@ -108,7 +108,7 @@ const Navigation = ({ toggle }: { toggle: () => void }) => {
               aria-expanded="false"
             >
               <Image
-                src="https://github.com/ahmaat19.png"
+                src={userInfo?.image}
                 alt="Ahmed"
                 className="rounded-pill me-1"
                 width={30}

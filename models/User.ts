@@ -1,6 +1,6 @@
 import { Schema, model, models } from 'mongoose'
 import crypto from 'crypto'
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcrypt'
 
 export interface IUser {
   _id: Schema.Types.ObjectId

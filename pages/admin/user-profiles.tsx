@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
-import withAuth from '../../HoC/withAuth'
+import withAuth from '../../HOC/withAuth'
 import { Spinner, Pagination, Message, Search, Meta } from '../../components'
 import moment from 'moment'
 import Image from 'next/image'

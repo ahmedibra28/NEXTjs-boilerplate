@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import withAuth from '../../HoC/withAuth'
+import withAuth from '../../HOC/withAuth'
 import { FormContainer, Message, Meta } from '../../components'
 import { useForm } from 'react-hook-form'
 import {

@@ -34,9 +34,11 @@ export const isAuth = async (
           select: 'permission',
           populate: {
             path: 'permission',
+            select: ['method', 'route'],
           },
         })
         .populate('user', ['-password', '-createdAt', '-updatedAt'])
+        .lean()
 
       req.user = userRole?.user
 
@@ -44,7 +46,6 @@ export const isAuth = async (
         (per: IPermission) => ({
           route: per?.route,
           method: per?.method,
-          auth: per?.auth,
         })
       )
 

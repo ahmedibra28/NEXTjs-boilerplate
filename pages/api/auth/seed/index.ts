@@ -23,39 +23,10 @@ handler.get(
   async (req: NextApiRequestExtended, res: NextApiResponseExtended) => {
     await db()
     try {
-      const { secret } = req.query
+      const { secret, option } = req.query
 
-      if (!secret || secret !== 'js')
+      if (!secret || secret !== 'ts')
         return res.status(401).json({ error: 'Unauthorized' })
-
-      // Delete all existing data
-      await User.deleteMany({})
-      await Profile.deleteMany({})
-      await Role.deleteMany({})
-      await Permission.deleteMany({})
-      await UserRole.deleteMany({})
-      await ClientPermission.deleteMany({})
-
-      // Create users
-      const userObject = await User.create({
-        _id: users._id,
-        name: users.name,
-        email: users.email,
-        password: users.password,
-        confirmed: true,
-        blocked: false,
-      })
-
-      // Create profiles for users
-      await Profile.create({
-        _id: profile._id,
-        user: userObject._id,
-        name: userObject.name,
-        address: profile.address,
-        mobile: profile.mobile,
-        bio: profile.bio,
-        image: `https://ui-avatars.com/api/?uppercase=true&name=${userObject.name}&background=random&color=random&size=128`,
-      })
 
       // Check duplicate permissions
       permissions.map((p) => {
@@ -71,31 +42,98 @@ handler.get(
         }
       })
 
+      if (option === 'reset') {
+        // Delete all existing data
+        await User.deleteMany({})
+        await Profile.deleteMany({})
+        await Role.deleteMany({})
+        await Permission.deleteMany({})
+        await UserRole.deleteMany({})
+        await ClientPermission.deleteMany({})
+      }
+
+      // Create users
+      let userObject = await User.findById(users._id)
+      if (userObject) {
+        userObject.name = users.name
+        userObject.email = users.email
+        userObject.password = users.password
+        userObject.confirmed = true
+        userObject.blocked = false
+      } else {
+        userObject = await User.create({
+          _id: users._id,
+          name: users.name,
+          email: users.email,
+          password: users.password,
+          confirmed: true,
+          blocked: false,
+        })
+      }
+
+      // Create profiles for users
+      await Profile.findOneAndUpdate(
+        { _id: profile._id },
+        {
+          _id: profile._id,
+          user: userObject._id,
+          name: userObject.name,
+          address: profile.address,
+          mobile: profile.mobile,
+          bio: profile.bio,
+          image: `https://ui-avatars.com/api/?uppercase=true&name=${userObject.name}&background=random&color=random&size=128`,
+        },
+        { new: true, upsert: true }
+      )
+
       // Create permissions
       const permissionsObj = Promise.all(
-        permissions?.map(async (obj) => await Permission.create(obj))
+        permissions?.map(
+          async (obj) =>
+            await Permission.findOneAndUpdate({ _id: obj._id }, obj, {
+              new: true,
+              upsert: true,
+            })
+        )
       )
       const permissionsObjects = await permissionsObj
 
       // Create client permissions
       const clientPermissionsObj = Promise.all(
         clientPermissions?.map(
-          async (obj) => await ClientPermission.create(obj)
+          async (obj) =>
+            await ClientPermission.findOneAndUpdate({ _id: obj._id }, obj, {
+              new: true,
+              upsert: true,
+            })
         )
       )
       const clientPermissionsObjects = await clientPermissionsObj
 
       // Create roles
       const roleObj = Promise.all(
-        roles?.map(async (obj) => await Role.create(obj))
+        roles?.map(
+          async (obj) =>
+            await Role.findOneAndUpdate({ _id: obj._id }, obj, {
+              new: true,
+              upsert: true,
+            })
+        )
       )
       const roleObjects = await roleObj
 
       // Create user roles
-      await UserRole.create({
-        user: users._id,
-        role: roles[0]._id,
-      })
+      await UserRole.findOneAndUpdate(
+        { user: users._id },
+        {
+          user: users._id,
+          role: roles[0]._id,
+        },
+        {
+          new: true,
+          upsert: true,
+        }
+      )
 
       // Find super admin role
       const superAdminRole = roleObjects.find((r) => r.type === 'SUPER_ADMIN')

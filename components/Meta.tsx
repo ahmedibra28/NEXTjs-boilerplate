@@ -39,7 +39,7 @@ const Meta = (props: Props) => {
 
       <meta
         name="keywords"
-        content="ahmedibra, ahmedibra.com, https://ahmedibra.com, https://github.com/ahmaat19, github.com/ahmaat19, next.js, next-ts, typescript, next-typescript, boilerplate, next-ts-boilerplate, next-boilerplate, next.js-boilerplate"
+        content="ahmedibra, ahmedibra.com, https://ahmedibra.com, https://github.com/ahmedibradotcom, github.com/ahmedibradotcom, next.js, next-ts, typescript, next-typescript, boilerplate, next-ts-boilerplate, next-boilerplate, next.js-boilerplate"
       />
       <meta name="author" content={props?.author ? props?.author : author} />
       <meta name="publisher" content={props?.author ? props?.author : author} />
