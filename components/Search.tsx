@@ -1,3 +1,4 @@
+'use client'
 import { FormEvent } from 'react'
 import { FaSearch } from 'react-icons/fa'
 
@@ -11,20 +12,21 @@ interface Props {
 const Search = ({ q, setQ, placeholder, searchHandler }: Props) => {
   return (
     <form onSubmit={searchHandler}>
-      <div className="input-group">
-        <input
-          type="text"
-          className="form-control"
-          placeholder={placeholder}
-          aria-label="Search"
-          onChange={(e) => setQ(e.target.value)}
-          value={q}
-        />
-        <div className="input-group-append">
-          <button type="submit" className="btn btn-outline-secondary">
+      <div className='form-control'>
+        <label className='input-group'>
+          <input
+            className='input rounded-none border border-gray-300 w-full focus:outline-none'
+            type='text'
+            placeholder={placeholder}
+            aria-label='Search'
+            onChange={(e) => setQ(e.target.value)}
+            value={q}
+          />
+          {/* <span>BTC</span> */}
+          <button type='submit' className='btn btn-outline-secondary'>
             <FaSearch />
           </button>
-        </div>
+        </label>
       </div>
     </form>
   )

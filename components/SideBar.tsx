@@ -1,221 +1,107 @@
-import Image from 'next/image'
+'use client'
+import useUserInfoStore from '@/zustand/userStore'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { FaLink, FaCogs, FaHome, FaUserCog } from 'react-icons/fa'
-import apiHook from '../api'
-import { userInfo } from '../api/api'
-import { IClientPermission } from '../models/ClientPermission'
+import React, { Fragment } from 'react'
+import {
+  FaAngleDown,
+  FaAngleUp,
+  FaCogs,
+  FaHome,
+  FaUserShield,
+} from 'react-icons/fa'
 
-const SideBar = () => {
-  const [show, setShow] = useState(null)
-  const router = useRouter()
+const Sidebar = ({ children }: any) => {
+  const { userInfo } = useUserInfoStore((state) => state)
 
-  useEffect(() => {
-    typeof document !== 'undefined' && setShow(userInfo().userInfo)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router])
+  const [menu, setMenu] = React.useState<any>(userInfo.menu)
 
-  const menus = () => {
-    let dropdownItems = userInfo()?.userInfo?.routes?.map(
-      (route: IClientPermission) => ({
-        menu: route.menu,
-        sort: route.sort,
-      })
-    )
-    dropdownItems = dropdownItems?.filter(
-      (item: IClientPermission) => item?.menu !== 'profile'
-    )
-
-    const menuItems = userInfo()?.userInfo?.routes?.map(
-      (route: IClientPermission) => route
-    )
-
-    const dropdownArray = dropdownItems?.filter(
-      (item: IClientPermission) =>
-        item?.menu !== 'hidden' && item?.menu !== 'normal'
-    )
-
-    const uniqueDropdowns = dropdownArray?.reduce((a: any[], b: any) => {
-      const i = a.findIndex((x: IClientPermission) => x.menu === b.menu)
-      return (
-        i === -1 ? a.push({ menu: b.menu, ...b, times: 1 }) : a[i].times++, a
-      )
-    }, [])
-
-    return {
-      uniqueDropdowns: uniqueDropdowns?.sort(
-        (a: { sort: number }, b: { sort: number }) => b?.sort - a?.sort
-      ),
-      menuItems: menuItems?.sort(
-        (a: { sort: number }, b: { sort: number }) => b?.sort - a?.sort
-      ),
+  React.useEffect(() => {
+    if (userInfo.id) {
+      setMenu(userInfo.menu)
     }
+  }, [userInfo])
+
+  const handleToggle = (item: any) => {
+    const newMenu = menu.map((x: any) => {
+      if (x.name === item.name) {
+        return { ...x, open: !x.open }
+      }
+      return { ...x, open: false }
+    })
+    setMenu(newMenu)
   }
 
-  useEffect(() => {
-    menus()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
 
-  const getApi = apiHook({
-    key: ['organization'],
-    method: 'GET',
-    url: `organization`,
-  })?.get
-
-  const menuIcon = (menu: string) => {
-    switch (menu) {
+  const pickIcon = (name: string) => {
+    switch (name) {
       case 'admin':
-        return (
-          <span className="text-muted">
-            <FaUserCog className="mb-1 me-2" />{' '}
-            {menu.charAt(0).toUpperCase() + menu.substring(1)}
-          </span>
-        )
+        return <FaUserShield className='w-5 h-auto mb-1 mr-2' />
       case 'setting':
-        return (
-          <span className="text-muted">
-            <FaCogs className="mb-1 me-2" />{' '}
-            {menu.charAt(0).toUpperCase() + menu.substring(1)}
-          </span>
-        )
-      case 'Home':
-        return (
-          <span className="text-muted">
-            <FaHome className="mb-1 me-2" />{' '}
-            {menu.charAt(0).toUpperCase() + menu.substring(1)}
-          </span>
-        )
-
+        return <FaCogs className='w-5 h-auto mb-1 mr-2' />
       default:
-        return (
-          <span className="text-muted">
-            <FaLink className="mb-1 me-2" />{' '}
-            {menu.charAt(0).toUpperCase() + menu.substring(1)}
-          </span>
-        )
+        return <FaHome className='w-5 h-auto mb-1 mr-2' />
     }
-  }
-
-  const authItems = () => {
-    return (
-      <>
-        {menus()?.menuItems?.map(
-          (menu: IClientPermission, index: number) =>
-            menu.menu === 'normal' && (
-              <div
-                key={index}
-                className="p-2 border border-top-0 border-start-0 border-end-0 shadow-none ps-3"
-              >
-                <Link
-                  href={menu.path}
-                  className="text-decoration-none text-primary text-muted fs-6"
-                >
-                  {menuIcon(menu?.name)}
-                </Link>
-              </div>
-            )
-        )}
-
-        {menus()?.uniqueDropdowns?.map(
-          (item: IClientPermission, index: number) => (
-            <div key={index} className="accordion-item border-0 shadow-none ">
-              <div className="accordion-header" id={`dropDownHeading${index}`}>
-                <button
-                  className="accordion-button shadow-none border border-top-0 border-start-0 border-end-0 bg-light py-2"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target={`#dropDownCollapse${index}`}
-                  aria-expanded="true"
-                  aria-controls={`dropDownCollapse${index}`}
-                >
-                  {menuIcon(item?.menu)}
-                </button>
-              </div>
-              <div
-                id={`dropDownCollapse${index}`}
-                className="accordion-collapse collapse "
-                aria-labelledby={`dropDownHeading${index}`}
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body list-group p-0">
-                  {menus() &&
-                    menus().menuItems.map(
-                      (menu: IClientPermission, index: number) =>
-                        menu.menu === item?.menu && (
-                          <li
-                            key={index}
-                            className="list-group-item border-top-0 border-start-0 border-end-0 rounded-0 ps-5"
-                          >
-                            <Link
-                              href={menu.path}
-                              style={{ overflow: 'hidden' }}
-                              className="text-decoration-none text-primary text-muted"
-                            >
-                              <FaLink className="mb-1 me-2" /> {menu.name}
-                            </Link>
-                          </li>
-                        )
-                    )}
-                </div>
-              </div>
-            </div>
-          )
-        )}
-      </>
-    )
   }
 
   return (
-    <div
-      className="bg-light position-fixed h-100 sidebar"
-      style={{
-        minWidth: 220,
-        top: 55,
-        overflowY: 'auto',
-        paddingBottom: 80,
-      }}
-    >
-      <div className="p-3" style={{ maxWidth: 220 }}>
-        <div className="rounded-pill text-center">
-          <Link href="/">
-            {getApi?.data?.image ? (
-              <Image
-                priority
-                width={80}
-                height={80}
-                src={getApi?.data?.image}
-                className="img-fluid rounded-pill shadow p-3 border border-primary"
-                alt="logo"
-                style={{ objectFit: 'cover' }}
-              />
-            ) : (
-              <Image
-                priority
-                width={80}
-                height={80}
-                src="/favicon.png"
-                className="img-fluid rounded-pill shadow p-3 border border-primary"
-                style={{ objectFit: 'cover' }}
-                alt="logo"
-              />
-            )}
-          </Link>
-        </div>
-        <h1 className="text-wrap text-center fs-6 fw-bold text-uppercase my-1 font-monospace text-primary">
-          {getApi?.data?.name?.slice(0, 50) || `ahmedibra.com`}
-        </h1>
-        <hr />
-      </div>
+    <div className='drawer lg:drawer-open'>
+      <input id='my-drawer-2' type='checkbox' className='drawer-toggle' />
+      <div className='drawer-content m-4'>{children}</div>
+      <div className='drawer-side lg:h-[85vh]'>
+        <label htmlFor='my-drawer-2' className='drawer-overlay'></label>
+        {userInfo.id && (
+          <ul className='menu p-4 w-64 h-full bg-white text-base-content rounded-tr-3xl rounded-br-3xl'>
+            {menu.map((item: any, i: number) => (
+              <Fragment key={i}>
+                {!item?.children && (
+                  <li>
+                    <Link href={item.path}>
+                      <FaHome className='w-5 h-auto mb-1' />
+                      {item.name}
+                    </Link>
+                  </li>
+                )}
 
-      <div style={{ maxWidth: 220, fontSize: '90%' }}>
-        <div className="accordion" id="accordionExample">
-          {show && authItems()}
-        </div>
+                {item?.children && (
+                  <li key={item.name}>
+                    <span
+                      onClick={() => handleToggle(item)}
+                      className='flex justify-between items-center'
+                    >
+                      <span className='flex justify-start items-center'>
+                        {pickIcon(item.name)}
+                        {capitalizeFirstLetter(item.name)}
+                      </span>
+                      {!item.open ? (
+                        <FaAngleDown className='text-gray-700 text-lg' />
+                      ) : (
+                        <FaAngleUp className='text-gray-700 text-lg' />
+                      )}
+                    </span>
+                    <div className='dropdown dropdown-end hover:bg-white py-0'>
+                      {item.open && (
+                        <ul className='p-2 bg-ghost border-0'>
+                          {item.children.map((child: any, i: number) => (
+                            <li key={i}>
+                              <Link href={child.path}>{child.name}</Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </li>
+                )}
+              </Fragment>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   )
 }
 
-export default SideBar
+export default dynamic(() => Promise.resolve(Sidebar), { ssr: false })

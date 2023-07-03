@@ -1,27 +1,23 @@
-import Image from 'next/image'
+'use client'
+
+import moment from 'moment'
 
 const Footer = () => {
+  const year = moment().format('YYYY')
   return (
-    <footer className="text-primary container-fluid" style={{ minHeight: 20 }}>
-      <div className="row ">
-        <div className="col text-center py-1 footer font-monospace bg-light my-auto text-muted">
-          Developed by{' '}
+    <footer className='footer footer-center p-4 bg-white text-base-content max-h-6'>
+      <div>
+        <p className='text-gray-500'>
+          Copyright © {year} - Developed by
           <a
-            className="text-muted"
-            target="_blank"
-            href="https://ahmedibra.com"
-            rel="noreferrer"
+            className='mx-1 font-bold'
+            target='_blank'
+            href='https://ahmedibra.com'
+            rel='noreferrer'
           >
             Ahmed Ibrahim
           </a>
-          <Image
-            className="ms-2"
-            src="/logo.png"
-            width="20"
-            height="20"
-            alt="logo"
-          />
-        </div>
+        </p>
       </div>
     </footer>
   )
