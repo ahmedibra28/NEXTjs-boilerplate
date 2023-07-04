@@ -3,8 +3,7 @@ import axios from 'axios'
 let baseUrl = 'http://localhost:3000/api'
 
 if (process.env.NODE_ENV === 'production') {
-  // baseUrl = 'https://sahalbook.com/api'
-  baseUrl = 'http://localhost:3000/api'
+  baseUrl = getEnvVariable('DOMAIN_URL')
 }
 
 export const userInfo = () => {
@@ -61,6 +60,7 @@ import {
   useQuery,
   useInfiniteQuery,
 } from '@tanstack/react-query'
+import { getEnvVariable } from '@/lib/helpers'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'InfiniteScroll'
 
