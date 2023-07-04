@@ -1,6 +1,7 @@
 import { isAuth } from '@/lib/auth'
 import { getErrorResponse } from '@/lib/helpers'
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma.db'
 
 interface Params {
   params: {

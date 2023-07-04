@@ -1,7 +1,7 @@
 import { isAuth } from '@/lib/auth'
 import { getErrorResponse } from '@/lib/helpers'
 import { NextResponse } from 'next/server'
-import { QueryMode } from '@/lib/prisma.db'
+import { QueryMode, prisma } from '@/lib/prisma.db'
 
 export async function GET(req: Request) {
   try {

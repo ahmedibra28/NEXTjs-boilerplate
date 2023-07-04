@@ -65,69 +65,6 @@ export async function GET(req: Request) {
       },
     })
 
-    const [permissionsObj, clientPermissionsObj, roleObj] = await Promise.all([
-      // Create permissions
-      await Promise.all(
-        permissions?.map(
-          async (obj) =>
-            await prisma.permission.upsert({
-              where: { id: obj.id },
-              // @ts-ignore
-              update: obj,
-              // @ts-ignore
-              create: obj,
-            })
-        )
-      ),
-      // Create client permissions
-      await Promise.all(
-        clientPermissions?.map(
-          async (obj) =>
-            await prisma.clientPermission.upsert({
-              where: { id: obj.id },
-              update: obj,
-              create: obj,
-            })
-        )
-      ),
-
-      // Create roles
-      await Promise.all(
-        roles?.map(
-          async (obj) =>
-            await prisma.role.upsert({
-              where: { id: obj.id },
-              update: {
-                ...obj,
-                ...(obj.type === 'SUPER_ADMIN' && {
-                  permissions: {
-                    connect: permissions.map((p) => ({ id: p.id })),
-                  },
-                }),
-                ...(obj.type === 'SUPER_ADMIN' && {
-                  clientPermissions: {
-                    connect: clientPermissions.map((p) => ({ id: p.id })),
-                  },
-                }),
-              },
-              create: {
-                ...obj,
-                ...(obj.type === 'SUPER_ADMIN' && {
-                  permissions: {
-                    connect: permissions.map((p) => ({ id: p.id })),
-                  },
-                }),
-                ...(obj.type === 'SUPER_ADMIN' && {
-                  clientPermissions: {
-                    connect: clientPermissions.map((p) => ({ id: p.id })),
-                  },
-                }),
-              },
-            })
-        )
-      ),
-    ])
-
     await prisma.user.update({
       data: {
         roleId: 1,
@@ -135,12 +72,78 @@ export async function GET(req: Request) {
       where: { id: users.id },
     })
 
+    // Create permissions
+    await Promise.all(
+      permissions?.map(
+        async (obj) =>
+          await prisma.permission.upsert({
+            where: { id: obj.id },
+            // @ts-ignore
+            update: obj,
+            // @ts-ignore
+            create: obj,
+          })
+      )
+    )
+
+    // Create client permissions
+    await Promise.all(
+      clientPermissions?.map(
+        async (obj) =>
+          await prisma.clientPermission.upsert({
+            where: { id: obj.id },
+            update: obj,
+            create: obj,
+          })
+      )
+    )
+
+    // Create roles or update if exists
+    await Promise.all(
+      roles?.map(
+        async (obj) =>
+          await prisma.role.upsert({
+            where: { id: obj.id },
+            update: {
+              ...obj,
+              ...(obj.type === 'SUPER_ADMIN' && {
+                permissions: {
+                  connect: permissions.map((p) => ({ id: Number(p.id) })),
+                },
+              }),
+              ...(obj.type === 'SUPER_ADMIN' && {
+                clientPermissions: {
+                  connect: clientPermissions.map((p) => ({
+                    id: Number(p.id),
+                  })),
+                },
+              }),
+            },
+            create: {
+              ...obj,
+              ...(obj.type === 'SUPER_ADMIN' && {
+                permissions: {
+                  connect: permissions.map((p) => ({ id: Number(p.id) })),
+                },
+              }),
+              ...(obj.type === 'SUPER_ADMIN' && {
+                clientPermissions: {
+                  connect: clientPermissions.map((p) => ({
+                    id: Number(p.id),
+                  })),
+                },
+              }),
+            },
+          })
+      )
+    )
+
     return NextResponse.json({
       message: 'Database seeded successfully',
       users: await prisma.user.count({}),
-      permissions: permissionsObj.length,
-      clientPermissions: clientPermissionsObj.length,
-      roles: roleObj.length,
+      permissions: await prisma.permission.count({}),
+      clientPermissions: await prisma.clientPermission.count({}),
+      roles: await prisma.role.count({}),
     })
   } catch ({ status = 500, message }: any) {
     return getErrorResponse(message, status)
