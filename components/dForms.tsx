@@ -1,7 +1,7 @@
 'use client'
 
 import classNames from 'classnames'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 
 export interface DynamicFormProps {
   register: any
