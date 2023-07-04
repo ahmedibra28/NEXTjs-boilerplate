@@ -1,9 +1,17 @@
 import axios from 'axios'
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useInfiniteQuery,
+} from '@tanstack/react-query'
+// import { getEnvVariable } from '@/lib/helpers'
 
 let baseUrl = 'http://localhost:3000/api'
 
 if (process.env.NODE_ENV === 'production') {
-  baseUrl = getEnvVariable('DOMAIN_URL')
+  baseUrl = 'http://localhost:3000/api'
+  // getEnvVariable('PROD_DOMAIN_URL')
 }
 
 export const userInfo = () => {
@@ -53,14 +61,6 @@ export const api = async (method: string, url: string, obj = {}) => {
     throw error?.response?.data?.error
   }
 }
-
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useInfiniteQuery,
-} from '@tanstack/react-query'
-import { getEnvVariable } from '@/lib/helpers'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'InfiniteScroll'
 
