@@ -5,11 +5,12 @@ import {
   useQuery,
   useInfiniteQuery,
 } from '@tanstack/react-query'
+import { getEnvVariable } from '@/lib/helpers'
 
 let baseUrl = 'http://localhost:3000/api'
 
 if (process.env.NODE_ENV === 'production') {
-  baseUrl = 'https://ntboilerplate.vercel.app/api'
+  baseUrl = getEnvVariable('NEXT_PUBLIC_API_URL')
 }
 
 export const userInfo = () => {
