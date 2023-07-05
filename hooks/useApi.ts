@@ -5,12 +5,11 @@ import {
   useQuery,
   useInfiniteQuery,
 } from '@tanstack/react-query'
-import { getEnvVariable } from '@/lib/helpers'
 
 let baseUrl = 'http://localhost:3000/api'
 
 if (process.env.NODE_ENV === 'production') {
-  baseUrl = getEnvVariable('NEXT_PUBLIC_API_URL')
+  baseUrl = process.env.NEXT_PUBLIC_API_URL as string
 }
 
 export const userInfo = () => {
