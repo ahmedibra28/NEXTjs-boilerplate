@@ -40,11 +40,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang='en'>
+    <html lang='en' style={{ background: '#f3f4f6' }}>
       <body className={roboto.className} suppressHydrationWarning={true}>
         <Providers>
           {nav()}
-          <div className='min-h-[85vh]'>
+          <div className='min-h-[91vh]'>
             <Sidebar>
               <main>{children}</main>
             </Sidebar>

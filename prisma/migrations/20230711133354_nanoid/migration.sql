@@ -1,42 +1,31 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Method" AS ENUM ('GET', 'POST', 'PUT', 'DELETE');
 
-  - You are about to drop the `ClientPermission` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Permission` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Role` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-*/
--- DropForeignKey
-ALTER TABLE "User" DROP CONSTRAINT "User_roleId_fkey";
-
--- DropForeignKey
-ALTER TABLE "_ClientPermissionToRole" DROP CONSTRAINT "_ClientPermissionToRole_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_ClientPermissionToRole" DROP CONSTRAINT "_ClientPermissionToRole_B_fkey";
-
--- DropForeignKey
-ALTER TABLE "_PermissionToRole" DROP CONSTRAINT "_PermissionToRole_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_PermissionToRole" DROP CONSTRAINT "_PermissionToRole_B_fkey";
-
--- DropTable
-DROP TABLE "ClientPermission";
-
--- DropTable
-DROP TABLE "Permission";
-
--- DropTable
-DROP TABLE "Role";
-
--- DropTable
-DROP TABLE "User";
+CREATE OR REPLACE FUNCTION nanoid(size int DEFAULT 21)
+RETURNS text AS $$
+DECLARE
+  id text := '';
+  i int := 0;
+  urlAlphabet char(64) := 'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';
+  bytes bytea := gen_random_bytes(size);
+  byte int;
+  pos int;
+BEGIN
+  WHILE i < size LOOP
+    byte := get_byte(bytes, i);
+    pos := (byte & 63) + 1; -- + 1 because substr starts at 1 for some reason
+    id := id || substr(urlAlphabet, pos, 1);
+    i = i + 1;
+  END LOOP;
+  RETURN id;
+END
+$$ LANGUAGE PLPGSQL STABLE;
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" SERIAL NOT NULL,
+    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "image" TEXT,
@@ -47,17 +36,17 @@ CREATE TABLE "users" (
     "confirmed" BOOLEAN NOT NULL DEFAULT false,
     "blocked" BOOLEAN NOT NULL DEFAULT false,
     "resetPasswordToken" TEXT,
-    "resetPasswordExpires" TIMESTAMP(3),
+    "resetPasswordExpire" BIGINT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "roleId" INTEGER,
+    "roleId" TEXT NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "roles" (
-    "id" SERIAL NOT NULL,
+    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
     "name" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "description" TEXT,
@@ -69,7 +58,7 @@ CREATE TABLE "roles" (
 
 -- CreateTable
 CREATE TABLE "permissions" (
-    "id" SERIAL NOT NULL,
+    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
     "name" TEXT NOT NULL,
     "method" "Method" NOT NULL,
     "route" TEXT NOT NULL,
@@ -82,7 +71,7 @@ CREATE TABLE "permissions" (
 
 -- CreateTable
 CREATE TABLE "client_permissions" (
-    "id" SERIAL NOT NULL,
+    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
     "name" TEXT NOT NULL,
     "sort" INTEGER NOT NULL,
     "menu" TEXT NOT NULL,
@@ -92,6 +81,18 @@ CREATE TABLE "client_permissions" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "client_permissions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_PermissionToRole" (
+    "A" VARCHAR(21) NOT NULL,
+    "B" VARCHAR(21) NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_ClientPermissionToRole" (
+    "A" VARCHAR(21) NOT NULL,
+    "B" VARCHAR(21) NOT NULL
 );
 
 -- CreateIndex
@@ -112,8 +113,20 @@ CREATE UNIQUE INDEX "client_permissions_name_key" ON "client_permissions"("name"
 -- CreateIndex
 CREATE UNIQUE INDEX "client_permissions_path_key" ON "client_permissions"("path");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "_PermissionToRole_AB_unique" ON "_PermissionToRole"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_PermissionToRole_B_index" ON "_PermissionToRole"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_ClientPermissionToRole_AB_unique" ON "_ClientPermissionToRole"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_ClientPermissionToRole_B_index" ON "_ClientPermissionToRole"("B");
+
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "users" ADD CONSTRAINT "users_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_PermissionToRole" ADD CONSTRAINT "_PermissionToRole_A_fkey" FOREIGN KEY ("A") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;

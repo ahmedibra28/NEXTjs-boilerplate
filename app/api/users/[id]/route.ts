@@ -9,6 +9,74 @@ interface Params {
   }
 }
 
+export async function GET(req: Request, { params }: Params) {
+  try {
+    const role = await prisma.role.findFirst({
+      where: {
+        id: params.id,
+      },
+      include: {
+        clientPermissions: {
+          select: {
+            menu: true,
+            sort: true,
+            path: true,
+            name: true,
+          },
+        },
+      },
+    })
+
+    if (!role) return getErrorResponse('Role not found', 404)
+
+    const routes = role.clientPermissions
+
+    interface Route {
+      menu?: string
+      name?: string
+      path?: string
+      open?: boolean
+    }
+    interface RouteChildren extends Route {
+      children?: { menu?: string; name?: string; path?: string }[] | any
+    }
+    const formatRoutes = (routes: Route[]) => {
+      const formattedRoutes: RouteChildren[] = []
+
+      routes.forEach((route) => {
+        if (route.menu === 'hidden') return null
+        if (route.menu === 'profile') return null
+
+        if (route.menu === 'normal') {
+          formattedRoutes.push({ name: route.name, path: route.path })
+        } else {
+          const found = formattedRoutes.find((r) => r.name === route.menu)
+          if (found) {
+            found.children.push({ name: route.name, path: route.path })
+          } else {
+            formattedRoutes.push({
+              name: route.menu,
+              open: false,
+              children: [{ name: route.name, path: route.path }],
+            })
+          }
+        }
+      })
+
+      return formattedRoutes
+    }
+
+    const menu = formatRoutes(routes)
+
+    return NextResponse.json({
+      routes,
+      menu,
+    })
+  } catch ({ status = 500, message }: any) {
+    return getErrorResponse(message, status)
+  }
+}
+
 export async function PUT(req: Request, { params }: Params) {
   try {
     await isAuth(req, params)
@@ -20,12 +88,12 @@ export async function PUT(req: Request, { params }: Params) {
     if (!role) return getErrorResponse('Role not found', 404)
 
     const user = await prisma.user.findFirst({
-      where: { email: email.toLowerCase(), id: { not: Number(params.id) } },
+      where: { email: email.toLowerCase(), id: { not: params.id } },
     })
     if (user) return getErrorResponse('User already exists', 409)
 
     const userObj = await prisma.user.update({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
       data: {
         name,
         email: email.toLowerCase(),
@@ -52,7 +120,7 @@ export async function DELETE(req: Request, { params }: Params) {
     await isAuth(req, params)
 
     const userObj = await prisma.user.findFirst({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
       include: {
         role: {
           select: {

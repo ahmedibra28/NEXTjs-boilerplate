@@ -94,10 +94,10 @@ export async function POST(req: Request) {
         description,
         type,
         permissions: {
-          connect: permission?.map((pre) => ({ id: Number(pre) })),
+          connect: permission?.map((pre) => ({ id: pre })),
         },
         clientPermissions: {
-          connect: clientPermission?.map((client) => ({ id: Number(client) })),
+          connect: clientPermission?.map((client) => ({ id: client })),
         },
       },
     })

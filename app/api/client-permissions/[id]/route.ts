@@ -16,7 +16,7 @@ export async function PUT(req: Request, { params }: Params) {
     const { name, sort, menu, path, description } = await req.json()
 
     const clientPermissionObj = await prisma.clientPermission.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
     })
     if (!clientPermissionObj)
       return getErrorResponse('Client permission not found', 404)
@@ -24,14 +24,14 @@ export async function PUT(req: Request, { params }: Params) {
     const checkExistence = await prisma.clientPermission.findFirst({
       where: {
         path: path.toLowerCase(),
-        id: { not: Number(params.id) },
+        id: { not: params.id },
       },
     })
     if (checkExistence)
       return getErrorResponse('Client permission already exist')
 
     await prisma.clientPermission.update({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
       data: {
         name,
         sort: Number(sort),
@@ -55,7 +55,7 @@ export async function DELETE(req: Request, { params }: Params) {
     await isAuth(req, params)
 
     const clientPermissionObj = await prisma.clientPermission.delete({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
     })
     if (!clientPermissionObj)
       return getErrorResponse('Client permission not found', 404)

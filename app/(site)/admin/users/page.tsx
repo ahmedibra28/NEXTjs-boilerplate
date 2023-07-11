@@ -24,6 +24,7 @@ import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
 import Search from '@/components/Search'
 import { IUser } from '@/types'
+import TableView from '@/components/TableView'
 
 const Page = () => {
   const [page, setPage] = useState(1)
@@ -110,16 +111,6 @@ const Page = () => {
     setPage(1)
   }
 
-  // TableView
-  const table = {
-    header: ['Name', 'Email'],
-    body: ['name', 'email'],
-    createdAt: 'createdAt',
-    confirmed: 'confirmed',
-    blocked: 'blocked',
-    data: getApi?.data,
-  }
-
   const editHandler = (item: IUser) => {
     setId(item.id)
     setValue('blocked', item?.blocked)
@@ -140,6 +131,75 @@ const Page = () => {
   const label = 'User'
   const modal = 'user'
 
+  // TableView
+  const table = {
+    header: [
+      { title: 'Name' },
+      { title: 'Email' },
+      { title: 'Role', className: 'hidden md:table-cell' },
+      { title: 'Confirmed', className: 'hidden md:table-cell' },
+      { title: 'Blocked', className: 'hidden md:table-cell' },
+      { title: 'CreatedAt', className: 'hidden md:table-cell' },
+      { title: 'Action' },
+    ],
+    body: [
+      { format: (item: any) => item?.name },
+      { format: (item: any) => item?.email },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) => item?.role?.type,
+      },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) =>
+          item?.confirmed ? (
+            <FaCheckCircle className='text-green-500' />
+          ) : (
+            <FaTimesCircle className='text-red-500' />
+          ),
+      },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) =>
+          !item?.blocked ? (
+            <FaCheckCircle className='text-green-500' />
+          ) : (
+            <FaTimesCircle className='text-red-500' />
+          ),
+      },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) => moment(item?.createdAt).format('DD-MM-YYYY'),
+      },
+      {
+        format: (item: any) => (
+          <div className='btn-group'>
+            <ButtonCircle
+              isLoading={false}
+              onClick={() => {
+                editHandler(item)
+                // @ts-ignore
+                window[modal].showModal()
+              }}
+              icon={<FaPenAlt className='text-white' />}
+              classStyle='btn-primary'
+            />
+
+            <ButtonCircle
+              isLoading={deleteApi?.isLoading}
+              onClick={() => deleteHandler(item.id)}
+              icon={<FaTrash className='text-white' />}
+              classStyle='btn-error'
+            />
+          </div>
+        ),
+      },
+    ],
+    data: getApi?.data?.data,
+    total: getApi?.data?.total,
+    paginationData: getApi?.data,
+  }
+
   // FormView
   const formCleanHandler = () => {
     reset()
@@ -158,6 +218,7 @@ const Page = () => {
       : postApi?.mutateAsync(data)
   }
 
+  // form view
   const form = [
     <div key={0} className='col-12'>
       <InputText
@@ -255,7 +316,7 @@ const Page = () => {
       {postApi?.isError && <Message variant='error' value={postApi?.error} />}
 
       <div className='ms-auto text-end'>
-        <Pagination data={table.data} setPage={setPage} />
+        <Pagination data={table.paginationData} setPage={setPage} />
       </div>
 
       <FormView
@@ -279,7 +340,7 @@ const Page = () => {
           <div className='flex items-center flex-col mb-2'>
             <h1 className='font-light text-2xl'>
               {name}
-              <sup> [{table?.data?.total}] </sup>
+              <sup> [{table?.total}] </sup>
             </h1>
             <button
               className='btn btn-outline btn-primary btn-sm shadow my-2 rounded-none'
@@ -297,66 +358,7 @@ const Page = () => {
               />
             </div>
           </div>
-          <table className='table table-xs md:table-sm'>
-            <thead className='border-0'>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th className='hidden md:table-cell'>Role</th>
-                <th className='hidden md:table-cell'>Confirmed</th>
-                <th className='hidden md:table-cell'>Blocked</th>
-                <th className='hidden md:table-cell'>DateTime</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {getApi?.data?.data?.map((item: IUser, i: number) => (
-                <tr key={i} className='hover'>
-                  <td>{item?.name}</td>
-                  <td>{item?.email}</td>
-                  <td className='hidden md:table-cell'>{item?.role?.type}</td>
-                  <td className='hidden md:table-cell'>
-                    {item?.confirmed ? (
-                      <FaCheckCircle className='text-success' />
-                    ) : (
-                      <FaTimesCircle className='text-error' />
-                    )}
-                  </td>
-                  <td className='hidden md:table-cell'>
-                    {item?.blocked ? (
-                      <FaCheckCircle className='text-success' />
-                    ) : (
-                      <FaTimesCircle className='text-error' />
-                    )}
-                  </td>
-                  <td className='hidden md:table-cell'>
-                    {moment(item?.createdAt).format('lll')}
-                  </td>
-                  <td>
-                    <div className='btn-group'>
-                      <ButtonCircle
-                        isLoading={false}
-                        onClick={() => {
-                          editHandler(item)
-                          // @ts-ignore
-                          window[modal].showModal()
-                        }}
-                        icon={<FaPenAlt className='text-white' />}
-                        classStyle='btn-primary'
-                      />
-
-                      <ButtonCircle
-                        isLoading={deleteApi?.isLoading}
-                        onClick={() => deleteHandler(item.id)}
-                        icon={<FaTrash className='text-white' />}
-                        classStyle='btn-error'
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableView table={table} />
         </div>
       )}
     </>

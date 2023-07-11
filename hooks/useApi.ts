@@ -6,7 +6,7 @@ import {
   useInfiniteQuery,
 } from '@tanstack/react-query'
 
-let baseUrl = 'http://localhost:3000/api'
+export let baseUrl = 'http://localhost:3000/api'
 
 if (process.env.NODE_ENV === 'production') {
   baseUrl = process.env.NEXT_PUBLIC_API_URL as string

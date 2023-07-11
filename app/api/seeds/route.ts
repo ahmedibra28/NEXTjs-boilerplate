@@ -56,18 +56,18 @@ export async function GET(req: Request) {
       create: {
         ...users,
         password: await encryptPassword({ password: users.password }),
-        roleId: 1,
+        roleId: roles[0].id,
       },
       update: {
         ...users,
-        roleId: 1,
+        roleId: roles[0].id,
         password: await encryptPassword({ password: users.password }),
       },
     })
 
     await prisma.user.update({
       data: {
-        roleId: 1,
+        roleId: roles[0].id,
       },
       where: { id: users.id },
     })
@@ -108,13 +108,13 @@ export async function GET(req: Request) {
               ...obj,
               ...(obj.type === 'SUPER_ADMIN' && {
                 permissions: {
-                  connect: permissions.map((p) => ({ id: Number(p.id) })),
+                  connect: permissions.map((p) => ({ id: p.id })),
                 },
               }),
               ...(obj.type === 'SUPER_ADMIN' && {
                 clientPermissions: {
                   connect: clientPermissions.map((p) => ({
-                    id: Number(p.id),
+                    id: p.id,
                   })),
                 },
               }),
@@ -123,13 +123,13 @@ export async function GET(req: Request) {
               ...obj,
               ...(obj.type === 'SUPER_ADMIN' && {
                 permissions: {
-                  connect: permissions.map((p) => ({ id: Number(p.id) })),
+                  connect: permissions.map((p) => ({ id: p.id })),
                 },
               }),
               ...(obj.type === 'SUPER_ADMIN' && {
                 clientPermissions: {
                   connect: clientPermissions.map((p) => ({
-                    id: Number(p.id),
+                    id: p.id,
                   })),
                 },
               }),

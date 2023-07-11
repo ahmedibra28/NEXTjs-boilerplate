@@ -19,7 +19,7 @@ declare global {
   }
   interface NextApiRequestExtended extends Request {
     user: {
-      id: number
+      id: string
       name: string
       email: string
       role: string

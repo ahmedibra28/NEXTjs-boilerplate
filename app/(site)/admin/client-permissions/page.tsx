@@ -10,18 +10,14 @@ import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
 import Confirm from '@/components/Confirm'
 import { useRouter } from 'next/navigation'
-import {
-  ButtonCircle,
-  InputNumber,
-  InputText,
-  StaticInputSelect,
-} from '@/components/dForms'
+import { ButtonCircle, InputNumber, InputText } from '@/components/dForms'
 import Message from '@/components/Message'
 import Pagination from '@/components/Pagination'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
 import Search from '@/components/Search'
 import { IClientPermission } from '@/types'
+import TableView from '@/components/TableView'
 
 const Page = () => {
   const [page, setPage] = useState(1)
@@ -93,16 +89,6 @@ const Page = () => {
     setPage(1)
   }
 
-  // TableView
-  const table = {
-    header: ['Name', 'Email'],
-    body: ['name', 'email'],
-    createdAt: 'createdAt',
-    confirmed: 'confirmed',
-    blocked: 'blocked',
-    data: getApi?.data,
-  }
-
   const editHandler = (item: IClientPermission) => {
     setId(item.id)
     setValue('name', item?.name)
@@ -136,6 +122,63 @@ const Page = () => {
           ...data,
         })
       : postApi?.mutateAsync(data)
+  }
+
+  // TableView
+  const table = {
+    header: [
+      { title: 'Name' },
+      { title: 'Menu' },
+      { title: 'Sort' },
+      { title: 'Path', className: 'hidden md:table-cell' },
+      { title: 'Description', className: 'hidden md:table-cell' },
+      { title: 'CreatedAt', className: 'hidden md:table-cell' },
+      { title: 'Action' },
+    ],
+    body: [
+      { format: (item: any) => item?.name },
+      { format: (item: any) => item?.menu },
+      { format: (item: any) => item?.sort },
+
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) => item?.path,
+      },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) => item?.description,
+      },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) => moment(item?.createdAt).format('DD-MM-YYYY'),
+      },
+      {
+        format: (item: any) => (
+          <div className='btn-group'>
+            <ButtonCircle
+              isLoading={false}
+              onClick={() => {
+                editHandler(item)
+                // @ts-ignore
+                window[modal].showModal()
+              }}
+              icon={<FaPenAlt className='text-white' />}
+              classStyle='btn-primary'
+            />
+
+            <ButtonCircle
+              isLoading={deleteApi?.isLoading}
+              onClick={() => deleteHandler(item.id)}
+              icon={<FaTrash className='text-white' />}
+              classStyle='btn-error'
+            />
+          </div>
+        ),
+      },
+    ],
+    data: getApi?.data?.data,
+    total: getApi?.data?.total,
+    paginationData: getApi?.data,
   }
 
   const form = [
@@ -207,7 +250,7 @@ const Page = () => {
       {postApi?.isError && <Message variant='error' value={postApi?.error} />}
 
       <div className='ms-auto text-end'>
-        <Pagination data={table.data} setPage={setPage} />
+        <Pagination data={table.paginationData} setPage={setPage} />
       </div>
 
       <FormView
@@ -231,7 +274,7 @@ const Page = () => {
           <div className='flex items-center flex-col mb-2'>
             <h1 className='font-light text-2xl'>
               {name}
-              <sup> [{table?.data?.total}] </sup>
+              <sup> [{table?.total}] </sup>
             </h1>
             <button
               className='btn btn-outline btn-primary btn-sm shadow my-2 rounded-none'
@@ -249,51 +292,7 @@ const Page = () => {
               />
             </div>
           </div>
-          <table className='table table-xs md:table-sm'>
-            <thead className='border-0'>
-              <tr>
-                <th>Name</th>
-                <th>Menu</th>
-                <th>Sort</th>
-                <th className='hidden md:table-cell'>Path</th>
-                <th className='hidden md:table-cell'>Description</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {getApi?.data?.data?.map((item: IClientPermission, i: number) => (
-                <tr key={i} className='hover'>
-                  <td>{item?.name}</td>
-                  <td>{item?.menu}</td>
-                  <td>{item?.sort}</td>
-                  <td className='hidden md:table-cell'>{item?.path}</td>
-                  <td className='hidden md:table-cell'>{item?.description}</td>
-
-                  <td>
-                    <div className='btn-group'>
-                      <ButtonCircle
-                        isLoading={false}
-                        onClick={() => {
-                          editHandler(item)
-                          // @ts-ignore
-                          window[modal].showModal()
-                        }}
-                        icon={<FaPenAlt className='text-white' />}
-                        classStyle='btn-primary'
-                      />
-
-                      <ButtonCircle
-                        isLoading={deleteApi?.isLoading}
-                        onClick={() => deleteHandler(item.id)}
-                        icon={<FaTrash className='text-white' />}
-                        classStyle='btn-error'
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableView table={table} />
         </div>
       )}
     </>

@@ -1,4 +1,5 @@
 'use client'
+import useInterval from '@/hooks/useInterval'
 import useUserInfoStore from '@/zustand/userStore'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
@@ -12,6 +13,8 @@ const Navigation = () => {
     useUserInfoStore.getState().logout()
   }
 
+  useInterval()
+
   return (
     <div className='flex-none'>
       <ul className='menu menu-horizontal px-1'>
@@ -20,23 +23,6 @@ const Navigation = () => {
             <Link href='/auth/login'>Login</Link>
           </li>
         )}
-        {/* <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className='p-2 bg-ghost '>
-                <li className=''>
-                  <Link href='/' className=''>
-                    Link 1
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/' className=''>
-                    Link 2
-                  </Link>
-                </li>
-              </ul>
-            </details>
-          </li> */}
       </ul>
       {userInfo.id && (
         <div suppressHydrationWarning={true} className='dropdown dropdown-end'>

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                  Int      @id @default(autoincrement())
+  id                  String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
   email               String   @unique
   name                String
   image               String?
@@ -23,14 +23,14 @@ model User {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  role   Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
-  roleId Int
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  roleId String
 
   @@map("users")
 }
 
 model Role {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
   name        String   @unique
   type        String   @unique
   description String?
@@ -45,7 +45,7 @@ model Role {
 }
 
 model Permission {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
   name        String
   method      Method
   route       String
@@ -60,7 +60,7 @@ model Permission {
 }
 
 model ClientPermission {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
   name        String   @unique
   sort        Int
   menu        String

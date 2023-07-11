@@ -1,5 +1,5 @@
 export interface IUser {
-  id?: number
+  id?: string
   email: string
   name: string
   image?: string | null
@@ -18,7 +18,7 @@ export interface IUser {
 }
 
 export interface IRole {
-  id?: number
+  id?: string
   name: string
   type: string
   description?: string | null
@@ -30,7 +30,7 @@ export interface IRole {
 }
 
 export interface IPermission {
-  id?: number
+  id?: string
   name: string
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   route: string
@@ -41,7 +41,7 @@ export interface IPermission {
 }
 
 export interface IClientPermission {
-  id?: number
+  id?: string
   name: string
   sort: number
   menu: string

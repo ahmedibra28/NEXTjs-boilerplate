@@ -51,10 +51,10 @@ const Sidebar = ({ children }: any) => {
     <div className='drawer lg:drawer-open'>
       <input id='my-drawer-2' type='checkbox' className='drawer-toggle' />
       <div className='drawer-content m-4'>{children}</div>
-      <div className='drawer-side lg:h-[85vh]'>
+      <div className='drawer-side lg:h-[91vh]'>
         <label htmlFor='my-drawer-2' className='drawer-overlay'></label>
         {userInfo.id && (
-          <ul className='menu p-4 w-64 h-full bg-white text-base-content rounded-tr-3xl rounded-br-3xl'>
+          <ul className='menu p-4 w-64 h-full text-base-content lg:bg-transparent bg-white'>
             {menu.map((item: any, i: number) => (
               <Fragment key={i}>
                 {!item?.children && (
@@ -82,7 +82,7 @@ const Sidebar = ({ children }: any) => {
                         <FaAngleUp className='text-gray-700 text-lg' />
                       )}
                     </span>
-                    <div className='dropdown dropdown-end hover:bg-white py-0'>
+                    <div className='dropdown dropdown-end hover:bg-transparent py-0'>
                       {item.open && (
                         <ul className='p-2 bg-ghost border-0'>
                           {item.children.map((child: any, i: number) => (

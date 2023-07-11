@@ -17,6 +17,7 @@ import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
 import Search from '@/components/Search'
 import { IPermission } from '@/types'
+import TableView from '@/components/TableView'
 
 const Page = () => {
   const [page, setPage] = useState(1)
@@ -88,16 +89,6 @@ const Page = () => {
     setPage(1)
   }
 
-  // TableView
-  const table = {
-    header: ['Name', 'Email'],
-    body: ['name', 'email'],
-    createdAt: 'createdAt',
-    confirmed: 'confirmed',
-    blocked: 'blocked',
-    data: getApi?.data,
-  }
-
   const editHandler = (item: IPermission) => {
     setId(item.id)
     setValue('name', item?.name)
@@ -130,6 +121,66 @@ const Page = () => {
           ...data,
         })
       : postApi?.mutateAsync(data)
+  }
+
+  // TableView
+  const table = {
+    header: [
+      { title: 'Name' },
+      { title: 'Method' },
+      { title: 'Route', className: 'hidden md:table-cell' },
+      { title: 'CreatedAt', className: 'hidden md:table-cell' },
+      { title: 'Action' },
+    ],
+    body: [
+      { format: (item: any) => item?.name },
+      {
+        format: (item: any) =>
+          item?.method === 'GET' ? (
+            <span className='text-green-500'>{item?.method}</span>
+          ) : item?.method === 'POST' ? (
+            <span className='text-blue-500'>{item?.method}</span>
+          ) : item?.method === 'PUT' ? (
+            <span className='text-yellow-500'>{item?.method}</span>
+          ) : (
+            <span className='text-red-500'>{item?.method}</span>
+          ),
+      },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) => item?.route,
+      },
+      {
+        className: 'hidden md:table-cell',
+        format: (item: any) => moment(item?.createdAt).format('DD-MM-YYYY'),
+      },
+      {
+        format: (item: any) => (
+          <div className='btn-group'>
+            <ButtonCircle
+              isLoading={false}
+              onClick={() => {
+                editHandler(item)
+                // @ts-ignore
+                window[modal].showModal()
+              }}
+              icon={<FaPenAlt className='text-white' />}
+              classStyle='btn-primary'
+            />
+
+            <ButtonCircle
+              isLoading={deleteApi?.isLoading}
+              onClick={() => deleteHandler(item.id)}
+              icon={<FaTrash className='text-white' />}
+              classStyle='btn-error'
+            />
+          </div>
+        ),
+      },
+    ],
+    data: getApi?.data?.data,
+    total: getApi?.data?.total,
+    paginationData: getApi?.data,
   }
 
   const form = [
@@ -199,7 +250,7 @@ const Page = () => {
       {postApi?.isError && <Message variant='error' value={postApi?.error} />}
 
       <div className='ms-auto text-end'>
-        <Pagination data={table.data} setPage={setPage} />
+        <Pagination data={table?.paginationData} setPage={setPage} />
       </div>
 
       <FormView
@@ -223,7 +274,7 @@ const Page = () => {
           <div className='flex items-center flex-col mb-2'>
             <h1 className='font-light text-2xl'>
               {name}
-              <sup> [{table?.data?.total}] </sup>
+              <sup> [{table?.total}] </sup>
             </h1>
             <button
               className='btn btn-outline btn-primary btn-sm shadow my-2 rounded-none'
@@ -241,70 +292,7 @@ const Page = () => {
               />
             </div>
           </div>
-          <table className='table table-xs md:table-sm'>
-            <thead className='border-0'>
-              <tr>
-                <th>Name</th>
-                <th>Method</th>
-                <th className='hidden md:table-cell'>Route</th>
-                <th className='hidden md:table-cell'>DateTime</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {getApi?.data?.data?.map((item: IPermission, i: number) => (
-                <tr key={i} className='hover'>
-                  <td>{item?.name}</td>
-                  <td>
-                    {item?.method === 'GET' ? (
-                      <div className='badge rounded-0s bg-success'>
-                        {item?.method}
-                      </div>
-                    ) : item?.method === 'POST' ? (
-                      <div className='badge rounded-0s bg-purple-500'>
-                        {item?.method}
-                      </div>
-                    ) : item?.method === 'DELETE' ? (
-                      <div className='badge rounded-0s bg-error'>
-                        {item?.method}
-                      </div>
-                    ) : (
-                      item?.method === 'PUT' && (
-                        <div className='badge rounded-0s bg-info'>
-                          {item?.method}
-                        </div>
-                      )
-                    )}
-                  </td>
-                  <td className='hidden md:table-cell'>{item?.route}</td>
-                  <td className='hidden md:table-cell'>
-                    {moment(item?.createdAt).format('lll')}
-                  </td>
-                  <td>
-                    <div className='btn-group'>
-                      <ButtonCircle
-                        isLoading={false}
-                        onClick={() => {
-                          editHandler(item)
-                          // @ts-ignore
-                          window[modal].showModal()
-                        }}
-                        icon={<FaPenAlt className='text-white' />}
-                        classStyle='btn-primary'
-                      />
-
-                      <ButtonCircle
-                        isLoading={deleteApi?.isLoading}
-                        onClick={() => deleteHandler(item.id)}
-                        icon={<FaTrash className='text-white' />}
-                        classStyle='btn-error'
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableView table={table} />
         </div>
       )}
     </>

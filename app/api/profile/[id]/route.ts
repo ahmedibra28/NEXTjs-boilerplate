@@ -16,7 +16,7 @@ export async function PUT(req: Request, { params }: Params) {
     const { name, address, mobile, bio, image, password } = await req.json()
 
     const object = await prisma.user.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
     })
 
     if (!object) return getErrorResponse('User profile not found', 404)
@@ -32,7 +32,7 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     const result = await prisma.user.update({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
       data: {
         ...(password && { password: await encryptPassword({ password }) }),
         name: name || object.name,

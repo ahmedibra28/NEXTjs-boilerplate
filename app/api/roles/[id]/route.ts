@@ -45,7 +45,7 @@ export async function PUT(req: Request, { params }: Params) {
     clientPermission = clientPermission?.filter((client) => client)
 
     const object = await prisma.role.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
     })
     if (!object) return getErrorResponse('Role not found', 400)
 
@@ -53,22 +53,22 @@ export async function PUT(req: Request, { params }: Params) {
       where: {
         name: { equals: name, mode: QueryMode.insensitive },
         type: { equals: type, mode: QueryMode.insensitive },
-        id: { not: Number(params.id) },
+        id: { not: params.id },
       },
     })
     if (checkExistence) return getErrorResponse('Role already exist')
 
     await prisma.role.update({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
       data: {
         name,
         description,
         type,
         permissions: {
-          connect: permission?.map((pre) => ({ id: Number(pre) })),
+          connect: permission?.map((pre) => ({ id: pre })),
         },
         clientPermissions: {
-          connect: clientPermission?.map((client) => ({ id: Number(client) })),
+          connect: clientPermission?.map((client) => ({ id: client })),
         },
       },
     })
@@ -87,13 +87,13 @@ export async function DELETE(req: Request, { params }: Params) {
     await isAuth(req, params)
 
     const checkIfSuperAdmin = await prisma.role.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
     })
     if (checkIfSuperAdmin && checkIfSuperAdmin?.type === 'SUPER_ADMIN')
       return getErrorResponse('Role is super admin', 400)
 
     const object = await prisma.role.delete({
-      where: { id: Number(params.id) },
+      where: { id: params.id },
     })
 
     if (!object) return getErrorResponse('Role not found', 404)

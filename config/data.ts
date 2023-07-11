@@ -1,13 +1,13 @@
 const roles = [
   {
-    id: 1,
+    id: 'HzdmUa40IctkReRd2Pofm',
     name: 'Super Admin',
     description:
       'Super Admins can access and manage all features and settings.',
     type: 'SUPER_ADMIN',
   },
   {
-    id: 2,
+    id: 'a75POUlJzMDmaJtz0JCxp',
     name: 'Authenticated',
     description: 'Default role given to authenticated user.',
     type: 'AUTHENTICATED',
@@ -15,7 +15,7 @@ const roles = [
 ]
 
 const users = {
-  id: 1,
+  id: 'e5cTUpLtGS7foE42nJuwp',
   name: 'Ahmed Ibrahim',
   email: 'info@ahmedibra.com',
   password: '123456',
@@ -28,7 +28,7 @@ const users = {
 }
 
 const profile = {
-  id: 1,
+  id: 'hMXCyzI2MLXNI6tQ-sU0i',
   mobile: 615301507,
   address: 'Mogadishu',
   image: 'https://github.com/ahmedibradotcom.png',
@@ -43,7 +43,7 @@ const sort = {
 
 const clientPermissions = [
   {
-    id: 1,
+    id: 'MZ4Qsx2e-g96eMw0X2qul',
     name: 'Home',
     path: '/',
     menu: 'hidden',
@@ -51,7 +51,7 @@ const clientPermissions = [
     description: 'Home page',
   },
   {
-    id: 2,
+    id: 'IYN1EVSvUg0o5pAxgPEPi',
     name: 'Users',
     path: '/admin/users',
     menu: 'admin',
@@ -59,7 +59,7 @@ const clientPermissions = [
     description: 'Users page',
   },
   {
-    id: 3,
+    id: 'VFGo5W_hc3O85QCOouabO',
     name: 'Roles',
     path: '/admin/roles',
     menu: 'admin',
@@ -67,7 +67,7 @@ const clientPermissions = [
     description: 'Roles page',
   },
   {
-    id: 4,
+    id: 't-Snd86AW-TlIlMEDmYyt',
     name: 'Profile',
     path: '/account/profile',
     menu: 'profile',
@@ -75,7 +75,7 @@ const clientPermissions = [
     description: 'Profile page',
   },
   {
-    id: 5,
+    id: 'eWpbNJ9LkTVO4BYyaO1mJ',
     name: 'Permissions',
     path: '/admin/permissions',
     menu: 'admin',
@@ -83,7 +83,7 @@ const clientPermissions = [
     description: 'Permissions page',
   },
   {
-    id: 6,
+    id: 'HnCMgsT54kcTRYlJGaOC2',
     name: 'Client Permissions',
     path: '/admin/client-permissions',
     menu: 'admin',
@@ -95,35 +95,35 @@ const clientPermissions = [
 const permissions = [
   // Users
   {
-    id: 1,
+    id: 'fCuAED2qkbOmWYmKsOa-_',
     description: 'Users',
     route: '/api/users',
     name: 'Users',
     method: 'GET',
   },
   {
-    id: 2,
-    description: 'User By Id',
+    id: 'UzN2L6RQ_gUM0_JN4ALkB',
+    description: 'User Client Permissions',
     route: '/api/users/:id',
     name: 'Users',
     method: 'GET',
   },
   {
-    id: 3,
+    id: 'rqRYCpC0yytkColvHwY3C',
     description: 'User',
     route: '/api/users',
     name: 'Users',
     method: 'POST',
   },
   {
-    id: 4,
+    id: 'xsei4vGvYpoXw3V0_Bgcy',
     description: 'User',
     route: '/api/users/:id',
     name: 'Users',
     method: 'PUT',
   },
   {
-    id: 5,
+    id: '27vMGpNbQGLKtuaIsTAcF',
     description: 'User',
     route: '/api/users/:id',
     name: 'Users',
@@ -132,14 +132,14 @@ const permissions = [
 
   //   Profile
   {
-    id: 6,
+    id: 'Fyph8SxjGayAHr8g65Rie',
     description: 'Profile',
     route: '/api/profile',
     name: 'Profile',
     method: 'GET',
   },
   {
-    id: 7,
+    id: 'LMG211l6gxRRkjAHPvhgw',
     description: 'Profile',
     route: '/api/profile/:id',
     name: 'Profile',
@@ -148,28 +148,28 @@ const permissions = [
 
   //   Role
   {
-    id: 8,
+    id: '2xiakJtuDptmlP7fxgggo',
     description: 'Roles',
     route: '/api/roles',
     name: 'Roles',
     method: 'GET',
   },
   {
-    id: 9,
+    id: 'HQ8Drbd0-KOMequqhQVuG',
     description: 'Role',
     route: '/api/roles',
     name: 'Roles',
     method: 'POST',
   },
   {
-    id: 10,
+    id: 'GzrnbouFYGvGfvdAfbiZT',
     description: 'Role',
     route: '/api/roles/:id',
     name: 'Roles',
     method: 'PUT',
   },
   {
-    id: 11,
+    id: 'KrZ76u2VUI9qICSJhsuW5',
     description: 'Role',
     route: '/api/roles/:id',
     name: 'Roles',
@@ -178,28 +178,28 @@ const permissions = [
 
   //   Permission
   {
-    id: 12,
+    id: '9P0mpbew9dYW4oF9cM-mO',
     description: 'Permissions',
     route: '/api/permissions',
     name: 'Permissions',
     method: 'GET',
   },
   {
-    id: 13,
+    id: 'n0dw4GMpgiXfySbdlGhs0',
     description: 'Permission',
     route: '/api/permissions',
     name: 'Permissions',
     method: 'POST',
   },
   {
-    id: 14,
+    id: 'tK5RgtYLe9yFNgF93m6TO',
     description: 'Permission',
     route: '/api/permissions/:id',
     name: 'Permissions',
     method: 'PUT',
   },
   {
-    id: 15,
+    id: 'cn25W3-inLybNRkCMHgNC',
     description: 'Permission',
     route: '/api/permissions/:id',
     name: 'Permissions',
@@ -208,28 +208,28 @@ const permissions = [
 
   //   Client Permission
   {
-    id: 16,
+    id: 'X26iEN1J-LBaC4HlPsRgh',
     description: 'Client Permissions',
     route: '/api/client-permissions',
     name: 'ClientPermissions',
     method: 'GET',
   },
   {
-    id: 17,
+    id: 'HRu69jNp0j4pJXs_cjCQ5',
     description: 'Client Permission',
     route: '/api/client-permissions',
     name: 'ClientPermissions',
     method: 'POST',
   },
   {
-    id: 18,
+    id: 'X9ACZfrFX9CAl-2uPXyw9',
     description: 'Client Permission',
     route: '/api/client-permissions/:id',
     name: 'ClientPermissions',
     method: 'PUT',
   },
   {
-    id: 19,
+    id: 'YTU-o6vjJk4A-4uM8kgxA',
     description: 'Client Permission',
     route: '/api/client-permissions/:id',
     name: 'ClientPermissions',

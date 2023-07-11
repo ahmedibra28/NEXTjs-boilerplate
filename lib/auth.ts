@@ -22,7 +22,7 @@ export const isAuth = async (req: any, params?: { id: string }) => {
 
       const userRole = await prisma.user.findFirst({
         where: {
-          id: Number(decoded.id),
+          id: decoded.id,
         },
         include: {
           role: {

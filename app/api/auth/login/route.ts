@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       role: role.type,
       routes,
       menu,
-      token: await generateToken(user.id.toString()),
+      token: await generateToken(user.id),
       message: 'User has been logged in successfully',
     })
   } catch ({ status = 500, message }: any) {

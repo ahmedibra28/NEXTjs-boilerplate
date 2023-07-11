@@ -26,6 +26,46 @@ SMTP_KEY=password
 
 Make sure to replace `user`, `password`, and `db_name` with your own Postgres credentials, and `smtp.host.com`, `user@host.com`, and `password` with your own SMTP credentials.
 
+# Nano ID for postgres
+
+Creating a blank migration for Custom function to the PostgreSQL instance using:
+
+```bash
+npx prisma migrate dev --create-only
+```
+
+You can name this migration 'nanoid'. Open the file created by the migration and paste the nanoid function
+
+```bash
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE OR REPLACE FUNCTION nanoid(size int DEFAULT 21)
+RETURNS text AS $$
+DECLARE
+  id text := '';
+  i int := 0;
+  urlAlphabet char(64) := 'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';
+  bytes bytea := gen_random_bytes(size);
+  byte int;
+  pos int;
+BEGIN
+  WHILE i < size LOOP
+    byte := get_byte(bytes, i);
+    pos := (byte & 63) + 1; -- + 1 because substr starts at 1 for some reason
+    id := id || substr(urlAlphabet, pos, 1);
+    i = i + 1;
+  END LOOP;
+  RETURN id;
+END
+$$ LANGUAGE PLPGSQL STABLE;
+```
+
+Then you can run this migration using:
+
+```bash
+npx prisma migrate dev
+```
+
 ### Starting the development server
 
 To start the development server, run:
