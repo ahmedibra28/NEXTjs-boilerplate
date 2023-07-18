@@ -182,51 +182,57 @@ const Page = () => {
   }
 
   const form = [
-    <div key={0} className='col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Name'
-        name='name'
-        placeholder='Enter name'
-      />
-    </div>,
-    <div key={1} className='col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Menu'
-        name='menu'
-        placeholder='Enter menu'
-      />
-    </div>,
-    <div key={2} className='col-12'>
-      <InputNumber
-        register={register}
-        errors={errors}
-        label='Sort'
-        name='sort'
-        placeholder='Enter sort'
-      />
-    </div>,
-    <div key={3} className='col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Path'
-        name='path'
-        placeholder='Enter path'
-      />
-    </div>,
-    <div key={4} className='col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Description'
-        name='description'
-        isRequired={false}
-        placeholder='Description'
-      />
+    <div key={0} className='flex flex-wrap justify-between'>
+      <div className='w-full'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Name'
+          name='name'
+          placeholder='Enter name'
+        />
+      </div>
+
+      <div className='w-full'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Menu'
+          name='menu'
+          placeholder='Enter menu'
+        />
+      </div>
+
+      <div className='w-full'>
+        <InputNumber
+          register={register}
+          errors={errors}
+          label='Sort'
+          name='sort'
+          placeholder='Enter sort'
+        />
+      </div>
+
+      <div className='w-full'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Path'
+          name='path'
+          placeholder='Enter path'
+        />
+      </div>
+
+      <div className='w-full'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Description'
+          name='description'
+          isRequired={false}
+          placeholder='Description'
+        />
+      </div>
     </div>,
   ]
 

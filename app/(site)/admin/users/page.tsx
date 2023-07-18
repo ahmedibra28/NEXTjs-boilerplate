@@ -220,79 +220,79 @@ const Page = () => {
 
   // form view
   const form = [
-    <div key={0} className='col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Name'
-        name='name'
-        placeholder='Enter name'
-      />
-    </div>,
-
-    <div key={1} className='col-12'>
-      <InputEmail
-        register={register}
-        errors={errors}
-        label='Email'
-        name='email'
-        placeholder='Enter email address'
-      />
-    </div>,
-    <div key={12} className='col-12'>
-      <Autocomplete
-        register={register}
-        errors={errors}
-        label='Role'
-        name='roleId'
-        items={getRolesApi?.data?.data}
-        item='name'
-        value={val}
-        onChange={setVal}
-        setValue={setValue}
-      />
-    </div>,
-    <div key={2} className='col-lg-6 col-md-6 col-12'>
-      <InputPassword
-        register={register}
-        errors={errors}
-        label='Password'
-        name='password'
-        placeholder='Enter password'
-        isRequired={false}
-      />
-    </div>,
-    <div key={3} className='col-lg-6 col-md-6 col-12'>
-      <InputPassword
-        register={register}
-        errors={errors}
-        label='Confirm Password'
-        name='confirmPassword'
-        placeholder='Enter confirm password'
-        isRequired={false}
-        minLength={true}
-        validate={true}
-        watch={watch}
-      />
-    </div>,
-
-    <div key={4} className='col-12'>
-      <InputCheckBox
-        register={register}
-        errors={errors}
-        label='Confirmed'
-        name='confirmed'
-        isRequired={false}
-      />
-    </div>,
-    <div key={5} className='col-12'>
-      <InputCheckBox
-        register={register}
-        errors={errors}
-        label='Blocked'
-        name='blocked'
-        isRequired={false}
-      />
+    <div key={0} className='flex flex-wrap justify-between'>
+      <div className='w-full'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Name'
+          name='name'
+          placeholder='Enter name'
+        />
+      </div>
+      <div className='w-full'>
+        <InputEmail
+          register={register}
+          errors={errors}
+          label='Email'
+          name='email'
+          placeholder='Enter email address'
+        />
+      </div>
+      <div className='w-full'>
+        <Autocomplete
+          register={register}
+          errors={errors}
+          label='Role'
+          name='roleId'
+          items={getRolesApi?.data?.data}
+          item='name'
+          value={val}
+          onChange={setVal}
+          setValue={setValue}
+        />
+      </div>
+      <div key={2} className='w-full'>
+        <InputPassword
+          register={register}
+          errors={errors}
+          label='Password'
+          name='password'
+          placeholder='Enter password'
+          isRequired={false}
+        />
+      </div>
+      <div className='w-full'>
+        <InputPassword
+          register={register}
+          errors={errors}
+          label='Confirm Password'
+          name='confirmPassword'
+          placeholder='Enter confirm password'
+          isRequired={false}
+          minLength={true}
+          validate={true}
+          watch={watch}
+        />
+      </div>
+      <div className='w-full'>
+        <InputCheckBox
+          register={register}
+          errors={errors}
+          label='Confirmed'
+          name='confirmed'
+          isRequired={false}
+        />
+      </div>
+      <div className='w-full'>
+        <InputCheckBox
+          register={register}
+          errors={errors}
+          label='Blocked'
+          name='blocked'
+          isRequired={false}
+        />
+      </div>
     </div>,
   ]
 

@@ -184,49 +184,51 @@ const Page = () => {
   }
 
   const form = [
-    <div key={0} className='col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Name'
-        name='name'
-        placeholder='Enter name'
-      />
-    </div>,
-    <div key={2} className='col-lg-6 col-md-6 col-12'>
-      <StaticInputSelect
-        register={register}
-        errors={errors}
-        label='Method'
-        name='method'
-        placeholder='Select method'
-        isRequired={false}
-        data={[
-          { name: 'GET' },
-          { name: 'POST' },
-          { name: 'PUT' },
-          { name: 'DELETE' },
-        ]}
-      />
-    </div>,
-    <div key={3} className='col-lg-6 col-md-6 col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Route'
-        name='route'
-        placeholder='Enter Route'
-      />
-    </div>,
-    <div key={4} className='col-12'>
-      <InputText
-        register={register}
-        errors={errors}
-        label='Description'
-        name='description'
-        isRequired={false}
-        placeholder='Description'
-      />
+    <div key={0} className='flex flex-wrap justify-between'>
+      <div className='w-full'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Name'
+          name='name'
+          placeholder='Enter name'
+        />
+      </div>
+      <div className='w-full lg:w-[48%]'>
+        <StaticInputSelect
+          register={register}
+          errors={errors}
+          label='Method'
+          name='method'
+          placeholder='Select method'
+          isRequired={false}
+          data={[
+            { name: 'GET' },
+            { name: 'POST' },
+            { name: 'PUT' },
+            { name: 'DELETE' },
+          ]}
+        />
+      </div>
+      <div className='w-full lg:w-[48%]'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Route'
+          name='route'
+          placeholder='Enter Route'
+        />
+      </div>
+      <div className='w-full'>
+        <InputText
+          register={register}
+          errors={errors}
+          label='Description'
+          name='description'
+          isRequired={false}
+          placeholder='Description'
+        />
+      </div>
     </div>,
   ]
 
