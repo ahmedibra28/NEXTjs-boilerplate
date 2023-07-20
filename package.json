@@ -13,6 +13,8 @@
     "studio": "npx prisma studio"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.373.0",
+    "@aws-sdk/signature-v4-crt": "^3.370.0",
     "@prisma/client": "^5.0.0",
     "@tanstack/react-query": "^4.29.14",
     "@tanstack/react-query-devtools": "^4.29.14",
@@ -21,6 +23,7 @@
     "@types/react-dom": "18.2.6",
     "animate.css": "^4.1.1",
     "autoprefixer": "10.4.14",
+    "aws-crt": "^1.15.22",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "classnames": "^2.3.2",

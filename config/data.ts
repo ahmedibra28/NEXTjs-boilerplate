@@ -235,6 +235,13 @@ const permissions = [
     name: 'ClientPermissions',
     method: 'DELETE',
   },
+  {
+    id: 'YTU-o6vjJk4A-4uM8kgxM',
+    description: 'Upload',
+    route: '/api/uploads',
+    name: 'Upload',
+    method: 'POST',
+  },
 ]
 
 export { roles, users, profile, permissions, clientPermissions }

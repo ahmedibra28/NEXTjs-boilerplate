@@ -22,6 +22,7 @@ export interface DynamicFormProps {
   setValue?: (e: string, v2: string) => void
   setFile?: (e: any) => void
   edit?: boolean
+  multiple?: boolean
 
   items?: string[]
   item?: string
@@ -593,6 +594,7 @@ export const InputFile = (args: DynamicFormProps) => {
     label,
     setFile,
     hasLabel = true,
+    multiple = false,
   } = args
 
   return (
@@ -603,6 +605,7 @@ export const InputFile = (args: DynamicFormProps) => {
         </label>
       )}
       <input
+        multiple={multiple}
         {...register(name, isRequired && { required: `${label} is required` })}
         type='file'
         placeholder={placeholder}

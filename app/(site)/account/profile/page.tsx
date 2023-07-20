@@ -54,7 +54,7 @@ const Profile = () => {
   const uploadApi = useApi({
     key: ['upload'],
     method: 'POST',
-    url: `upload?type=image`,
+    url: `uploads?type=image`,
   })?.post
 
   useEffect(() => {
@@ -68,6 +68,8 @@ const Profile = () => {
         email,
         image,
       })
+      setFile(null)
+      setFileLink(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateApi?.isSuccess])
@@ -110,7 +112,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (uploadApi?.isSuccess) {
-      setFileLink(uploadApi?.data.filePaths?.[0]?.path)
+      setFileLink(uploadApi?.data.data?.[0]?.url)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadApi?.isSuccess])
@@ -236,7 +238,7 @@ const Profile = () => {
 
           <div className='w-full md:w-[48%] lg:w-[32%]'>
             <CustomSubmitButton
-              isLoading={updateApi?.isLoading}
+              isLoading={updateApi?.isLoading || uploadApi?.isLoading}
               label='Update'
             />
           </div>
