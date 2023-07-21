@@ -50,6 +50,7 @@ export async function POST(req: Request) {
       name?: string
       path?: string
       open?: boolean
+      sort?: number
     }
     interface RouteChildren extends Route {
       children?: { menu?: string; name?: string; path?: string }[] | any
@@ -62,7 +63,11 @@ export async function POST(req: Request) {
         if (route.menu === 'profile') return null
 
         if (route.menu === 'normal') {
-          formattedRoutes.push({ name: route.name, path: route.path })
+          formattedRoutes.push({
+            name: route.name,
+            path: route.path,
+            sort: route.sort,
+          })
         } else {
           const found = formattedRoutes.find((r) => r.name === route.menu)
           if (found) {
@@ -70,6 +75,7 @@ export async function POST(req: Request) {
           } else {
             formattedRoutes.push({
               name: route.menu,
+              sort: route.sort,
               open: false,
               children: [{ name: route.name, path: route.path }],
             })
@@ -91,7 +97,7 @@ export async function POST(req: Request) {
       image: user.image,
       role: role.type,
       routes,
-      menu,
+      menu: menu.sort((a?: any, b?: any) => a?.sort - b?.sort),
       token: await generateToken(user.id),
       message: 'User has been logged in successfully',
     })

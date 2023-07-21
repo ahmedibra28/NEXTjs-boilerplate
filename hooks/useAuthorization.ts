@@ -13,6 +13,7 @@ const useAuthorization = () => {
     const values = Object.values(params)
     let param = pathname
     keys.forEach((k, i) => {
+      // @ts-ignore
       param = param.replace(values[i], `[${k}]`)
     })
     return param

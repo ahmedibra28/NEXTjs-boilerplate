@@ -1,5 +1,5 @@
 'use client'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6'
 
 interface Props {
   data: {

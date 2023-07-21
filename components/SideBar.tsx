@@ -6,10 +6,10 @@ import React, { Fragment } from 'react'
 import {
   FaAngleDown,
   FaAngleUp,
-  FaCogs,
-  FaHome,
+  FaGears,
+  FaLink,
   FaUserShield,
-} from 'react-icons/fa'
+} from 'react-icons/fa6'
 
 const Sidebar = ({ children }: any) => {
   const { userInfo } = useUserInfoStore((state) => state)
@@ -41,9 +41,9 @@ const Sidebar = ({ children }: any) => {
       case 'admin':
         return <FaUserShield className='w-5 h-auto mb-1 mr-2' />
       case 'setting':
-        return <FaCogs className='w-5 h-auto mb-1 mr-2' />
+        return <FaGears className='w-5 h-auto mb-1 mr-2' />
       default:
-        return <FaHome className='w-5 h-auto mb-1 mr-2' />
+        return <FaLink className='w-5 h-auto mb-1 mr-2' />
     }
   }
 
@@ -60,7 +60,7 @@ const Sidebar = ({ children }: any) => {
                 {!item?.children && (
                   <li>
                     <Link href={item.path}>
-                      <FaHome className='w-5 h-auto mb-1' />
+                      <FaLink className='w-5 h-auto mb-1' />
                       {item.name}
                     </Link>
                   </li>

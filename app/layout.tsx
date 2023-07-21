@@ -5,7 +5,7 @@ import Navigation from '@/components/Navigation'
 import Providers from '@/lib/provider'
 // import Footer from '@/components/Footer'
 import Sidebar from '@/components/Sidebar'
-import { FaBars } from 'react-icons/fa'
+import { FaBars } from 'react-icons/fa6'
 import Link from 'next/link'
 
 const roboto = Roboto({

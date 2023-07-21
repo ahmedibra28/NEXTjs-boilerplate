@@ -4,7 +4,7 @@ import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import { FaPenAlt, FaTrash } from 'react-icons/fa'
+import { FaFilePen, FaTrash } from 'react-icons/fa6'
 import moment from 'moment'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
@@ -162,7 +162,7 @@ const Page = () => {
                 // @ts-ignore
                 window[modal].showModal()
               }}
-              icon={<FaPenAlt className='text-white' />}
+              icon={<FaFilePen className='text-white' />}
               classStyle='btn-primary'
             />
 

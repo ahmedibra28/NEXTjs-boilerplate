@@ -1,6 +1,6 @@
 'use client'
 
-import { FaPaperPlane, FaTimesCircle } from 'react-icons/fa'
+import { FaPaperPlane, FaCircleXmark } from 'react-icons/fa6'
 import { CustomSubmitButton } from './dForms'
 
 interface Props {
@@ -62,7 +62,7 @@ const FormView = ({
     //               onClick={formCleanHandler}
     //             >
     //               <>
-    //                 <FaTimesCircle className='mb-1' /> Close
+    //                 <FaCircleXmark className='mb-1' /> Close
     //               </>
     //             </button>
     //             <button
@@ -104,7 +104,7 @@ const FormView = ({
             type='button'
             className='btn btn-error text-white'
           >
-            <FaTimesCircle className='mb-0.5 text-white' /> Close
+            <FaCircleXmark className='mb-0.5 text-white' /> Close
           </button>
 
           <CustomSubmitButton

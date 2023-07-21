@@ -1,6 +1,6 @@
 'use client'
 import { FormEvent } from 'react'
-import { FaSearch } from 'react-icons/fa'
+import { FaMagnifyingGlass } from 'react-icons/fa6'
 
 interface Props {
   q: string
@@ -24,7 +24,7 @@ const Search = ({ q, setQ, placeholder, searchHandler }: Props) => {
           />
           {/* <span>BTC</span> */}
           <button type='submit' className='btn btn-outline-secondary'>
-            <FaSearch />
+            <FaMagnifyingGlass />
           </button>
         </label>
       </div>

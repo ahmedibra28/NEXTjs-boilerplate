@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
+import { FaCircleCheck, FaCircleXmark } from 'react-icons/fa6'
 
 interface Props {
   variant: 'success' | 'error'
@@ -34,9 +34,9 @@ const Message = ({ variant, value = 'Internal Server Error!' }: Props) => {
               onClick={() => setAlert(false)}
             >
               {variant === 'success' ? (
-                <FaCheckCircle className='text-white' />
+                <FaCircleCheck className='text-white' />
               ) : (
-                <FaTimesCircle className='text-white' />
+                <FaCircleXmark className='text-white' />
               )}
             </button>
             <span className='text-white whitespace-pre-line font-light'>

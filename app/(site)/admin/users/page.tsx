@@ -4,7 +4,12 @@ import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import { FaCheckCircle, FaPenAlt, FaTimesCircle, FaTrash } from 'react-icons/fa'
+import {
+  FaCircleCheck,
+  FaFilePen,
+  FaCircleXmark,
+  FaTrash,
+} from 'react-icons/fa6'
 import moment from 'moment'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
@@ -153,18 +158,18 @@ const Page = () => {
         className: 'hidden md:table-cell',
         format: (item: any) =>
           item?.confirmed ? (
-            <FaCheckCircle className='text-green-500' />
+            <FaCircleCheck className='text-green-500' />
           ) : (
-            <FaTimesCircle className='text-red-500' />
+            <FaCircleXmark className='text-red-500' />
           ),
       },
       {
         className: 'hidden md:table-cell',
         format: (item: any) =>
           !item?.blocked ? (
-            <FaCheckCircle className='text-green-500' />
+            <FaCircleCheck className='text-green-500' />
           ) : (
-            <FaTimesCircle className='text-red-500' />
+            <FaCircleXmark className='text-red-500' />
           ),
       },
       {
@@ -181,7 +186,7 @@ const Page = () => {
                 // @ts-ignore
                 window[modal].showModal()
               }}
-              icon={<FaPenAlt className='text-white' />}
+              icon={<FaFilePen className='text-white' />}
               classStyle='btn-primary'
             />
 

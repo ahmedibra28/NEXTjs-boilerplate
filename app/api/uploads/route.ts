@@ -1,7 +1,6 @@
 import { isAuth } from '@/lib/auth'
 import { getEnvVariable, getErrorResponse } from '@/lib/helpers'
 import { NextResponse } from 'next/server'
-import { prismaDynamically } from '@/lib/prisma.db'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import sharp from 'sharp'
 
@@ -44,7 +43,6 @@ const uploadObject = async (fileName: string, data: any, bucket: string) => {
 
 export async function POST(req: Request) {
   try {
-    const { prisma, Prisma } = await prismaDynamically(req)
     await isAuth(req)
 
     const { searchParams } = new URL(req.url)

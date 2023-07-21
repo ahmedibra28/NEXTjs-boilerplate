@@ -2,7 +2,7 @@
 
 import React from 'react'
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import { FaTrash } from 'react-icons/fa'
+import { FaTrash } from 'react-icons/fa6'
 
 const Confirm = (action: () => void) => {
   return {

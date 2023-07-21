@@ -11,17 +11,21 @@ interface Params {
 
 export async function GET(req: Request, { params }: Params) {
   try {
-    const role = await prisma.role.findFirst({
+    const role = await prisma.user.findUnique({
       where: {
         id: params.id,
       },
-      include: {
-        clientPermissions: {
+      select: {
+        role: {
           select: {
-            menu: true,
-            sort: true,
-            path: true,
-            name: true,
+            clientPermissions: {
+              select: {
+                menu: true,
+                sort: true,
+                path: true,
+                name: true,
+              },
+            },
           },
         },
       },
@@ -29,13 +33,14 @@ export async function GET(req: Request, { params }: Params) {
 
     if (!role) return getErrorResponse('Role not found', 404)
 
-    const routes = role.clientPermissions
+    const routes = role.role.clientPermissions
 
     interface Route {
       menu?: string
       name?: string
       path?: string
       open?: boolean
+      sort?: number
     }
     interface RouteChildren extends Route {
       children?: { menu?: string; name?: string; path?: string }[] | any
@@ -48,7 +53,11 @@ export async function GET(req: Request, { params }: Params) {
         if (route.menu === 'profile') return null
 
         if (route.menu === 'normal') {
-          formattedRoutes.push({ name: route.name, path: route.path })
+          formattedRoutes.push({
+            name: route.name,
+            path: route.path,
+            sort: route.sort,
+          })
         } else {
           const found = formattedRoutes.find((r) => r.name === route.menu)
           if (found) {
@@ -56,6 +65,7 @@ export async function GET(req: Request, { params }: Params) {
           } else {
             formattedRoutes.push({
               name: route.menu,
+              sort: route.sort,
               open: false,
               children: [{ name: route.name, path: route.path }],
             })
@@ -70,7 +80,7 @@ export async function GET(req: Request, { params }: Params) {
 
     return NextResponse.json({
       routes,
-      menu,
+      menu: menu.sort((a?: any, b?: any) => a?.sort - b?.sort),
     })
   } catch ({ status = 500, message }: any) {
     return getErrorResponse(message, status)

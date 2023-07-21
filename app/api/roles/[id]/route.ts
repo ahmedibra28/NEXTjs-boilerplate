@@ -58,6 +58,15 @@ export async function PUT(req: Request, { params }: Params) {
     })
     if (checkExistence) return getErrorResponse('Role already exist')
 
+    // prepare for disconnect
+    const oldPermissions = await prisma.role.findUnique({
+      where: { id: params.id },
+      select: {
+        permissions: { select: { id: true } },
+        clientPermissions: { select: { id: true } },
+      },
+    })
+
     await prisma.role.update({
       where: { id: params.id },
       data: {
@@ -65,9 +74,15 @@ export async function PUT(req: Request, { params }: Params) {
         description,
         type,
         permissions: {
+          disconnect: oldPermissions?.permissions?.map((pre) => ({
+            id: pre.id,
+          })),
           connect: permission?.map((pre) => ({ id: pre })),
         },
         clientPermissions: {
+          disconnect: oldPermissions?.clientPermissions?.map((client) => ({
+            id: client.id,
+          })),
           connect: clientPermission?.map((client) => ({ id: client })),
         },
       },
