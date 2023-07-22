@@ -76,11 +76,34 @@ export async function GET(req: Request, { params }: Params) {
       return formattedRoutes
     }
 
-    const menu = formatRoutes(routes)
+    const sortMenu: any = (menu: any[]) => {
+      const sortedMenu = menu.sort((a, b) => {
+        if (a.sort === b.sort) {
+          if (a.name < b.name) {
+            return -1
+          } else {
+            return 1
+          }
+        } else {
+          return a.sort - b.sort
+        }
+      })
+
+      return sortedMenu.map((m) => {
+        if (m.children) {
+          return {
+            ...m,
+            children: sortMenu(m.children),
+          }
+        } else {
+          return m
+        }
+      })
+    }
 
     return NextResponse.json({
       routes,
-      menu: menu.sort((a?: any, b?: any) => a?.sort - b?.sort),
+      menu: sortMenu(formatRoutes(routes) as any[]),
     })
   } catch ({ status = 500, message }: any) {
     return getErrorResponse(message, status)

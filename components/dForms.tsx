@@ -128,9 +128,9 @@ const Autocomplete = (props: DynamicFormProps) => {
     isRequired = true,
     hasLabel = true,
     setValue,
-    setSearch,
-    format,
-    edit = true,
+    // setSearch,
+    // format,
+    // edit = true,
     item: itemProp,
   } = props
   const ref = useRef<HTMLDivElement>(null)
@@ -167,7 +167,7 @@ const Autocomplete = (props: DynamicFormProps) => {
 
         {/* add this part */}
         {items?.length > 0 && (
-          <div className='dropdown-content bg-base-200 top-14 max-h-96 overflow-auto flex-col rounded-md'>
+          <div className='dropdown-content bg-base-200 z-10 top-14 max-h-96 overflow-auto flex-col rounded-md'>
             <ul
               className='menu menu-compact '
               // use ref to calculate the width of parent

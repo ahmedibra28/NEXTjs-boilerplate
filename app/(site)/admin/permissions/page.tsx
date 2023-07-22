@@ -4,7 +4,7 @@ import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import { FaFilePen, FaTrash } from 'react-icons/fa6'
+import { FaBars, FaFilePen, FaTrash } from 'react-icons/fa6'
 import moment from 'moment'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
@@ -112,6 +112,8 @@ const Page = () => {
     reset()
     setEdit(false)
     setId(null)
+    // @ts-ignore
+    window[modal].close()
   }
 
   const submitHandler = (data: object) => {
@@ -156,24 +158,37 @@ const Page = () => {
       },
       {
         format: (item: any) => (
-          <div className='btn-group'>
-            <ButtonCircle
-              isLoading={false}
-              onClick={() => {
-                editHandler(item)
-                // @ts-ignore
-                window[modal].showModal()
-              }}
-              icon={<FaFilePen className='text-white' />}
-              classStyle='btn-primary'
-            />
-
-            <ButtonCircle
-              isLoading={deleteApi?.isLoading}
-              onClick={() => deleteHandler(item.id)}
-              icon={<FaTrash className='text-white' />}
-              classStyle='btn-error'
-            />
+          <div className='dropdown dropdown-top dropdown-left z-50'>
+            <label tabIndex={0} className='cursor-pointer'>
+              <FaBars className='text-2xl' />
+            </label>
+            <ul
+              tabIndex={0}
+              className='dropdown-content z-50 menu p-2 bg-white rounded-tl-box rounded-tr-box rounded-bl-box w-28 border border-gray-200 shadow'
+            >
+              <li className='h-10 w-24'>
+                <ButtonCircle
+                  isLoading={false}
+                  label='Edit'
+                  onClick={() => {
+                    editHandler(item)
+                    // @ts-ignore
+                    window[modal].showModal()
+                  }}
+                  icon={<FaFilePen className='text-white' />}
+                  classStyle='btn-primary justify-start text-white'
+                />
+              </li>
+              <li className='h-10 w-24'>
+                <ButtonCircle
+                  isLoading={deleteApi?.isLoading}
+                  label='Delete'
+                  onClick={() => deleteHandler(item.id)}
+                  icon={<FaTrash className='text-white' />}
+                  classStyle='btn-error justify-start text-white'
+                />
+              </li>
+            </ul>
           </div>
         ),
       },
