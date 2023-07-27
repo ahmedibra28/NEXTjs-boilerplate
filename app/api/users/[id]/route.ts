@@ -117,12 +117,16 @@ export async function PUT(req: Request, { params }: Params) {
     const { name, confirmed, blocked, password, email, roleId } =
       await req.json()
 
-    const role = await prisma.role.findFirst({ where: { name: roleId } })
+    const role =
+      name && (await prisma.role.findFirst({ where: { name: roleId } }))
     if (!role) return getErrorResponse('Role not found', 404)
 
-    const user = await prisma.user.findFirst({
-      where: { email: email.toLowerCase(), id: { not: params.id } },
-    })
+    const user =
+      email &&
+      params.id &&
+      (await prisma.user.findFirst({
+        where: { email: email.toLowerCase(), id: { not: params.id } },
+      }))
     if (user) return getErrorResponse('User already exists', 409)
 
     const userObj = await prisma.user.update({
@@ -152,16 +156,18 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     await isAuth(req, params)
 
-    const userObj = await prisma.user.findFirst({
-      where: { id: params.id },
-      include: {
-        role: {
-          select: {
-            type: true,
+    const userObj =
+      params.id &&
+      (await prisma.user.findFirst({
+        where: { id: params.id },
+        include: {
+          role: {
+            select: {
+              type: true,
+            },
           },
         },
-      },
-    })
+      }))
     if (!userObj) return getErrorResponse('User not found', 404)
 
     if (userObj.role.type === 'SUPER_ADMIN')

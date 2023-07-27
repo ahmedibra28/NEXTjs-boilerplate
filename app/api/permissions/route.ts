@@ -50,12 +50,15 @@ export async function POST(req: Request) {
 
     const { name, method, route, description } = await req.json()
 
-    const checkExistence = await prisma.permission.findFirst({
-      where: {
-        method: method.toUpperCase(),
-        route: route.toLowerCase(),
-      },
-    })
+    const checkExistence =
+      method &&
+      route &&
+      (await prisma.permission.findFirst({
+        where: {
+          method: method.toUpperCase(),
+          route: route.toLowerCase(),
+        },
+      }))
     if (checkExistence) return getErrorResponse('Permission already exist')
 
     const permissionObj = await prisma.permission.create({

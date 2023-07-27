@@ -49,13 +49,17 @@ export async function PUT(req: Request, { params }: Params) {
     })
     if (!object) return getErrorResponse('Role not found', 400)
 
-    const checkExistence = await prisma.role.findFirst({
-      where: {
-        name: { equals: name, mode: QueryMode.insensitive },
-        type: { equals: type, mode: QueryMode.insensitive },
-        id: { not: params.id },
-      },
-    })
+    const checkExistence =
+      name &&
+      type &&
+      params.id &&
+      (await prisma.role.findFirst({
+        where: {
+          name: { equals: name, mode: QueryMode.insensitive },
+          type: { equals: type, mode: QueryMode.insensitive },
+          id: { not: params.id },
+        },
+      }))
     if (checkExistence) return getErrorResponse('Role already exist')
 
     // prepare for disconnect

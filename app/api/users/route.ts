@@ -65,12 +65,15 @@ export async function POST(req: Request) {
     const { name, email, password, confirmed, blocked, roleId } =
       await req.json()
 
-    const role = await prisma.role.findFirst({ where: { name: roleId } })
+    const role =
+      roleId && (await prisma.role.findFirst({ where: { name: roleId } }))
     if (!role) return getErrorResponse('Role not found', 404)
 
-    const user = await prisma.user.findFirst({
-      where: { email: email.toLowerCase() },
-    })
+    const user =
+      email &&
+      (await prisma.user.findFirst({
+        where: { email: email.toLowerCase() },
+      }))
     if (user) return getErrorResponse('User already exists', 409)
 
     const userObj = await prisma.user.create({

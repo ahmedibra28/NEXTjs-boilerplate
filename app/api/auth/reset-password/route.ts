@@ -15,12 +15,14 @@ export async function POST(req: NextApiRequestExtended) {
       .update(resetToken)
       .digest('hex')
 
-    const user = await prisma.user.findFirst({
-      where: {
-        resetPasswordToken,
-        resetPasswordExpire: { gt: Date.now() },
-      },
-    })
+    const user =
+      resetPasswordToken &&
+      (await prisma.user.findFirst({
+        where: {
+          resetPasswordToken,
+          resetPasswordExpire: { gt: Date.now() },
+        },
+      }))
 
     if (!user) return getErrorResponse('Invalid token or expired', 401)
 

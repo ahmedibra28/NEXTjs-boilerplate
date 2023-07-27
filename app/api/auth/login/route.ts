@@ -25,21 +25,23 @@ export async function POST(req: Request) {
 
     if (!user.confirmed) return getErrorResponse('User is not confirmed', 401)
 
-    const role = await prisma.role.findFirst({
-      where: {
-        id: user.roleId,
-      },
-      include: {
-        clientPermissions: {
-          select: {
-            menu: true,
-            sort: true,
-            path: true,
-            name: true,
+    const role =
+      user.roleId &&
+      (await prisma.role.findFirst({
+        where: {
+          id: user.roleId,
+        },
+        include: {
+          clientPermissions: {
+            select: {
+              menu: true,
+              sort: true,
+              path: true,
+              name: true,
+            },
           },
         },
-      },
-    })
+      }))
 
     if (!role) return getErrorResponse('Role not found', 404)
 

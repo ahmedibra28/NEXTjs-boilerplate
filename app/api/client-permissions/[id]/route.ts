@@ -21,12 +21,15 @@ export async function PUT(req: Request, { params }: Params) {
     if (!clientPermissionObj)
       return getErrorResponse('Client permission not found', 404)
 
-    const checkExistence = await prisma.clientPermission.findFirst({
-      where: {
-        path: path.toLowerCase(),
-        id: { not: params.id },
-      },
-    })
+    const checkExistence =
+      path &&
+      params.id &&
+      (await prisma.clientPermission.findFirst({
+        where: {
+          path: path.toLowerCase(),
+          id: { not: params.id },
+        },
+      }))
     if (checkExistence)
       return getErrorResponse('Client permission already exist')
 

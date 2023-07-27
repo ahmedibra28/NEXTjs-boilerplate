@@ -21,13 +21,17 @@ export async function PUT(req: Request, { params }: Params) {
 
     if (!permissionObj) return getErrorResponse('Permission not found', 404)
 
-    const checkExistence = await prisma.permission.findFirst({
-      where: {
-        method: method.toUpperCase(),
-        route: route.toLowerCase(),
-        id: { not: params.id },
-      },
-    })
+    const checkExistence =
+      method &&
+      route &&
+      params.id &&
+      (await prisma.permission.findFirst({
+        where: {
+          method: method.toUpperCase(),
+          route: route.toLowerCase(),
+          id: { not: params.id },
+        },
+      }))
     if (checkExistence) return getErrorResponse('Permission already exist')
 
     await prisma.permission.update({

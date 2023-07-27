@@ -83,9 +83,11 @@ export async function POST(req: Request) {
     permission = permission?.filter((per) => per)
     clientPermission = clientPermission?.filter((client) => client)
 
-    const checkExistence = await prisma.role.findFirst({
-      where: { name: { equals: name, mode: QueryMode.insensitive } },
-    })
+    const checkExistence =
+      name &&
+      (await prisma.role.findFirst({
+        where: { name: { equals: name, mode: QueryMode.insensitive } },
+      }))
     if (checkExistence) return getErrorResponse('Role already exist')
 
     const object = await prisma.role.create({
