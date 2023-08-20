@@ -235,6 +235,7 @@ const permissions = [
     name: 'ClientPermissions',
     method: 'DELETE',
   },
+  //  Upload
   {
     id: 'YTU-o6vjJk4A-4uM8kgxM',
     description: 'Upload',

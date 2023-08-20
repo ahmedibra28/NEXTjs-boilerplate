@@ -206,6 +206,19 @@ const Profile = () => {
                 isRequired={false}
                 placeholder='Choose an image'
               />
+              {fileLink && (
+                <div className='avatar text-center flex justify-center items-end mt-2'>
+                  <div className='w-12 mask mask-squircle'>
+                    <Image
+                      src={fileLink}
+                      alt='avatar'
+                      width={50}
+                      height={50}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className='flex justify-start flex-wrap flex-row w-full gap-2'>

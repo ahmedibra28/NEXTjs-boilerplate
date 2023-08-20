@@ -78,10 +78,8 @@ export async function GET(req: Request) {
         async (obj) =>
           await prisma.permission.upsert({
             where: { id: obj.id },
-            // @ts-ignore
-            update: obj,
-            // @ts-ignore
-            create: obj,
+            update: obj as any,
+            create: obj as any,
           })
       )
     )

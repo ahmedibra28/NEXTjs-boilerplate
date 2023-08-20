@@ -29,7 +29,7 @@ import Pagination from '@/components/Pagination'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
 import Search from '@/components/Search'
-import { IUser } from '@/types'
+import { IRole, IUser } from '@/types'
 import TableView from '@/components/TableView'
 
 const Page = () => {
@@ -230,13 +230,18 @@ const Page = () => {
     window[modal].close()
   }
 
-  const submitHandler = (data: object) => {
+  const submitHandler = (data: any) => {
+    const roleId = getRolesApi?.data?.data?.find(
+      (item: IRole) => item?.name === data?.roleId
+    )?.id
+
     edit
       ? updateApi?.mutateAsync({
           id: id,
           ...data,
+          roleId,
         })
-      : postApi?.mutateAsync(data)
+      : postApi?.mutateAsync({ ...data, roleId })
   }
 
   // form view

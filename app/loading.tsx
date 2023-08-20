@@ -2,21 +2,28 @@ import React from 'react'
 
 const Loading = () => {
   return (
-    <div
-      role='status'
-      className='max-w-6xl p-4 space-y-4  divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700'
-    >
-      {[...Array(10)].map((_, i) => (
-        <div key={i} className='flex items-center justify-between'>
-          <div>
-            <div className='h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5'></div>
-            <div className='w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700'></div>
-          </div>
-          <div className='h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12'></div>
-        </div>
-      ))}
+    <div className='overflow-x-auto bg-white p-3 mt-16 '>
+      <div className='flex items-center flex-col mb-2'>
+        <h1 className='font-light text-2xl animate-pulse dark:bg-gray-700 w-full md:w-[40%] h-5'></h1>
+        <h1 className='font-light text-2xl animate-pulse dark:bg-gray-700 w-28 h-10 mt-5'></h1>
 
-      <span className='sr-only'>Loading...</span>
+        <h1 className='font-light text-2xl animate-pulse dark:bg-gray-700 w-64 h-12 mt-5'></h1>
+        <div className='w-full sm:w-[80%] md:w-[50%] lg:w-[30%] mx-auto'></div>
+      </div>
+
+      <div className='w-full h-72 mt-10'>
+        <div className='h-4 animate-pulse mb-3 bg-gray-300 dark:bg-gray-700 w-[100%] md:w-[70%]'></div>
+
+        <div className='h-4 animate-pulse mb-3 bg-gray-300 dark:bg-gray-700 w-[90%] md:w-[50%]'></div>
+
+        <div className='h-4 animate-pulse mb-3 bg-gray-300 dark:bg-gray-700 w-[70%] md:w-[90%]'></div>
+
+        <div className='h-4 animate-pulse mb-3 bg-gray-300 dark:bg-gray-700 w-[40%] md:w-[30%]'></div>
+
+        <div className='h-4 animate-pulse mb-3 bg-gray-300 dark:bg-gray-700 w-[30%] md:w-[50%]'></div>
+
+        <div className='h-4 animate-pulse mb-3 bg-gray-300 dark:bg-gray-700 w-[50%] md:w-[90%]'></div>
+      </div>
     </div>
   )
 }

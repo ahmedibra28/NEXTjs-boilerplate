@@ -49,3 +49,5 @@ migrations
 /public/uploads/*.pdf
 /public/uploads/*.docx
 /public/uploads/*.doc
+
+/prisma/migrations

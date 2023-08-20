@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       await req.json()
 
     const role =
-      roleId && (await prisma.role.findFirst({ where: { name: roleId } }))
+      roleId && (await prisma.role.findFirst({ where: { id: roleId } }))
     if (!role) return getErrorResponse('Role not found', 404)
 
     const user =

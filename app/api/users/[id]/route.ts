@@ -118,7 +118,7 @@ export async function PUT(req: Request, { params }: Params) {
       await req.json()
 
     const role =
-      name && (await prisma.role.findFirst({ where: { name: roleId } }))
+      roleId && (await prisma.role.findFirst({ where: { id: roleId } }))
     if (!role) return getErrorResponse('Role not found', 404)
 
     const user =
