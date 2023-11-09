@@ -23,7 +23,7 @@ const users = {
   blocked: false,
   mobile: 615301507,
   address: 'Mogadishu',
-  image: 'https://github.com/ahmedibradotcom.png',
+  image: 'https://github.com/ahmedibra28.png',
   bio: 'Full Stack Developer',
 }
 
@@ -31,7 +31,7 @@ const profile = {
   id: 'hMXCyzI2MLXNI6tQ-sU0i',
   mobile: 615301507,
   address: 'Mogadishu',
-  image: 'https://github.com/ahmedibradotcom.png',
+  image: 'https://github.com/ahmedibra28.png',
   bio: 'Full Stack Developer',
 }
 

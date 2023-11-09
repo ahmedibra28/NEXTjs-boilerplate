@@ -57,7 +57,7 @@ const Page = () => {
           placeholder='Email'
         />
 
-        <CustomSubmitButton isLoading={postApi?.isLoading} label='Send' />
+        <CustomSubmitButton isLoading={postApi?.isPending} label='Send' />
       </form>
     </FormContainer>
   )

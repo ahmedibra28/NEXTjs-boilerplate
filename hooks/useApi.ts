@@ -3,7 +3,7 @@ import {
   QueryClient,
   useMutation,
   useQuery,
-  useInfiniteQuery,
+  // useInfiniteQuery,
 } from '@tanstack/react-query'
 
 export let baseUrl = 'http://localhost:3000/api'
@@ -56,7 +56,12 @@ export const api = async (method: string, url: string, obj = {}) => {
           .then((res) => res.data)
     }
   } catch (error: any) {
-    throw error?.response?.data?.error
+    const err = error?.response?.data?.error || 'Something went wrong'
+    if (err === 'jwt expired' && typeof window !== 'undefined') {
+      localStorage.removeItem('userInfo')
+      window.location.reload()
+    }
+    throw err
   }
 }
 
@@ -69,15 +74,6 @@ interface ApiHookParams {
   scrollMethod?: 'GET'
 }
 
-// interface ApiHookResult {
-//   post?: ReturnType<typeof useMutation>
-//   get?: ReturnType<typeof useQuery>
-//   update?: ReturnType<typeof useMutation>
-//   deleteObj?: ReturnType<typeof useMutation>
-//   infinite?: ReturnType<typeof useInfiniteQuery>
-//   data?: T
-// }
-
 export default function useApi({
   key,
   method,
@@ -87,64 +83,61 @@ export default function useApi({
   const queryClient = new QueryClient()
   switch (method) {
     case 'GET':
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const get = useQuery(key, () => api(method, url, {}), {
+      // eslint-disable-next-line
+      const get = useQuery({
+        queryKey: key,
+        queryFn: () => api(method, url, {}),
         retry: 0,
       })
 
       return { get }
 
     case 'POST':
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const post = useMutation((obj: any) => api(method, url, obj), {
+      // eslint-disable-next-line
+      const post = useMutation({
+        mutationFn: (obj: any) => api(method, url, obj),
         retry: 0,
-        onSuccess: () => queryClient.invalidateQueries(key),
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: key })
+        },
       })
       return { post }
 
     case 'PUT':
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const put = useMutation(
-        (obj: any) => api(method, `${url}/${obj?.id}`, obj),
-        {
-          retry: 0,
-
-          onSuccess: () => queryClient.invalidateQueries(key),
-        }
-      )
+      // eslint-disable-next-line
+      const put = useMutation({
+        mutationFn: (obj: any) => api(method, `${url}/${obj?.id}`, obj),
+        retry: 0,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: key }),
+      })
 
       return { put }
 
     case 'DELETE':
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const deleteObj = useMutation(
-        (id: string) => api(method, `${url}/${id}`),
-        {
-          retry: 0,
-          onSuccess: () => queryClient.invalidateQueries(key),
-        }
-      )
+      // eslint-disable-next-line
+      const deleteObj = useMutation({
+        mutationFn: (id: string) => api(method, `${url}/${id}`),
+        retry: 0,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: key }),
+      })
       return { deleteObj }
 
-    case 'InfiniteScroll':
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const infinite: any = useInfiniteQuery(
-        key,
-        ({ pageParam = 1 }) =>
-          // @ts-ignore
-          api(scrollMethod, `${url}&page=${pageParam}`),
-        {
-          getNextPageParam: (lastPage: any, allPages) => {
-            const maxPage = lastPage?.pages
-            const nextPage = allPages?.length + 1
+    // case 'InfiniteScroll':
+    //   // eslint-disable-next-line
+    //   const infinite = useInfiniteQuery({
+    //     queryKey: key,
+    //     queryFn: ({ pageParam = 1 }) =>
+    //       api(scrollMethod, `${url}&page=${pageParam}`),
+    //     getNextPageParam: (lastPage: any, allPages) => {
+    //       const maxPage = lastPage?.pages
+    //       const nextPage = allPages?.length + 1
 
-            return nextPage <= maxPage ? nextPage : undefined
-          },
-          retry: 0,
-        }
-      )
+    //       return nextPage <= maxPage ? nextPage : undefined
+    //     },
+    //     retry: 0,
+    //   })
 
-      return { infinite, data: infinite.data }
+    //   return { infinite, data: infinite.data }
 
     default:
       throw new Error(`Invalid method ${method}`)

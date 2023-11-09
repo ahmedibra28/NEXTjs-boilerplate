@@ -1,7 +1,7 @@
 'use client'
 import useAuthorization from '@/hooks/useAuthorization'
 import { useRouter } from 'next/navigation'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useForm } from 'react-hook-form'
 
@@ -11,16 +11,15 @@ import Message from '@/components/Message'
 import Spinner from '@/components/Spinner'
 import {
   CustomSubmitButton,
-  InputFile,
   InputPassword,
   InputTel,
   InputText,
 } from '@/components/dForms'
 import useUserInfoStore from '@/zustand/userStore'
+import Upload from '@/components/Upload'
 
 const Profile = () => {
-  const [file, setFile] = useState(null)
-  const [fileLink, setFileLink] = useState(null)
+  const [fileLink, setFileLink] = React.useState<string[]>([])
 
   const path = useAuthorization()
   const router = useRouter()
@@ -51,11 +50,6 @@ const Profile = () => {
     method: 'PUT',
     url: `profile`,
   })?.put
-  const uploadApi = useApi({
-    key: ['upload'],
-    method: 'POST',
-    url: `uploads?type=image`,
-  })?.post
 
   useEffect(() => {
     if (updateApi?.isSuccess) {
@@ -68,54 +62,27 @@ const Profile = () => {
         email,
         image,
       })
-      setFile(null)
-      setFileLink(null)
+      setFileLink([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateApi?.isSuccess])
 
   useEffect(() => {
-    setValue('name', !getApi?.isLoading ? getApi?.data?.name : '')
-    setValue('address', !getApi?.isLoading ? getApi?.data?.address : '')
-    setValue('mobile', !getApi?.isLoading ? getApi?.data?.mobile : '')
-    setValue('bio', !getApi?.isLoading ? getApi?.data?.bio : '')
+    setValue('name', !getApi?.isPending ? getApi?.data?.name : '')
+    setValue('address', !getApi?.isPending ? getApi?.data?.address : '')
+    setValue('mobile', !getApi?.isPending ? getApi?.data?.mobile : '')
+    setValue('bio', !getApi?.isPending ? getApi?.data?.bio : '')
+    setFileLink(!getApi?.isPending ? [getApi?.data?.image] : [])
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getApi?.isLoading, setValue])
+  }, [getApi?.isPending, setValue])
 
   const submitHandler = (data: any) => {
-    if (!file && !fileLink) {
-      updateApi?.mutateAsync({
-        id: getApi?.data?.id,
-        name: data?.name,
-        address: data?.address,
-        mobile: data?.mobile,
-        bio: data?.bio,
-        password: data?.password,
-      })
-    } else {
-      updateApi?.mutateAsync({
-        ...data,
-        id: getApi?.data?.id,
-        image: fileLink,
-      })
-    }
+    updateApi?.mutateAsync({
+      ...data,
+      id: getApi?.data?.id,
+      image: fileLink ? fileLink[0] : getApi?.data?.image,
+    })
   }
-
-  useEffect(() => {
-    if (file) {
-      const formData = new FormData()
-      formData.append('file', file)
-      uploadApi?.mutateAsync(formData)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file])
-
-  useEffect(() => {
-    if (uploadApi?.isSuccess) {
-      setFileLink(uploadApi?.data.data?.[0]?.url)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploadApi?.isSuccess])
 
   return (
     <Fragment>
@@ -123,18 +90,17 @@ const Profile = () => {
         <Message variant='error' value={updateApi?.error} />
       )}
 
-      {uploadApi?.isError && (
-        <Message variant='error' value={uploadApi?.error} />
-      )}
       {getApi?.isError && <Message variant='error' value={getApi?.error} />}
       {updateApi?.isSuccess && (
         <Message variant='success' value={updateApi?.data?.message} />
       )}
 
-      {getApi?.isLoading && <Spinner />}
+      {getApi?.isPending && <Spinner />}
 
       <div className='bg-opacity-60 max-w-4xl mx-auto'>
-        <div className='divider text-3xl uppercase '>{userInfo.name}</div>
+        <div className='divider text-3xl uppercase text-primary'>
+          {userInfo.name}
+        </div>
         <div className='text-center mb-10'>
           <div className='badge badge-neutral'>
             <span> {userInfo.role}</span>
@@ -197,20 +163,18 @@ const Profile = () => {
             </div>
 
             <div className='w-full md:w-[48%] lg:w-[32%]'>
-              <InputFile
-                register={register}
-                errors={errors}
+              <Upload
                 label='Image'
-                name='image'
-                setFile={setFile}
-                isRequired={false}
-                placeholder='Choose an image'
+                setFileLink={setFileLink}
+                fileLink={fileLink}
+                fileType='image'
               />
-              {fileLink && (
+
+              {fileLink.length > 0 && (
                 <div className='avatar text-center flex justify-center items-end mt-2'>
                   <div className='w-12 mask mask-squircle'>
                     <Image
-                      src={fileLink}
+                      src={fileLink?.[0]}
                       alt='avatar'
                       width={50}
                       height={50}
@@ -251,7 +215,7 @@ const Profile = () => {
 
           <div className='w-full md:w-[48%] lg:w-[32%]'>
             <CustomSubmitButton
-              isLoading={updateApi?.isLoading || uploadApi?.isLoading}
+              isLoading={updateApi?.isPending}
               label='Update'
             />
           </div>

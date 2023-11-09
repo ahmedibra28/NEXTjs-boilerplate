@@ -19,8 +19,8 @@ const uploadObject = async (fileName: string, data: any, bucket: string) => {
   })
 
   const params = {
-    Bucket: 'sahalbook',
-    Key: `${bucket}/${fileName}`,
+    Bucket: 'eballan',
+    Key: fileName,
     Body: data,
     ACL: 'public-read',
     Metadata: {
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       message: 'File uploaded successfully',
       data: fileUrls?.map((url) => ({
-        url: `https://sahalbook.sgp1.cdn.digitaloceanspaces.com/sahalbook/images/${url.replace(
+        url: `https://farshaxan.blr1.cdn.digitaloceanspaces.com/eballan/${url.replace(
           /\s/g,
           '%20'
         )}`,

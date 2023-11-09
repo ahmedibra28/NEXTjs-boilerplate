@@ -87,7 +87,7 @@ const Reset = ({
 
         <CustomSubmitButton
           label='Reset Password'
-          isLoading={postApi?.isLoading}
+          isLoading={postApi?.isPending}
         />
       </form>
     </FormContainer>

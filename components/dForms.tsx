@@ -27,94 +27,11 @@ export interface DynamicFormProps {
   items?: string[]
   item?: string
   onChange?: (val: string) => void
+  dropdownValue?: string
+  customFormat?: any
+  disabled?: boolean
 }
 
-// export const AutoCompleteInput = (args: DynamicFormProps) => {
-//   const {
-//     register,
-//     placeholder,
-//     errors,
-//     name,
-//     label,
-//     isRequired = true,
-//     hasLabel = true,
-//     data = [],
-//     value,
-//     setValue,
-//     setSearch,
-//     format,
-//     edit = true,
-//   } = args
-
-//   const [visible, setVisible] = useState(true)
-//   const [selectedValue, setSelectedValue] = useState('')
-
-//   useEffect(() => {
-//     if (selectedValue !== value) {
-//       setVisible(true)
-//     }
-//     // @ts-ignore
-//     setSearch(value)
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [value])
-
-//   useEffect(() => {
-//     if (edit) {
-//       setVisible(false)
-//     }
-//   }, [edit])
-
-//   const selectedItem = (item: string) => {
-//     // @ts-ignore
-//     setValue(name, item)
-//     setSelectedValue(item)
-//     setVisible(false)
-//   }
-
-//   return (
-//     <div className='mb-3 position-relative'>
-//       {hasLabel && (
-//         <label className='label' htmlFor={name}>
-//           {label}
-//         </label>
-//       )}
-//       <input
-//         {...register(name, isRequired && { required: `${label} is required` })}
-//         type='text'
-//         placeholder={placeholder}
-//         className='form-control shadow-none specialInput'
-//         autoComplete='off'
-//       />
-//       {visible && value && data?.length > 0 && (
-//         <div
-//           className='bg-light position-absolute start-0 end-0 animate__animated  animate__fadeIn border border-top-0'
-//           style={{ zIndex: 10 }}
-//         >
-//           <ul className='list-inline px-2 mx-1'>
-//             {value &&
-//               data?.map((d: any) => (
-//                 <li
-//                   key={d?.id}
-//                   className='border border-top-0 border-start-0 border-end-0 my-1  py-1'
-//                   onClick={() => selectedItem(d?.name)}
-//                 >
-//                   {format(d)}
-//                 </li>
-//               ))}
-//           </ul>
-//         </div>
-//       )}
-
-//       {errors && errors[name] && (
-//         <span className='text-secondary text-sm mt-1'>
-//           {errors[name].message}
-//         </span>
-//       )}
-//     </div>
-//   )
-// }
-
-//we are using dropdown, input and menu component from daisyui
 const Autocomplete = (props: DynamicFormProps) => {
   const {
     items = [],
@@ -130,8 +47,10 @@ const Autocomplete = (props: DynamicFormProps) => {
     setValue,
     // setSearch,
     // format,
-    // edit = true,
+    edit = true,
     item: itemProp,
+    dropdownValue = '',
+    customFormat = '',
   } = props
   const ref = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
@@ -152,6 +71,7 @@ const Autocomplete = (props: DynamicFormProps) => {
         ref={ref}
       >
         <input
+          autoComplete='off'
           {...register(
             name,
             isRequired && { required: `${label} is required` }
@@ -167,7 +87,7 @@ const Autocomplete = (props: DynamicFormProps) => {
 
         {/* add this part */}
         {items?.length > 0 && (
-          <div className='dropdown-content bg-base-200 z-10 top-14 max-h-96 overflow-auto flex-col rounded-md'>
+          <div className='dropdown-content bg-base-200 top-14 z-10 max-h-96 overflow-auto flex-col rounded-md'>
             <ul
               className='menu menu-compact '
               // use ref to calculate the width of parent
@@ -184,11 +104,67 @@ const Autocomplete = (props: DynamicFormProps) => {
                       setOpen(false)
                       // @ts-ignore
                       setValue(name, item[itemProp])
+
+                      if (dropdownValue === 'product-purchase') {
+                        // @ts-ignore
+                        setValue(
+                          `${name?.split('.')?.[0]}.cost`,
+                          // @ts-ignore
+                          item?.cost
+                        )
+
+                        // @ts-ignore
+                        setValue(`${name?.split('.')?.[0]}.price`, item?.price)
+
+                        // @ts-ignore
+                        setValue(
+                          `${name?.split('.')?.[0]}.id`,
+                          // @ts-ignore
+                          item?.id
+                        )
+                      }
+
+                      if (dropdownValue === 'product-sale') {
+                        // @ts-ignore
+                        setValue(
+                          `${name?.split('.')?.[0]}.price`,
+                          // @ts-ignore
+                          item?.price?.toFixed(2)
+                        )
+                        // @ts-ignore
+                        setValue(
+                          `${name?.split('.')?.[0]}.quantity`,
+                          // @ts-ignore
+                          1
+                        )
+                        // @ts-ignore
+                        setValue(
+                          `${name?.split('.')?.[0]}.discount`,
+                          // @ts-ignore
+                          0
+                        )
+                        // @ts-ignore
+                        setValue(
+                          `${name?.split('.')?.[0]}.total`,
+                          // @ts-ignore
+                          Number(item?.price) * Number(item?.quantity)
+                        )
+                        // @ts-ignore
+                        setValue(
+                          `${name?.split('.')?.[0]}.id`,
+                          // @ts-ignore
+                          item?.id
+                        )
+                      }
                     }}
                     className='border-b border-b-base-content/10 w-full'
                   >
-                    {/* @ts-ignore */}
-                    <button type='button'>{item[itemProp]}</button>
+                    {customFormat ? (
+                      customFormat(item)
+                    ) : (
+                      // @ts-ignore
+                      <button type='button'>{item[itemProp]}</button>
+                    )}
                   </li>
                 )
               })}
@@ -321,6 +297,7 @@ export const InputNumber = (args: DynamicFormProps) => {
     isRequired = true,
     hasLabel = true,
     max = 100000000000,
+    disabled = false,
   } = args
 
   return (
@@ -331,9 +308,10 @@ export const InputNumber = (args: DynamicFormProps) => {
         </label>
       )}
       <input
+        disabled={disabled}
         {...register(name, isRequired && { required: `${label} is required` })}
         type='number'
-        step={0.01}
+        step={0.00001}
         placeholder={placeholder}
         className='input rounded-none border border-gray-300 w-full'
         max={max}
@@ -348,7 +326,15 @@ export const InputNumber = (args: DynamicFormProps) => {
 }
 
 export const InputEmail = (args: DynamicFormProps) => {
-  const { register, placeholder, errors, label, name, hasLabel = true } = args
+  const {
+    register,
+    placeholder,
+    errors,
+    label,
+    name,
+    hasLabel = true,
+    isRequired = true,
+  } = args
 
   return (
     <div className='form-control w-full'>
@@ -360,7 +346,7 @@ export const InputEmail = (args: DynamicFormProps) => {
 
       <input
         {...register(name, {
-          required: `${label} is required`,
+          required: isRequired ? `${label} is required` : null,
           pattern: {
             value: /\S+@\S+\.+\S+/,
             message: 'Entered value does not match email format',
@@ -453,7 +439,7 @@ export const DynamicInputSelect = (args: DynamicFormProps) => {
         placeholder={placeholder}
         className='input rounded-none border border-gray-300 w-full'
       >
-        <option value=''>-------</option>
+        <option value=''>--- {placeholder} ---</option>
         {data &&
           data.map((d: any) => (
             <option key={d.id} value={d.id}>
@@ -612,7 +598,10 @@ export const InputFile = (args: DynamicFormProps) => {
         className='file-input file-input-ghost rounded-none border border-gray-300 w-full'
         id='formFile'
         // @ts-ignore
-        onChange={(e: any) => setFile(e.target.files[0])}
+        onChange={(e: any) =>
+          // @ts-ignore
+          setFile(multiple ? e.target.files : e.target.files[0])
+        }
       />
       {errors && errors[name] && (
         <span className='text-secondary text-sm mt-1'>
@@ -748,9 +737,15 @@ export const CustomSubmitButton = ({
   isLoading = false,
   label = 'Submit',
   spinner = 'loading loading-spinner',
+  ...args
 }) => {
   return (
-    <button type={type as any} className={classStyle} disabled={isLoading}>
+    <button
+      {...args}
+      type={type as any}
+      className={classStyle}
+      disabled={isLoading}
+    >
       {isLoading ? (
         <span className='flex items-center gap-2'>
           <span className={spinner}></span>
@@ -767,6 +762,7 @@ export const ButtonCircle = ({
   type = 'button',
   classStyle = 'btn btn-sm w-12 h-12 btn-primary rounded-full',
   isLoading = false,
+  disabled = false,
   label = '',
   spinner = 'loading loading-spinner',
   onClick = () => {},
@@ -777,6 +773,7 @@ export const ButtonCircle = ({
   type?: string
   classStyle?: string
   isLoading?: boolean
+  disabled?: boolean
   label?: string
   spinner?: string
   onClick?: () => void
@@ -788,7 +785,7 @@ export const ButtonCircle = ({
       type={type as any}
       className={`btn btn-sm ${classStyle}`}
       onClick={onClick}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
     >
       {isLoading ? (
         <span className='flex items-center gap-2'>

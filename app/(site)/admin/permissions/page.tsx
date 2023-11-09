@@ -181,7 +181,7 @@ const Page = () => {
               </li>
               <li className='h-10 w-24'>
                 <ButtonCircle
-                  isLoading={deleteApi?.isLoading}
+                  isLoading={deleteApi?.isPending}
                   label='Delete'
                   onClick={() => deleteHandler(item.id)}
                   icon={<FaTrash className='text-white' />}
@@ -273,8 +273,8 @@ const Page = () => {
       <FormView
         formCleanHandler={formCleanHandler}
         form={form}
-        isLoadingUpdate={updateApi?.isLoading}
-        isLoadingPost={postApi?.isLoading}
+        isLoadingUpdate={updateApi?.isPending}
+        isLoadingPost={postApi?.isPending}
         handleSubmit={handleSubmit}
         submitHandler={submitHandler}
         modal={modal}
@@ -282,7 +282,7 @@ const Page = () => {
         modalSize='max-w-xl'
       />
 
-      {getApi?.isLoading ? (
+      {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
         <Message variant='error' value={getApi?.error} />

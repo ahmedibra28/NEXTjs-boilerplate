@@ -80,7 +80,7 @@ const Page = () => {
           placeholder='Password'
         />
 
-        <CustomSubmitButton isLoading={postApi?.isLoading} label='Sign In' />
+        <CustomSubmitButton isLoading={postApi?.isPending} label='Sign In' />
       </form>
       <div className='row pt-3'>
         <div className='col'>

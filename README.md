@@ -7,7 +7,7 @@ This is a boilerplate project for a Next.js 13 app using TypeScript, Tailwind CS
 To use this boilerplate, clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/ahmedibradotcom/NEXTjs-boilerplate.git
+git clone https://github.com/ahmedibra28/NEXTjs-boilerplate.git
 cd NEXTjs-boilerplate
 npm install
 ```
