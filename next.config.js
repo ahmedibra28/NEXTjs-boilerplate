@@ -4,8 +4,21 @@ const path = require('path');
 const nextConfig = {
     reactStrictMode: true,
     images: {
-        domains: ['github.com', 'ui-avatars.com', 'farshaxan.blr1.cdn.digitaloceanspaces.com',]
-    },
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'ahmedibra.com'
+            },
+            {
+                protocol: 'https',
+                hostname: 'github.com'
+            },
+            {
+                protocol: 'https',
+                hostname: 'ui-avatars.com'
+            }
+        ]
+    }
 }
 
 module.exports = nextConfig

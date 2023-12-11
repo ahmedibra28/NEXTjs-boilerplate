@@ -40,7 +40,10 @@ const Page = () => {
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
   const [roleValue, setRoleValue] = useState('')
-  const [roleValueEdit, setRoleValueEdit] = useState<ISelect | null>(null)
+
+  const [reactSelect, setReactSelect] = useState<
+    { label?: string; value?: string; id?: string }[]
+  >([])
 
   const path = useAuthorization()
   const router = useRouter()
@@ -128,7 +131,10 @@ const Page = () => {
     setValue('email', item?.email)
     const role: ISelect = { label: item?.role?.name, value: item?.role?.id }
     setValue('roleId', role)
-    setRoleValueEdit(role)
+    setReactSelect([
+      ...reactSelect.filter((item) => item.id !== 'roleId'),
+      { ...role, id: 'roleId' },
+    ])
 
     setEdit(true)
   }
@@ -183,13 +189,13 @@ const Page = () => {
       },
       {
         format: (item: any) => (
-          <div className='dropdown dropdown-top dropdown-left z-50'>
+          <div className='dropdown dropdown-top dropdown-left z-10'>
             <label tabIndex={0} className='cursor-pointer'>
               <FaBars className='text-2xl' />
             </label>
             <ul
               tabIndex={0}
-              className='dropdown-content z-50 menu p-2 bg-white rounded-tl-box rounded-tr-box rounded-bl-box w-28 border border-gray-200 shadow'
+              className='dropdown-content z-10 menu p-2 bg-white rounded-tl-box rounded-tr-box rounded-bl-box w-28 border border-gray-200 shadow'
             >
               <li className='h-10 w-24'>
                 <ButtonCircle
@@ -229,7 +235,7 @@ const Page = () => {
     setEdit(false)
     setId(null)
     setValue('roleId', null)
-    setRoleValueEdit(null)
+    setReactSelect([])
     getRolesApi?.refetch()
     // @ts-ignore
     window[modal].close()
@@ -268,18 +274,21 @@ const Page = () => {
       </div>
       <div className='w-full'>
         <SelectInput
-          debounce={500}
+          debounce={1000}
           name='roleId'
           label='Role'
           edit={edit}
           isLoading={getRolesApi?.isPending}
           register={register}
           errors={errors}
-          value={roleValueEdit}
+          value={reactSelect?.find((item) => item.id === 'roleId')}
           onChange={(item: string) => setRoleValue(item)}
           selectedOption={(item) => {
             setValue('roleId', item)
-            setRoleValueEdit(item)
+            setReactSelect([
+              ...reactSelect.filter((item) => item.id !== 'roleId'),
+              { ...item, id: 'roleId' },
+            ])
           }}
           data={
             getRolesApi?.data?.data?.map((item: IRole) => ({

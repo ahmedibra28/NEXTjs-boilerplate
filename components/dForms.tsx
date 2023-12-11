@@ -1,7 +1,7 @@
 'use client'
 
 import classNames from 'classnames'
-import { memo, useRef, useState } from 'react'
+import React, { memo, useRef, useState } from 'react'
 import AsyncSelect from 'react-select/async'
 
 export interface DynamicFormProps {
@@ -75,6 +75,7 @@ export const SelectInput = ({
       i.label.toLowerCase().includes(inputValue.toLowerCase())
     )
   }
+
   let timeoutId: any
 
   const loadOptions = (
@@ -85,9 +86,13 @@ export const SelectInput = ({
 
     timeoutId = setTimeout(() => {
       callback(onFilter(inputValue))
-      callback(onChange(inputValue))
     }, debounce)
   }
+
+  // const v = (ValueType, ActionTypes) => {
+  //   console.log({ ValueType, ActionTypes })
+  // }
+
   return (
     <>
       {hasLabel && (
@@ -96,6 +101,8 @@ export const SelectInput = ({
         </label>
       )}
       <AsyncSelect
+        // setValue={v}
+        onInputChange={(e) => onChange(e)}
         value={value}
         placeholder={`Search ${label?.toLowerCase()}`}
         {...register(name, isRequired && { required: `${label} is required` })}

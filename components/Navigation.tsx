@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { Fragment } from 'react'
+import { FaAngleDown, FaAngleUp, FaBars, FaPowerOff } from 'react-icons/fa6'
 
 const Navigation = () => {
   const { userInfo } = useUserInfoStore((state) => state)
@@ -40,6 +41,16 @@ const Navigation = () => {
     }
   }, [])
 
+  const handleToggle = (item: any) => {
+    const newMenu = menu.map((x: any) => {
+      if (x.name === item.name) {
+        return { ...x, open: !x.open }
+      }
+      return { ...x, open: false }
+    })
+    setMenu(newMenu)
+  }
+
   const auth = (
     <>
       <div className='flex-none hidden lg:block'>
@@ -57,7 +68,7 @@ const Navigation = () => {
                   <details>
                     <summary> {capitalizeFirstLetter(item.name)}</summary>
 
-                    <ul className='p-2 bg-base-100 rounded z-50 w-44 top-10 right-0'>
+                    <ul className='p-2 bg-base-100 rounded z-20 w-44 top-10 right-0'>
                       {item.children.map((child: any, i: number) => (
                         <li key={i}>
                           <Link href={child.path}>{child.name}</Link>
@@ -72,7 +83,10 @@ const Navigation = () => {
         </ul>
       </div>
 
-      <div suppressHydrationWarning={true} className='dropdown dropdown-end'>
+      <div
+        suppressHydrationWarning={true}
+        className='dropdown dropdown-end  hidden lg:block'
+      >
         <label tabIndex={0} className='btn btn-ghost btn-circle avatar'>
           <div className='w-10 rounded-full'>
             <Image
@@ -93,13 +107,82 @@ const Navigation = () => {
           <li>
             <Link href='/account/profile' className='justify-between'>
               Profile
-              <span className='badge'>New</span>
             </Link>
           </li>
 
           <li>
             <button onClick={() => handleLogout()}>
               <Link href='/auth/login'>Logout</Link>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div className='dropdown lg:hidden'>
+        <div
+          tabIndex={0}
+          role='button'
+          className='btn border bg-transparent m-1'
+        >
+          <FaBars className='text-gray-500 text-2xl' />
+        </div>
+        <ul
+          tabIndex={0}
+          className='dropdown-content z-20 menu p-2 bg-base-100 rounded w-52 shadow-xl top-[66px] right-0'
+        >
+          <li>
+            <Link href='/account/profile' className='justify-between'>
+              Profile
+            </Link>
+          </li>
+
+          {menu.map((item: any, i: number) => (
+            <Fragment key={i}>
+              {!item?.children && (
+                <li>
+                  <Link href={item.path}>{item.name}</Link>
+                </li>
+              )}
+
+              {item?.children && (
+                <li key={item.name}>
+                  <span
+                    onClick={() => handleToggle(item)}
+                    className='flex justify-between items-center'
+                  >
+                    <span className='flex justify-start items-center'>
+                      {capitalizeFirstLetter(item.name)}
+                    </span>
+                    {!item.open ? (
+                      <FaAngleDown className='text-gray-700 text-lg' />
+                    ) : (
+                      <FaAngleUp className='text-gray-700 text-lg' />
+                    )}
+                  </span>
+                  <div className='dropdown dropdown-end hover:bg-transparent py-0'>
+                    {item.open && (
+                      <ul className='p-2 bg-ghost border-0'>
+                        {item.children.map((child: any, i: number) => (
+                          <li key={i}>
+                            <Link href={child.path}>{child.name}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              )}
+            </Fragment>
+          ))}
+          <hr className='my-2' />
+          <li>
+            <button onClick={() => handleLogout()}>
+              <Link
+                href='/auth/login'
+                className='flex justify-start items-center flex-row gap-x-1 text-red-500'
+              >
+                <FaPowerOff /> <span>Logout</span>
+              </Link>
             </button>
           </li>
         </ul>

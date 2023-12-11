@@ -23,7 +23,7 @@ const Message = ({ variant, value = 'Internal Server Error!' }: Props) => {
   return (
     <>
       {alert && (
-        <div className='toast z-50 fixed top-0 max-w-full'>
+        <div className='toast z-0 fixed top-0 max-w-full'>
           <div
             className={`alert ${
               variant === 'success' ? 'alert-success' : 'alert-error'

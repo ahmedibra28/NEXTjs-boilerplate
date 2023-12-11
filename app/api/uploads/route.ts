@@ -29,6 +29,7 @@ const uploadObject = async (fileName: string, data: any, bucket: string) => {
   }
 
   try {
+    // @ts-ignore
     const data = await s3Client.send(new PutObjectCommand(params))
 
     return data
