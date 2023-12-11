@@ -17,12 +17,12 @@ import useApi from '@/hooks/useApi'
 import Confirm from '@/components/Confirm'
 import { useRouter } from 'next/navigation'
 import {
-  Autocomplete,
   ButtonCircle,
   InputCheckBox,
   InputEmail,
   InputPassword,
   InputText,
+  SelectInput,
 } from '@/components/dForms'
 import Message from '@/components/Message'
 import Pagination from '@/components/Pagination'
@@ -32,12 +32,15 @@ import Search from '@/components/Search'
 import { IRole, IUser } from '@/types'
 import TableView from '@/components/TableView'
 
+type ISelect = { label?: string; value?: string }
+
 const Page = () => {
   const [page, setPage] = useState(1)
   const [id, setId] = useState<any>(null)
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
-  const [val, setVal] = useState('')
+  const [roleValue, setRoleValue] = useState('')
+  const [roleValueEdit, setRoleValueEdit] = useState<ISelect | null>(null)
 
   const path = useAuthorization()
   const router = useRouter()
@@ -57,7 +60,7 @@ const Page = () => {
   const getRolesApi = useApi({
     key: ['roles'],
     method: 'GET',
-    url: `roles?page=1&q=${val}&limit=${10}`,
+    url: `roles?page=1&q=${roleValue}&limit=${10}`,
   })?.get
 
   const postApi = useApi({
@@ -78,12 +81,12 @@ const Page = () => {
     url: `users`,
   })?.deleteObj
 
-  useEffect(() => {
-    if (val) {
+  React.useEffect(() => {
+    if (roleValue) {
       getRolesApi?.refetch()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [val])
+    // eslint-disable-next-line
+  }, [roleValue])
 
   const {
     register,
@@ -123,8 +126,9 @@ const Page = () => {
     setValue('confirmed', item?.confirmed)
     setValue('name', item?.name)
     setValue('email', item?.email)
-    setValue('roleId', item?.role.name)
-    setVal(item?.role.name)
+    const role: ISelect = { label: item?.role?.name, value: item?.role?.id }
+    setValue('roleId', role)
+    setRoleValueEdit(role)
 
     setEdit(true)
   }
@@ -224,24 +228,21 @@ const Page = () => {
     reset()
     setEdit(false)
     setId(null)
-    setVal('')
+    setValue('roleId', null)
+    setRoleValueEdit(null)
     getRolesApi?.refetch()
     // @ts-ignore
     window[modal].close()
   }
 
   const submitHandler = (data: any) => {
-    const roleId = getRolesApi?.data?.data?.find(
-      (item: IRole) => item?.name === data?.roleId
-    )?.id
-
     edit
       ? updateApi?.mutateAsync({
           id: id,
           ...data,
-          roleId,
+          roleId: data?.roleId?.value,
         })
-      : postApi?.mutateAsync({ ...data, roleId })
+      : postApi?.mutateAsync({ ...data, roleId: data?.roleId?.value })
   }
 
   // form view
@@ -266,16 +267,26 @@ const Page = () => {
         />
       </div>
       <div className='w-full'>
-        <Autocomplete
+        <SelectInput
+          debounce={500}
+          name='roleId'
+          label='Role'
+          edit={edit}
+          isLoading={getRolesApi?.isPending}
           register={register}
           errors={errors}
-          label='Role'
-          name='roleId'
-          items={getRolesApi?.data?.data}
-          item='name'
-          value={val}
-          onChange={setVal}
-          setValue={setValue}
+          value={roleValueEdit}
+          onChange={(item: string) => setRoleValue(item)}
+          selectedOption={(item) => {
+            setValue('roleId', item)
+            setRoleValueEdit(item)
+          }}
+          data={
+            getRolesApi?.data?.data?.map((item: IRole) => ({
+              value: item.id,
+              label: item.name,
+            })) || []
+          }
         />
       </div>
       <div key={2} className='w-full'>

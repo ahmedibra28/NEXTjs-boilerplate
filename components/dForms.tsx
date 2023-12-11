@@ -2,6 +2,7 @@
 
 import classNames from 'classnames'
 import { memo, useRef, useState } from 'react'
+import AsyncSelect from 'react-select/async'
 
 export interface DynamicFormProps {
   register: any
@@ -32,29 +33,61 @@ export interface DynamicFormProps {
   disabled?: boolean
 }
 
-const Autocomplete = (props: DynamicFormProps) => {
-  const {
-    items = [],
-    value,
-    onChange,
-    register,
-    placeholder = 'Type something..',
-    errors,
-    name,
-    label,
-    isRequired = true,
-    hasLabel = true,
-    setValue,
-    // setSearch,
-    // format,
-    edit = true,
-    item: itemProp,
-    dropdownValue = '',
-    customFormat = '',
-  } = props
-  const ref = useRef<HTMLDivElement>(null)
-  const [open, setOpen] = useState(false)
+export const SelectInput = ({
+  data,
+  isDisabled = false,
+  isLoading = false,
+  isClearable = true,
+  isSearchable = true,
+  name,
+  isMulti = false,
+  selectedOption = () => {},
+  onChange = () => {},
+  debounce = 2000,
+  register,
+  errors,
+  isRequired = true,
+  hasLabel = true,
+  label,
+  edit,
+  value,
+}: {
+  data: any[]
+  isDisabled?: boolean
+  isLoading?: boolean
+  isClearable?: boolean
+  isSearchable?: boolean
+  name: string
+  debounce?: number
+  isMulti?: boolean
+  selectedOption?: (selectedOption: any) => void
+  onChange?: (inputValue: string) => void
+  hasLabel?: boolean
+  label?: string
+  register?: any
+  errors?: any
+  isRequired?: boolean
+  edit?: boolean
+  value?: any
+}) => {
+  const onFilter = (inputValue: string) => {
+    return data?.filter((i: any) =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    )
+  }
+  let timeoutId: any
 
+  const loadOptions = (
+    inputValue: string,
+    callback: (options: any) => void
+  ) => {
+    clearTimeout(timeoutId)
+
+    timeoutId = setTimeout(() => {
+      callback(onFilter(inputValue))
+      callback(onChange(inputValue))
+    }, debounce)
+  }
   return (
     <>
       {hasLabel && (
@@ -62,129 +95,53 @@ const Autocomplete = (props: DynamicFormProps) => {
           {label}
         </label>
       )}
-      <div
-        // use classnames here to easily toggle dropdown open
-        className={classNames({
-          'dropdown w-full': true,
-          'dropdown-open': open,
-        })}
-        ref={ref}
-      >
-        <input
-          autoComplete='off'
-          {...register(
-            name,
-            isRequired && { required: `${label} is required` }
-          )}
-          type='text'
-          className='input rounded-none border border-gray-300 w-full'
-          value={value}
-          // @ts-ignore
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          tabIndex={0}
-        />
-
-        {/* add this part */}
-        {items?.length > 0 && (
-          <div className='dropdown-content bg-base-200 top-14 z-10 max-h-96 overflow-auto flex-col rounded-md'>
-            <ul
-              className='menu menu-compact '
-              // use ref to calculate the width of parent
-              style={{ width: ref.current?.clientWidth }}
-            >
-              {items?.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    tabIndex={index + 1}
-                    onClick={() => {
-                      // @ts-ignore
-                      onChange(item[itemProp])
-                      setOpen(false)
-                      // @ts-ignore
-                      setValue(name, item[itemProp])
-
-                      if (dropdownValue === 'product-purchase') {
-                        // @ts-ignore
-                        setValue(
-                          `${name?.split('.')?.[0]}.cost`,
-                          // @ts-ignore
-                          item?.cost
-                        )
-
-                        // @ts-ignore
-                        setValue(`${name?.split('.')?.[0]}.price`, item?.price)
-
-                        // @ts-ignore
-                        setValue(
-                          `${name?.split('.')?.[0]}.id`,
-                          // @ts-ignore
-                          item?.id
-                        )
-                      }
-
-                      if (dropdownValue === 'product-sale') {
-                        // @ts-ignore
-                        setValue(
-                          `${name?.split('.')?.[0]}.price`,
-                          // @ts-ignore
-                          item?.price?.toFixed(2)
-                        )
-                        // @ts-ignore
-                        setValue(
-                          `${name?.split('.')?.[0]}.quantity`,
-                          // @ts-ignore
-                          1
-                        )
-                        // @ts-ignore
-                        setValue(
-                          `${name?.split('.')?.[0]}.discount`,
-                          // @ts-ignore
-                          0
-                        )
-                        // @ts-ignore
-                        setValue(
-                          `${name?.split('.')?.[0]}.total`,
-                          // @ts-ignore
-                          Number(item?.price) * Number(item?.quantity)
-                        )
-                        // @ts-ignore
-                        setValue(
-                          `${name?.split('.')?.[0]}.id`,
-                          // @ts-ignore
-                          item?.id
-                        )
-                      }
-                    }}
-                    className='border-b border-b-base-content/10 w-full'
-                  >
-                    {customFormat ? (
-                      customFormat(item)
-                    ) : (
-                      // @ts-ignore
-                      <button type='button'>{item[itemProp]}</button>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-            {/* add this part */}
-          </div>
-        )}
-
-        {errors && errors[name] && (
-          <span className='text-secondary text-sm mt-1'>
-            {errors[name].message}
-          </span>
-        )}
-      </div>
+      <AsyncSelect
+        value={value}
+        placeholder={`Search ${label?.toLowerCase()}`}
+        {...register(name, isRequired && { required: `${label} is required` })}
+        cacheOptions={true}
+        loadOptions={isLoading ? () => {} : loadOptions}
+        onChange={selectedOption}
+        className='z-[100] input outline-none rounded-none border border-gray-300 w-full'
+        classNamePrefix='select'
+        defaultValue={edit ? data?.[0] : null}
+        isDisabled={isDisabled}
+        isLoading={isLoading}
+        isClearable={isClearable}
+        isSearchable={isSearchable}
+        name={name}
+        options={data}
+        isMulti={isMulti}
+        styles={{
+          container: (provided) => ({
+            ...provided,
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            '&:focus': {
+              outline: 'none',
+              border: 'none',
+            },
+          }),
+          control: (provided) => ({
+            ...provided,
+            marginLeft: '-20px',
+            border: 'none',
+            width: '100%',
+            boxShadow: 'none',
+            backgroundColor: 'white',
+          }),
+        }}
+      />
+      {errors && errors[name] && (
+        <span className='text-secondary text-sm mt-1'>
+          {errors[name].message}
+        </span>
+      )}
     </>
   )
 }
-// export as memo but not as default
-const m = memo(Autocomplete)
-export { m as Autocomplete }
 
 export const InputText = (args: DynamicFormProps) => {
   const {

@@ -33,6 +33,7 @@ export async function GET(req: Request) {
           createdAt: true,
           role: {
             select: {
+              id: true,
               type: true,
               name: true,
             },
