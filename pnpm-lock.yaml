@@ -20,6 +20,9 @@ dependencies:
   '@tanstack/react-query-devtools':
     specifier: ^5.8.1
     version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
+  '@tanstack/react-table':
+    specifier: ^8.10.7
+    version: 8.10.7(react-dom@18.2.0)(react@18.2.0)
   '@types/node':
     specifier: 20.9.0
     version: 20.9.0
@@ -50,6 +53,9 @@ dependencies:
   crypto:
     specifier: ^1.0.1
     version: 1.0.1
+  dayjs:
+    specifier: ^1.11.10
+    version: 1.11.10
   device-detector-js:
     specifier: ^3.0.3
     version: 3.0.3
@@ -1653,6 +1659,23 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
+  /@tanstack/react-table@8.10.7(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-bXhjA7xsTcsW8JPTTYlUg/FuBpn8MNjiEPhkNhIGCUR6iRQM2+WEco4OBpvDeVcR9SE+bmWLzdfiY7bCbCSVuA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      '@tanstack/table-core': 8.10.7
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/table-core@8.10.7:
+    resolution: {integrity: sha512-KQk5OMg5OH6rmbHZxuNROvdI+hKDIUxANaHlV+dPlNN7ED3qYQ/WkpY2qlXww1SIdeMlkIhpN/2L00rof0fXFw==}
+    engines: {node: '>=12'}
+    dev: false
+
   /@tsconfig/node10@1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
     dev: true
@@ -2387,6 +2410,10 @@ packages:
 
   /damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
+    dev: false
+
+  /dayjs@1.11.10:
+    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
     dev: false
 
   /debug@3.2.7:

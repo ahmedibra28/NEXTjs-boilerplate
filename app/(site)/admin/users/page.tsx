@@ -4,38 +4,23 @@ import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import {
-  FaCircleCheck,
-  FaFilePen,
-  FaCircleXmark,
-  FaTrash,
-  FaBars,
-} from 'react-icons/fa6'
-import moment from 'moment'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
 import Confirm from '@/components/Confirm'
 import { useRouter } from 'next/navigation'
-import {
-  ButtonCircle,
-  InputCheckBox,
-  InputEmail,
-  InputPassword,
-  InputText,
-  SelectInput,
-} from '@/components/dForms'
 import Message from '@/components/Message'
-import Pagination from '@/components/Pagination'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
-import Search from '@/components/Search'
-import { IRole, IUser } from '@/types'
-import TableView from '@/components/TableView'
+import { IUser } from '@/types'
+import { form } from './_component/form'
+import RTable from '@/components/RTable'
+import { columns } from './_component/columns'
 
 type ISelect = { label?: string; value?: string }
 
 const Page = () => {
   const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(50)
   const [id, setId] = useState<any>(null)
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
@@ -57,7 +42,7 @@ const Page = () => {
   const getApi = useApi({
     key: ['users'],
     method: 'GET',
-    url: `users?page=${page}&q=${q}&limit=${25}`,
+    url: `users?page=${page}&q=${q}&limit=${limit}`,
   })?.get
 
   const getRolesApi = useApi({
@@ -143,91 +128,8 @@ const Page = () => {
     confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
-  const name = 'Users List'
   const label = 'User'
   const modal = 'user'
-
-  // TableView
-  const table = {
-    header: [
-      { title: 'Name' },
-      { title: 'Email' },
-      { title: 'Role', className: 'hidden md:table-cell' },
-      { title: 'Confirmed', className: 'hidden md:table-cell' },
-      { title: 'Blocked', className: 'hidden md:table-cell' },
-      { title: 'CreatedAt', className: 'hidden md:table-cell' },
-      { title: 'Action' },
-    ],
-    body: [
-      { format: (item: any) => item?.name },
-      { format: (item: any) => item?.email },
-      {
-        className: 'hidden md:table-cell',
-        format: (item: any) => item?.role?.type,
-      },
-      {
-        className: 'hidden md:table-cell',
-        format: (item: any) =>
-          item?.confirmed ? (
-            <FaCircleCheck className='text-green-500' />
-          ) : (
-            <FaCircleXmark className='text-red-500' />
-          ),
-      },
-      {
-        className: 'hidden md:table-cell',
-        format: (item: any) =>
-          !item?.blocked ? (
-            <FaCircleCheck className='text-green-500' />
-          ) : (
-            <FaCircleXmark className='text-red-500' />
-          ),
-      },
-      {
-        className: 'hidden md:table-cell',
-        format: (item: any) => moment(item?.createdAt).format('DD-MM-YYYY'),
-      },
-      {
-        format: (item: any) => (
-          <div className='dropdown dropdown-top dropdown-left z-10'>
-            <label tabIndex={0} className='cursor-pointer'>
-              <FaBars className='text-2xl' />
-            </label>
-            <ul
-              tabIndex={0}
-              className='dropdown-content z-10 menu p-2 bg-white rounded-tl-box rounded-tr-box rounded-bl-box w-28 border border-gray-200 shadow'
-            >
-              <li className='h-10 w-24'>
-                <ButtonCircle
-                  isLoading={false}
-                  label='Edit'
-                  onClick={() => {
-                    editHandler(item)
-                    // @ts-ignore
-                    window[modal].showModal()
-                  }}
-                  icon={<FaFilePen className='text-white' />}
-                  classStyle='btn-primary justify-start text-white'
-                />
-              </li>
-              <li className='h-10 w-24'>
-                <ButtonCircle
-                  isLoading={deleteApi?.isPending}
-                  label='Delete'
-                  onClick={() => deleteHandler(item.id)}
-                  icon={<FaTrash className='text-white' />}
-                  classStyle='btn-error justify-start text-white'
-                />
-              </li>
-            </ul>
-          </div>
-        ),
-      },
-    ],
-    data: getApi?.data?.data,
-    total: getApi?.data?.total,
-    paginationData: getApi?.data,
-  }
 
   // FormView
   const formCleanHandler = () => {
@@ -251,97 +153,6 @@ const Page = () => {
       : postApi?.mutateAsync({ ...data, roleId: data?.roleId?.value })
   }
 
-  // form view
-  const form = [
-    <div key={0} className='flex flex-wrap justify-between'>
-      <div className='w-full'>
-        <InputText
-          register={register}
-          errors={errors}
-          label='Name'
-          name='name'
-          placeholder='Enter name'
-        />
-      </div>
-      <div className='w-full'>
-        <InputEmail
-          register={register}
-          errors={errors}
-          label='Email'
-          name='email'
-          placeholder='Enter email address'
-        />
-      </div>
-      <div className='w-full'>
-        <SelectInput
-          debounce={1000}
-          name='roleId'
-          label='Role'
-          edit={edit}
-          isLoading={getRolesApi?.isPending}
-          register={register}
-          errors={errors}
-          value={reactSelect?.find((item) => item.id === 'roleId')}
-          onChange={(item: string) => setRoleValue(item)}
-          selectedOption={(item) => {
-            setValue('roleId', item)
-            setReactSelect([
-              ...reactSelect.filter((item) => item.id !== 'roleId'),
-              { ...item, id: 'roleId' },
-            ])
-          }}
-          data={
-            getRolesApi?.data?.data?.map((item: IRole) => ({
-              value: item.id,
-              label: item.name,
-            })) || []
-          }
-        />
-      </div>
-      <div key={2} className='w-full'>
-        <InputPassword
-          register={register}
-          errors={errors}
-          label='Password'
-          name='password'
-          placeholder='Enter password'
-          isRequired={false}
-        />
-      </div>
-      <div className='w-full'>
-        <InputPassword
-          register={register}
-          errors={errors}
-          label='Confirm Password'
-          name='confirmPassword'
-          placeholder='Enter confirm password'
-          isRequired={false}
-          minLength={true}
-          validate={true}
-          watch={watch}
-        />
-      </div>
-      <div className='w-full'>
-        <InputCheckBox
-          register={register}
-          errors={errors}
-          label='Confirmed'
-          name='confirmed'
-          isRequired={false}
-        />
-      </div>
-      <div className='w-full'>
-        <InputCheckBox
-          register={register}
-          errors={errors}
-          label='Blocked'
-          name='blocked'
-          isRequired={false}
-        />
-      </div>
-    </div>,
-  ]
-
   return (
     <>
       {deleteApi?.isSuccess && (
@@ -361,13 +172,19 @@ const Page = () => {
       )}
       {postApi?.isError && <Message variant='error' value={postApi?.error} />}
 
-      <div className='ms-auto text-end'>
-        <Pagination data={table.paginationData} setPage={setPage} />
-      </div>
-
       <FormView
         formCleanHandler={formCleanHandler}
-        form={form}
+        form={form({
+          register,
+          errors,
+          edit,
+          watch,
+          setValue,
+          getRolesApi,
+          reactSelect,
+          setReactSelect,
+          setRoleValue,
+        })}
         isLoadingUpdate={updateApi?.isPending}
         isLoadingPost={postApi?.isPending}
         handleSubmit={handleSubmit}
@@ -383,28 +200,22 @@ const Page = () => {
         <Message variant='error' value={getApi?.error} />
       ) : (
         <div className='overflow-x-auto bg-white p-3 mt-2'>
-          <div className='flex items-center flex-col mb-2'>
-            <h1 className='font-light text-2xl'>
-              {name}
-              <sup> [{table?.total}] </sup>
-            </h1>
-            <button
-              className='btn btn-outline btn-primary btn-sm shadow my-2 rounded-none'
-              // @ts-ignore
-              onClick={() => window[modal].showModal()}
-            >
-              Add New {label}
-            </button>
-            <div className='w-full sm:w-[80%] md:w-[50%] lg:w-[30%] mx-auto'>
-              <Search
-                placeholder='Search by email'
-                setQ={setQ}
-                q={q}
-                searchHandler={searchHandler}
-              />
-            </div>
-          </div>
-          <TableView table={table} />
+          <RTable
+            data={getApi?.data}
+            columns={columns({
+              editHandler,
+              deleteHandler,
+              isPending: deleteApi?.isPending || false,
+              modal,
+            })}
+            setPage={setPage}
+            setLimit={setLimit}
+            limit={limit}
+            q={q}
+            setQ={setQ}
+            searchHandler={searchHandler}
+            modal={modal}
+          />
         </div>
       )}
     </>

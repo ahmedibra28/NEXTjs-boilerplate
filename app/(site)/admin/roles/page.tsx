@@ -4,27 +4,21 @@ import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
-import { FaBars, FaFilePen, FaTrash } from 'react-icons/fa6'
-import moment from 'moment'
 import useApi from '@/hooks/useApi'
 import useAuthorization from '@/hooks/useAuthorization'
 import { useRouter } from 'next/navigation'
 import { IClientPermission, IPermission, IRole } from '@/types'
 import Confirm from '@/components/Confirm'
-import {
-  ButtonCircle,
-  InputMultipleCheckBox,
-  InputText,
-} from '@/components/dForms'
 import Message from '@/components/Message'
-import Pagination from '@/components/Pagination'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
-import Search from '@/components/Search'
-import TableView from '@/components/TableView'
+import RTable from '@/components/RTable'
+import { columns } from './_component/columns'
+import { form } from './_component/form'
 
 const Page = () => {
   const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(50)
   const [id, setId] = useState<any>(null)
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
@@ -41,7 +35,7 @@ const Page = () => {
   const getApi = useApi({
     key: ['roles'],
     method: 'GET',
-    url: `roles?page=${page}&q=${q}&limit=${25}`,
+    url: `roles?page=${page}&q=${q}&limit=${limit}`,
   })?.get
 
   const postApi = useApi({
@@ -173,7 +167,6 @@ const Page = () => {
     confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
   }
 
-  const name = 'Roles List'
   const label = 'Role'
   const modal = 'role'
 
@@ -222,164 +215,6 @@ const Page = () => {
         })
   }
 
-  // TableView
-  const table = {
-    header: [
-      { title: 'Name' },
-      { title: 'Type' },
-      { title: 'Description', className: 'hidden md:table-cell' },
-      { title: 'CreatedAt', className: 'hidden md:table-cell' },
-      { title: 'Action' },
-    ],
-    body: [
-      { format: (item: any) => item?.name },
-      { format: (item: any) => item?.type?.toUpperCase() },
-      {
-        className: 'hidden md:table-cell',
-        format: (item: any) => item?.description,
-      },
-      {
-        className: 'hidden md:table-cell',
-        format: (item: any) => moment(item?.createdAt).format('DD-MM-YYYY'),
-      },
-      {
-        format: (item: any) => (
-          <div className='dropdown dropdown-top dropdown-left z-50'>
-            <label tabIndex={0} className='cursor-pointer'>
-              <FaBars className='text-2xl' />
-            </label>
-            <ul
-              tabIndex={0}
-              className='dropdown-content z-50 menu p-2 bg-white rounded-tl-box rounded-tr-box rounded-bl-box w-28 border border-gray-200 shadow'
-            >
-              <li className='h-10 w-24'>
-                <ButtonCircle
-                  isLoading={false}
-                  label='Edit'
-                  onClick={() => {
-                    editHandler(item)
-                    // @ts-ignore
-                    window[modal].showModal()
-                  }}
-                  icon={<FaFilePen className='text-white' />}
-                  classStyle='btn-primary justify-start text-white'
-                />
-              </li>
-              <li className='h-10 w-24'>
-                <ButtonCircle
-                  isLoading={deleteApi?.isPending}
-                  label='Delete'
-                  onClick={() => deleteHandler(item.id)}
-                  icon={<FaTrash className='text-white' />}
-                  classStyle='btn-error justify-start text-white'
-                />
-              </li>
-            </ul>
-          </div>
-        ),
-      },
-    ],
-    data: getApi?.data?.data,
-    total: getApi?.data?.total,
-    paginationData: getApi?.data,
-  }
-
-  const form = [
-    <div key={0} className='flex flex-wrap justify-between'>
-      <div className='w-full mb-5'>
-        <InputText
-          register={register}
-          errors={errors}
-          label='Name'
-          name='name'
-          placeholder='Enter name'
-        />
-      </div>
-
-      <div className='w-full'>
-        {uniquePermissions?.length > 0 &&
-          uniquePermissions?.map((g, i) => (
-            <div key={i} className='mb-1'>
-              <label className='fw-bold text-uppercase'>
-                {uniquePermissions?.length > 0 && Object.keys(g)[0]}
-              </label>
-
-              <InputMultipleCheckBox
-                register={register}
-                errors={errors}
-                label={`${uniquePermissions?.length > 0 && Object.keys(g)[0]}`}
-                name={`permission-${
-                  uniquePermissions?.length > 0 && Object.keys(g)[0]
-                }`}
-                placeholder={`${
-                  uniquePermissions?.length > 0 && Object.keys(g)[0]
-                }`}
-                data={
-                  uniquePermissions?.length > 0 &&
-                  Object.values(g)[0]?.map((item: any) => ({
-                    name: `${item.method} - ${item.description}`,
-                    id: item.id?.toString(),
-                  }))
-                }
-                isRequired={false}
-              />
-            </div>
-          ))}
-      </div>
-
-      <div className='w-full mb-5'>
-        <InputText
-          register={register}
-          errors={errors}
-          label='Description'
-          name='description'
-          isRequired={false}
-          placeholder='Description'
-        />
-      </div>
-
-      <div className='w-full'>
-        {uniqueClientPermissions?.length > 0 &&
-          uniqueClientPermissions?.map((g, i) => (
-            <div key={i} className='mb-1'>
-              <label className='fw-bold text-uppercase'>
-                {uniqueClientPermissions?.length > 0 && Object.keys(g)[0]}
-              </label>
-
-              <InputMultipleCheckBox
-                register={register}
-                errors={errors}
-                label={`${
-                  uniqueClientPermissions?.length > 0 && Object.keys(g)[0]
-                }`}
-                name={`clientPermission-${
-                  uniqueClientPermissions?.length > 0 && Object.keys(g)[0]
-                }`}
-                placeholder={`${
-                  uniqueClientPermissions?.length > 0 && Object.keys(g)[0]
-                }`}
-                data={
-                  uniqueClientPermissions?.length > 0 &&
-                  Object.values(g)[0]?.map(
-                    (item: {
-                      menu: any
-                      path: any
-                      id: any
-                      description: string
-                    }) => ({
-                      name: `${item.description}`,
-                      id: item.id?.toString(),
-                    })
-                  )
-                }
-                isRequired={false}
-              />
-            </div>
-          ))}
-      </div>
-    </div>,
-  ]
-
   return (
     <>
       {deleteApi?.isSuccess && (
@@ -402,13 +237,14 @@ const Page = () => {
       )}
       {postApi?.isError && <Message variant='error' value={postApi?.error} />}
 
-      <div className='ms-auto text-end'>
-        <Pagination data={table.paginationData} setPage={setPage} />
-      </div>
-
       <FormView
         formCleanHandler={formCleanHandler}
-        form={form}
+        form={form({
+          register,
+          errors,
+          uniqueClientPermissions,
+          uniquePermissions,
+        })}
         isLoadingUpdate={updateApi?.isPending}
         isLoadingPost={postApi?.isPending}
         handleSubmit={handleSubmit}
@@ -424,28 +260,22 @@ const Page = () => {
         <Message variant='error' value={getApi?.error} />
       ) : (
         <div className='overflow-x-auto bg-white p-3 mt-2'>
-          <div className='flex items-center flex-col mb-2'>
-            <h1 className='font-light text-2xl'>
-              {name}
-              <sup> [{table?.total}] </sup>
-            </h1>
-            <button
-              className='btn btn-outline btn-primary btn-sm shadow my-2 rounded-none'
-              // @ts-ignore
-              onClick={() => window[modal].showModal()}
-            >
-              Add New {label}
-            </button>
-            <div className='w-full sm:w-[80%] md:w-[50%] lg:w-[30%] mx-auto'>
-              <Search
-                placeholder='Search by name'
-                setQ={setQ}
-                q={q}
-                searchHandler={searchHandler}
-              />
-            </div>
-          </div>
-          <TableView table={table} />
+          <RTable
+            data={getApi?.data}
+            columns={columns({
+              editHandler,
+              deleteHandler,
+              isPending: deleteApi?.isPending || false,
+              modal,
+            })}
+            setPage={setPage}
+            setLimit={setLimit}
+            limit={limit}
+            q={q}
+            setQ={setQ}
+            searchHandler={searchHandler}
+            modal={modal}
+          />
         </div>
       )}
     </>

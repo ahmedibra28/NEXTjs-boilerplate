@@ -7,16 +7,23 @@ interface Props {
   setQ: (value: string) => void
   placeholder: string
   searchHandler: (e: FormEvent) => void
+  type?: string
 }
 
-const Search = ({ q, setQ, placeholder, searchHandler }: Props) => {
+const Search = ({
+  q,
+  setQ,
+  placeholder,
+  searchHandler,
+  type = 'text',
+}: Props) => {
   return (
     <form onSubmit={searchHandler}>
       <div className='form-control'>
         <label className='input-group'>
           <input
             className='input rounded-none border border-gray-300 w-full focus:outline-none'
-            type='text'
+            type={type}
             placeholder={placeholder}
             aria-label='Search'
             onChange={(e) => setQ(e.target.value)}

@@ -85,7 +85,7 @@ const Navigation = () => {
 
       <div
         suppressHydrationWarning={true}
-        className='dropdown dropdown-end  hidden lg:block'
+        className='dropdown dropdown-end  hidden lg:block z-20'
       >
         <label tabIndex={0} className='btn btn-ghost btn-circle avatar'>
           <div className='w-10 rounded-full'>
