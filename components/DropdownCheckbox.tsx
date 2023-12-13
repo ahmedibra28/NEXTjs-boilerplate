@@ -19,7 +19,7 @@ const DropdownCheckbox = ({
   return (
     <Fragment>
       <div className='dropdown dropdown-left z-10'>
-        <label tabIndex={0} className='btn m-1 text-gray-700'>
+        <label tabIndex={0} className='btn rounded-none m-1 text-gray-700'>
           <FaSliders /> View
         </label>
         <ul

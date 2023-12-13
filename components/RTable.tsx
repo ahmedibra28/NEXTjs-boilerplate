@@ -112,7 +112,7 @@ const RTable: React.FC<RTableProps> = ({
         <div className='flex flex-row justify-start items-center'>
           {modal && (
             <button
-              className='btn btn-primary text-gray-100'
+              className='btn btn-primary rounded-none text-gray-100'
               // @ts-ignore
               onClick={() => window[modal].showModal()}
             >
