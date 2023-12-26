@@ -1,7 +1,6 @@
 'use client'
 
-import classNames from 'classnames'
-import React, { memo, useRef, useState } from 'react'
+import React from 'react'
 import AsyncSelect from 'react-select/async'
 
 export interface DynamicFormProps {
@@ -89,10 +88,6 @@ export const SelectInput = ({
     }, debounce)
   }
 
-  // const v = (ValueType, ActionTypes) => {
-  //   console.log({ ValueType, ActionTypes })
-  // }
-
   return (
     <>
       {hasLabel && (
@@ -101,7 +96,6 @@ export const SelectInput = ({
         </label>
       )}
       <AsyncSelect
-        // setValue={v}
         onInputChange={(e) => onChange(e)}
         value={value}
         placeholder={`Search ${label?.toLowerCase()}`}
