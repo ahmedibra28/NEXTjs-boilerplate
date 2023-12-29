@@ -125,22 +125,12 @@ const Page = () => {
 
   return (
     <>
-      {deleteApi?.isSuccess && (
-        <Message variant='success' value={deleteApi?.data?.message} />
-      )}
-      {deleteApi?.isError && (
-        <Message variant='error' value={deleteApi?.error} />
-      )}
-      {updateApi?.isSuccess && (
-        <Message variant='success' value={updateApi?.data?.message} />
-      )}
-      {updateApi?.isError && (
-        <Message variant='error' value={updateApi?.error} />
-      )}
-      {postApi?.isSuccess && (
-        <Message variant='success' value={postApi?.data?.message} />
-      )}
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {deleteApi?.isSuccess && <Message value={deleteApi?.data?.message} />}
+      {deleteApi?.isError && <Message value={deleteApi?.error} />}
+      {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
+      {updateApi?.isError && <Message value={updateApi?.error} />}
+      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
       <FormView
         formCleanHandler={formCleanHandler}
@@ -157,7 +147,7 @@ const Page = () => {
       {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
-        <Message variant='error' value={getApi?.error} />
+        <Message value={getApi?.error} />
       ) : (
         <div className='overflow-x-auto bg-white p-3 mt-2'>
           <RTable
@@ -175,6 +165,7 @@ const Page = () => {
             setQ={setQ}
             searchHandler={searchHandler}
             modal={modal}
+            caption='Client Permissions List'
           />
         </div>
       )}

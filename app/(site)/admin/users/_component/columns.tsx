@@ -1,12 +1,6 @@
-import { ButtonCircle } from '@/components/dForms'
+import { actionButton } from '@/components/dForms'
 import DateTime from '@/lib/dateTime'
-import {
-  FaCircleCheck,
-  FaCircleXmark,
-  FaEllipsis,
-  FaFilePen,
-  FaTrash,
-} from 'react-icons/fa6'
+import { FaCircleCheck, FaCircleXmark } from 'react-icons/fa6'
 
 type Column = {
   editHandler: (item: any) => void
@@ -57,39 +51,7 @@ export const columns = ({
   {
     header: 'Action',
     active: true,
-    cell: ({ row: { original } }: any) => (
-      <div className='dropdown dropdown-top dropdown-left z-10'>
-        <label tabIndex={0} className='cursor-pointer'>
-          <FaEllipsis className='text-2xl' />
-        </label>
-        <ul
-          tabIndex={0}
-          className='dropdown-content menu p-2 bg-white rounded-tl-box rounded-tr-box rounded-bl-box w-28 border border-gray-200 shadow'
-        >
-          <li className='h-10 w-auto'>
-            <ButtonCircle
-              isLoading={false}
-              label='Edit'
-              onClick={() => {
-                editHandler(original)
-                // @ts-ignore
-                window[modal].showModal()
-              }}
-              icon={<FaFilePen className='text-white' />}
-              classStyle='btn-primary justify-start text-white'
-            />
-          </li>
-          <li className='h-10 w-auto'>
-            <ButtonCircle
-              isLoading={isPending}
-              label='Delete'
-              onClick={() => deleteHandler(original.id)}
-              icon={<FaTrash className='text-white' />}
-              classStyle='btn-error justify-start text-white'
-            />
-          </li>
-        </ul>
-      </div>
-    ),
+    cell: ({ row: { original } }: any) =>
+      actionButton({ editHandler, isPending, deleteHandler, modal, original }),
   },
 ]

@@ -7,7 +7,7 @@ import useUserInfoStore from '@/zustand/userStore'
 import useApi from '@/hooks/useApi'
 import FormContainer from '@/components/FormContainer'
 import Message from '@/components/Message'
-import { CustomSubmitButton, InputEmail } from '@/components/dForms'
+import { FormButton, FormInput } from '@/components/ui/Form'
 
 const Page = () => {
   const router = useRouter()
@@ -43,21 +43,23 @@ const Page = () => {
         <title>Forgot</title>
         <meta property='og:title' content='Forgot' key='title' />
       </Head>
-      {postApi?.isSuccess && (
-        <Message variant='success' value={postApi?.data?.message} />
-      )}
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <InputEmail
+      <form onSubmit={handleSubmit(submitHandler)} className='space-y-2'>
+        <FormInput
           register={register}
           errors={errors}
-          label='Email'
           name='email'
+          label='Email'
           placeholder='Email'
+          type='email'
         />
-
-        <CustomSubmitButton isLoading={postApi?.isPending} label='Send' />
+        <FormButton
+          loading={postApi?.isPending}
+          label='Send'
+          className='w-full'
+        />
       </form>
     </FormContainer>
   )

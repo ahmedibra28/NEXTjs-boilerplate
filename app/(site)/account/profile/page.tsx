@@ -86,14 +86,10 @@ const Profile = () => {
 
   return (
     <Fragment>
-      {updateApi?.isError && (
-        <Message variant='error' value={updateApi?.error} />
-      )}
+      {updateApi?.isError && <Message value={updateApi?.error} />}
 
-      {getApi?.isError && <Message variant='error' value={getApi?.error} />}
-      {updateApi?.isSuccess && (
-        <Message variant='success' value={updateApi?.data?.message} />
-      )}
+      {getApi?.isError && <Message value={getApi?.error} />}
+      {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
 
       {getApi?.isPending && <Spinner />}
 

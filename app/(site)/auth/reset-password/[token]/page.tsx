@@ -6,8 +6,8 @@ import useUserInfoStore from '@/zustand/userStore'
 import useApi from '@/hooks/useApi'
 import FormContainer from '@/components/FormContainer'
 import Message from '@/components/Message'
-import { CustomSubmitButton, InputPassword } from '@/components/dForms'
 import { useRouter } from 'next/navigation'
+import { FormButton, FormInput } from '@/components/ui/Form'
 
 const Reset = ({
   params,
@@ -58,36 +58,36 @@ const Reset = ({
         <title>Reset</title>
         <meta property='og:title' content='Reset' key='title' />
       </Head>
-      {postApi?.isSuccess && (
-        <Message variant='success' value={postApi?.data?.message} />
-      )}
+      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
 
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <InputPassword
+      <form onSubmit={handleSubmit(submitHandler)} className='space-y-2'>
+        <FormInput
           register={register}
+          minLength={6}
           errors={errors}
-          label='Password'
           name='password'
-          minLength={true}
+          label='Password'
           placeholder='Password'
+          type='password'
         />
-
-        <InputPassword
+        <FormInput
           register={register}
           errors={errors}
-          label='Confirm Password'
-          name='confirmPassword'
           watch={watch}
           validate={true}
-          minLength={true}
+          minLength={6}
+          name='confirmPassword'
+          label='Confirm Password'
           placeholder='Confirm Password'
+          type='password'
         />
 
-        <CustomSubmitButton
+        <FormButton
+          loading={postApi?.isPending}
           label='Reset Password'
-          isLoading={postApi?.isPending}
+          className='w-full'
         />
       </form>
     </FormContainer>

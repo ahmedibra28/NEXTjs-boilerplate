@@ -3,14 +3,26 @@ import { useEffect, useState } from 'react'
 import { FaCircleCheck, FaCircleXmark } from 'react-icons/fa6'
 
 interface Props {
-  variant: 'success' | 'error'
   value: string | any
 }
 
-const Message = ({ variant, value = 'Internal Server Error!' }: Props) => {
+import { toast } from 'sonner'
+
+import { Toaster } from './ui/sonner'
+import DateTime from '@/lib/dateTime'
+
+const Message = ({ value = 'Internal Server Error!' }: Props) => {
   const [alert, setAlert] = useState(true)
 
   useEffect(() => {
+    toast.message(value, {
+      description: DateTime().format('ddd D MMM YYYY HH:mm:ss'),
+      action: {
+        label: 'Close',
+        onClick: () => {},
+      },
+    })
+
     const timeId = setTimeout(() => {
       setAlert(false)
     }, 10000)
@@ -18,31 +30,14 @@ const Message = ({ variant, value = 'Internal Server Error!' }: Props) => {
     return () => {
       clearTimeout(timeId)
     }
+    // eslint-disable-next-line
   }, [alert])
 
   return (
     <>
       {alert && (
-        <div className='toast z-0 fixed top-0 max-w-full'>
-          <div
-            className={`alert ${
-              variant === 'success' ? 'alert-success' : 'alert-error'
-            } flex flex-row justify-start items-center`}
-          >
-            <button
-              className='border rounded-full p-1'
-              onClick={() => setAlert(false)}
-            >
-              {variant === 'success' ? (
-                <FaCircleCheck className='text-white' />
-              ) : (
-                <FaCircleXmark className='text-white' />
-              )}
-            </button>
-            <span className='text-white whitespace-pre-line font-light'>
-              {value}
-            </span>
-          </div>
+        <div>
+          <Toaster position='top-right' className='bg-red-500' />
         </div>
       )}
     </>

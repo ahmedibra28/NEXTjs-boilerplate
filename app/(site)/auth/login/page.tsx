@@ -3,15 +3,11 @@ import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import {
-  CustomSubmitButton,
-  InputEmail,
-  InputPassword,
-} from '@/components/dForms'
 import useUserInfoStore from '@/zustand/userStore'
 import useApi from '@/hooks/useApi'
 import FormContainer from '@/components/FormContainer'
 import Message from '@/components/Message'
+import { FormButton, FormInput } from '@/components/ui/Form'
 
 const Page = () => {
   const router = useRouter()
@@ -61,26 +57,33 @@ const Page = () => {
 
   return (
     <FormContainer title='Sign In'>
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <InputEmail
-          errors={errors}
+      <form onSubmit={handleSubmit(submitHandler)} className='space-y-2'>
+        <FormInput
           register={register}
-          label='Email'
+          errors={errors}
           name='email'
+          label='Email'
           placeholder='Email'
+          type='email'
         />
 
-        <InputPassword
-          errors={errors}
+        <FormInput
           register={register}
-          label='Password'
+          errors={errors}
+          minLength={6}
           name='password'
+          label='Password'
           placeholder='Password'
+          type='password'
         />
 
-        <CustomSubmitButton isLoading={postApi?.isPending} label='Sign In' />
+        <FormButton
+          loading={postApi?.isPending}
+          label='Sign In'
+          className='w-full'
+        />
       </form>
       <div className='row pt-3'>
         <div className='col'>

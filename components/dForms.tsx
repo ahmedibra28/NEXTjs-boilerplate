@@ -2,6 +2,14 @@
 
 import React from 'react'
 import AsyncSelect from 'react-select/async'
+import { Button } from '@/components/ui/button'
+import { FaEllipsis, FaFilePen, FaSpinner, FaTrash } from 'react-icons/fa6'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 export interface DynamicFormProps {
   register: any
@@ -718,44 +726,89 @@ export const CustomSubmitButton = ({
 
 export const ButtonCircle = ({
   type = 'button',
-  classStyle = 'btn btn-sm w-12 h-12 btn-primary rounded-full',
+  className = 'btn btn-sm w-12 h-12 btn-primary rounded-full',
   isLoading = false,
   disabled = false,
   label = '',
-  spinner = 'loading loading-spinner',
   onClick = () => {},
   icon,
   args,
 }: {
   icon: any
   type?: string
-  classStyle?: string
+  className?: string
   isLoading?: boolean
   disabled?: boolean
   label?: string
-  spinner?: string
   onClick?: () => void
   args?: any
 }) => {
   return (
-    <button
-      {...args}
-      type={type as any}
-      className={`btn btn-sm ${classStyle}`}
-      onClick={onClick}
-      disabled={isLoading || disabled}
-    >
-      {isLoading ? (
-        <span className='flex items-center gap-2'>
-          <span className={spinner}></span>
-          loading...
-        </span>
-      ) : (
-        <>
-          {icon && icon}
-          {label && label}
-        </>
-      )}
-    </button>
+    <>
+      <Button
+        {...args}
+        type={type as any}
+        onClick={onClick}
+        disabled={isLoading || disabled}
+        className={className}
+      >
+        {isLoading ? (
+          <FaSpinner className='mr-1 animate-spin' />
+        ) : (
+          <span className='mr-1'>{icon && icon}</span>
+        )}
+        {label && label}
+      </Button>
+    </>
   )
 }
+
+export const actionButton = ({
+  editHandler,
+  isPending,
+  deleteHandler,
+  modal,
+  original,
+}: {
+  editHandler?: (item: any) => void
+  isPending?: boolean
+  deleteHandler?: (item: any) => void
+  modal?: string
+  original?: any
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <FaEllipsis className='text-2xl' />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      {editHandler && (
+        <DropdownMenuItem>
+          <ButtonCircle
+            args={{ size: 'sm' }}
+            isLoading={false}
+            label='Edit'
+            onClick={() => {
+              editHandler(original)
+              // @ts-ignore
+              window[modal].showModal()
+            }}
+            icon={<FaFilePen />}
+            className='btn-primary justify-start text-white'
+          />
+        </DropdownMenuItem>
+      )}
+      {deleteHandler && (
+        <DropdownMenuItem>
+          <ButtonCircle
+            args={{ size: 'sm' }}
+            isLoading={isPending}
+            label='Delete'
+            onClick={() => deleteHandler(original.id)}
+            icon={<FaTrash />}
+            className='btn-error justify-start text-white bg-red-500'
+          />
+        </DropdownMenuItem>
+      )}
+    </DropdownMenuContent>
+  </DropdownMenu>
+)
