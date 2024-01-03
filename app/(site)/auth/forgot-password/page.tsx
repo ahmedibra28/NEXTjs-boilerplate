@@ -7,19 +7,29 @@ import useUserInfoStore from '@/zustand/userStore'
 import useApi from '@/hooks/useApi'
 import FormContainer from '@/components/FormContainer'
 import Message from '@/components/Message'
-import { FormButton, FormInput } from '@/components/ui/Form'
+import * as z from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
 
 const Page = () => {
   const router = useRouter()
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm()
+  const formSchema = z.object({
+    email: z.string().email(),
+  })
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    postApi?.mutateAsync(values)
+  }
   const postApi = useApi({
     key: ['forgot-password'],
     method: 'POST',
@@ -27,16 +37,14 @@ const Page = () => {
   })?.post
 
   useEffect(() => {
-    postApi?.isSuccess && reset()
-  }, [postApi?.isSuccess, reset])
+    postApi?.isSuccess && form.reset()
+    // eslint-disable-next-line
+  }, [postApi?.isSuccess, form.reset])
 
   useEffect(() => {
     userInfo.id && router.push('/')
   }, [router, userInfo.id])
 
-  const submitHandler = (data: { email?: string }) => {
-    postApi?.mutateAsync(data)
-  }
   return (
     <FormContainer title='Forgot Password'>
       <Head>
@@ -46,21 +54,22 @@ const Page = () => {
       {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
       {postApi?.isError && <Message value={postApi?.error} />}
 
-      <form onSubmit={handleSubmit(submitHandler)} className='space-y-2'>
-        <FormInput
-          register={register}
-          errors={errors}
-          name='email'
-          label='Email'
-          placeholder='Email'
-          type='email'
-        />
-        <FormButton
-          loading={postApi?.isPending}
-          label='Send'
-          className='w-full'
-        />
-      </form>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+          <CustomFormField
+            form={form}
+            name='email'
+            label='Email'
+            placeholder='Enter email'
+          />
+
+          <FormButton
+            loading={postApi?.isPending}
+            label='Send'
+            className='w-full'
+          />
+        </form>
+      </Form>
     </FormContainer>
   )
 }

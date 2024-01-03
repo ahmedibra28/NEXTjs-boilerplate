@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, FormEvent } from 'react'
+import React, { useState, useEffect, FormEvent, use } from 'react'
 import dynamic from 'next/dynamic'
 import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
@@ -12,15 +12,34 @@ import Message from '@/components/Message'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
 import { IClientPermission } from '@/types'
-import { form } from './_component/form'
 import RTable from '@/components/RTable'
-import { columns } from './_component/columns'
+import { useColumn } from './hook/useColumn'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField from '@/components/ui/CustomForm'
+import useEditStore from '@/zustand/editStore'
+
+const formSchema = z.object({
+  name: z.string().refine((value) => value !== '', {
+    message: 'Name is required',
+  }),
+  menu: z.string().refine((value) => value !== '', {
+    message: 'Menu is required',
+  }),
+  sort: z.string(),
+  path: z.string().refine((value) => value !== '', {
+    message: 'Path is required',
+  }),
+  description: z.string().optional(),
+})
 
 const Page = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
-  const [id, setId] = useState<any>(null)
-  const [edit, setEdit] = useState(false)
+  const [id, setId] = useState<string | null>(null)
+  const { edit, setEdit } = useEditStore((state) => state)
   const [q, setQ] = useState('')
 
   const path = useAuthorization()
@@ -56,29 +75,32 @@ const Page = () => {
     url: `client-permissions`,
   })?.deleteObj
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm({})
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      menu: '',
+      sort: '',
+      path: '',
+      description: '',
+    },
+  })
 
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess)
       formCleanHandler()
     getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
     getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [page])
 
   useEffect(() => {
     if (!q) getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [q])
 
   const searchHandler = (e: FormEvent) => {
@@ -87,15 +109,21 @@ const Page = () => {
     setPage(1)
   }
 
-  const editHandler = (item: IClientPermission) => {
-    setId(item.id)
-    setValue('name', item?.name)
-    setValue('description', item?.description)
-    setValue('menu', item?.menu)
-    setValue('path', item?.path)
-    setValue('sort', item?.sort)
+  const refEdit = React.useRef(edit)
+  const refId = React.useRef(id)
 
+  const editHandler = (item: IClientPermission) => {
+    setId(item.id!)
     setEdit(true)
+
+    refEdit.current = true
+    refId.current = item.id!
+
+    form.setValue('name', item?.name)
+    form.setValue('description', item?.description || '')
+    form.setValue('menu', item?.menu)
+    form.setValue('path', item?.path)
+    form.setValue('sort', item?.sort?.toString())
   }
 
   const deleteHandler = (id: any) => {
@@ -105,23 +133,81 @@ const Page = () => {
   const label = 'Client Permission'
   const modal = 'clientPermission'
 
-  // FormView
   const formCleanHandler = () => {
-    reset()
+    form.reset()
     setEdit(false)
     setId(null)
-    // @ts-ignore
-    window[modal].close()
+    refEdit.current = false
+    refId.current = null
   }
 
-  const submitHandler = (data: object) => {
-    edit
+  const formFields = (
+    <Form {...form}>
+      <CustomFormField
+        form={form}
+        name='name'
+        label='Name'
+        placeholder='Name'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        name='menu'
+        label='Menu'
+        placeholder='Menu'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        name='sort'
+        label='Sort'
+        placeholder='Sort'
+        type='number'
+      />
+      <CustomFormField
+        form={form}
+        name='path'
+        label='Path'
+        placeholder='Path'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        name='description'
+        label='Description'
+        placeholder='Description'
+        cols={3}
+        rows={3}
+      />
+    </Form>
+  )
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    refEdit.current
       ? updateApi?.mutateAsync({
-          id: id,
-          ...data,
+          id: refId.current,
+          ...values,
         })
-      : postApi?.mutateAsync(data)
+      : postApi?.mutateAsync(values)
   }
+
+  const formChildren = (
+    <FormView
+      formCleanHandler={formCleanHandler}
+      form={formFields}
+      loading={updateApi?.isPending || postApi?.isPending}
+      handleSubmit={form.handleSubmit}
+      submitHandler={onSubmit}
+      label={label}
+    />
+  )
+
+  const { columns } = useColumn({
+    editHandler,
+    isPending: deleteApi?.isPending || false,
+    deleteHandler,
+    formChildren,
+  })
 
   return (
     <>
@@ -132,18 +218,6 @@ const Page = () => {
       {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
       {postApi?.isError && <Message value={postApi?.error} />}
 
-      <FormView
-        formCleanHandler={formCleanHandler}
-        form={form({ register, errors })}
-        isLoadingUpdate={updateApi?.isPending}
-        isLoadingPost={postApi?.isPending}
-        handleSubmit={handleSubmit}
-        submitHandler={submitHandler}
-        modal={modal}
-        label={`${edit ? 'Edit' : 'Add New'} ${label}`}
-        modalSize='max-w-xl'
-      />
-
       {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
@@ -152,12 +226,7 @@ const Page = () => {
         <div className='overflow-x-auto bg-white p-3 mt-2'>
           <RTable
             data={getApi?.data}
-            columns={columns({
-              editHandler,
-              deleteHandler,
-              isPending: deleteApi?.isPending || false,
-              modal,
-            })}
+            columns={columns}
             setPage={setPage}
             setLimit={setLimit}
             limit={limit}
@@ -166,7 +235,9 @@ const Page = () => {
             searchHandler={searchHandler}
             modal={modal}
             caption='Client Permissions List'
-          />
+          >
+            {formChildren}
+          </RTable>
         </div>
       )}
     </>

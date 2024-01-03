@@ -1,111 +1,176 @@
-import { Input, InputProps } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import * as React from "react"
+import * as LabelPrimitive from "@radix-ui/react-label"
+import { Slot } from "@radix-ui/react-slot"
 import {
-  FieldError,
-  FieldErrors,
+  Controller,
+  ControllerProps,
+  FieldPath,
   FieldValues,
-  UseFormRegister,
-  UseFormWatch,
-} from 'react-hook-form'
-import { Button, ButtonProps } from './button'
-import { FaSpinner } from 'react-icons/fa6'
+  FormProvider,
+  useFormContext,
+} from "react-hook-form"
 
-export interface FormButtonProp {
-  label: string
-  className?: string
-  icon?: React.ReactNode
-  loading?: boolean
+import { cn } from "@/lib/utils"
+import { Label } from "@/components/ui/label"
+
+const Form = FormProvider
+
+type FormFieldContextValue<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
+  name: TName
 }
 
-export interface FormInputProp {
-  register: UseFormRegister<FieldValues>
-  errors: FieldErrors<FieldValues>
-  minLength?: number
-  validate?: boolean
-  watch?: UseFormWatch<{ [x: string]: any }>
-  showLabel?: boolean
-  required?: boolean
-  name: string
-  label: string
-}
+const FormFieldContext = React.createContext<FormFieldContextValue>(
+  {} as FormFieldContextValue
+)
 
-export const FormInput = ({
-  register,
-  errors,
-  minLength,
-  validate,
-  watch,
-  name,
-  label,
-  showLabel = true,
-  required = true,
+const FormField = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>({
   ...props
-}: FormInputProp & InputProps) => {
+}: ControllerProps<TFieldValues, TName>) => {
   return (
-    <div className='w-full'>
-      {label && showLabel && (
-        <Label className='label' htmlFor={name}>
-          {label}
-        </Label>
-      )}
-      <Input
-        {...register(name, {
-          required: required && `${label} is required`,
-          ...(minLength && {
-            minLength: {
-              value: minLength,
-              message: `${label} must have at least 6 characters long`,
-            },
-          }),
-
-          ...(validate &&
-            watch && {
-              validate: (value: string) =>
-                value === watch().password || 'The passwords do not match',
-            }),
-
-          ...(props.type === 'email' && {
-            pattern: {
-              value: /\S+@\S+\.+\S+/,
-              message: 'Entered value does not match email format',
-            },
-          }),
-        })}
-        {...props}
-      />
-      {errors[name] && (
-        <span className='text-red-500 text-xs'>
-          {(errors[name] as FieldError).message}
-        </span>
-      )}
-    </div>
+    <FormFieldContext.Provider value={{ name: props.name }}>
+      <Controller {...props} />
+    </FormFieldContext.Provider>
   )
 }
 
-export const FormButton = ({
-  label,
-  className,
-  type = 'submit',
-  onClick,
-  icon,
-  loading,
-  ...props
-}: FormButtonProp & ButtonProps) => {
+const useFormField = () => {
+  const fieldContext = React.useContext(FormFieldContext)
+  const itemContext = React.useContext(FormItemContext)
+  const { getFieldState, formState } = useFormContext()
+
+  const fieldState = getFieldState(fieldContext.name, formState)
+
+  if (!fieldContext) {
+    throw new Error("useFormField should be used within <FormField>")
+  }
+
+  const { id } = itemContext
+
+  return {
+    id,
+    name: fieldContext.name,
+    formItemId: `${id}-form-item`,
+    formDescriptionId: `${id}-form-item-description`,
+    formMessageId: `${id}-form-item-message`,
+    ...fieldState,
+  }
+}
+
+type FormItemContextValue = {
+  id: string
+}
+
+const FormItemContext = React.createContext<FormItemContextValue>(
+  {} as FormItemContextValue
+)
+
+const FormItem = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const id = React.useId()
+
   return (
-    <Button
-      disabled={loading}
-      type={type}
-      onClick={onClick}
-      className={className}
+    <FormItemContext.Provider value={{ id }}>
+      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+    </FormItemContext.Provider>
+  )
+})
+FormItem.displayName = "FormItem"
+
+const FormLabel = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+>(({ className, ...props }, ref) => {
+  const { error, formItemId } = useFormField()
+
+  return (
+    <Label
+      ref={ref}
+      className={cn(error && "text-destructive", className)}
+      htmlFor={formItemId}
+      {...props}
+    />
+  )
+})
+FormLabel.displayName = "FormLabel"
+
+const FormControl = React.forwardRef<
+  React.ElementRef<typeof Slot>,
+  React.ComponentPropsWithoutRef<typeof Slot>
+>(({ ...props }, ref) => {
+  const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
+
+  return (
+    <Slot
+      ref={ref}
+      id={formItemId}
+      aria-describedby={
+        !error
+          ? `${formDescriptionId}`
+          : `${formDescriptionId} ${formMessageId}`
+      }
+      aria-invalid={!!error}
+      {...props}
+    />
+  )
+})
+FormControl.displayName = "FormControl"
+
+const FormDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => {
+  const { formDescriptionId } = useFormField()
+
+  return (
+    <p
+      ref={ref}
+      id={formDescriptionId}
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+})
+FormDescription.displayName = "FormDescription"
+
+const FormMessage = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, children, ...props }, ref) => {
+  const { error, formMessageId } = useFormField()
+  const body = error ? String(error?.message) : children
+
+  if (!body) {
+    return null
+  }
+
+  return (
+    <p
+      ref={ref}
+      id={formMessageId}
+      className={cn("text-sm font-medium text-destructive", className)}
       {...props}
     >
-      {loading ? (
-        <FaSpinner className='mr-1 animate-spin' />
-      ) : (
-        icon && <span className='mr-1'>{icon}</span>
-      )}
-
-      {label}
-    </Button>
+      {body}
+    </p>
   )
+})
+FormMessage.displayName = "FormMessage"
+
+export {
+  useFormField,
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
 }

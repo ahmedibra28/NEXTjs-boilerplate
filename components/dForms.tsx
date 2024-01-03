@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Dialog, DialogTrigger } from './ui/dialog'
 
 export interface DynamicFormProps {
   register: any
@@ -763,52 +764,56 @@ export const ButtonCircle = ({
   )
 }
 
-export const actionButton = ({
+export const ActionButton = ({
   editHandler,
   isPending,
   deleteHandler,
-  modal,
   original,
+  formChildren,
 }: {
   editHandler?: (item: any) => void
   isPending?: boolean
   deleteHandler?: (item: any) => void
   modal?: string
   original?: any
-}) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger>
-      <FaEllipsis className='text-2xl' />
-    </DropdownMenuTrigger>
-    <DropdownMenuContent>
-      {editHandler && (
-        <DropdownMenuItem>
-          <ButtonCircle
-            args={{ size: 'sm' }}
-            isLoading={false}
-            label='Edit'
-            onClick={() => {
-              editHandler(original)
-              // @ts-ignore
-              window[modal].showModal()
-            }}
-            icon={<FaFilePen />}
-            className='btn-primary justify-start text-white'
-          />
-        </DropdownMenuItem>
-      )}
-      {deleteHandler && (
-        <DropdownMenuItem>
-          <ButtonCircle
-            args={{ size: 'sm' }}
-            isLoading={isPending}
-            label='Delete'
-            onClick={() => deleteHandler(original.id)}
-            icon={<FaTrash />}
-            className='btn-error justify-start text-white bg-red-500'
-          />
-        </DropdownMenuItem>
-      )}
-    </DropdownMenuContent>
-  </DropdownMenu>
-)
+  formChildren?: React.ReactNode
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <FaEllipsis className='text-2xl' />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {editHandler && (
+          <div>
+            <Dialog>
+              <DialogTrigger>
+                <div
+                  onClick={() => editHandler(original)}
+                  className='h-10 min-w-24 flex justify-start items-center gap-x-1 rounded-lg bg-primary text-white py-2 px-4 mx-2 text-sm'
+                >
+                  <FaFilePen />
+                  Edit
+                </div>
+              </DialogTrigger>
+              {formChildren}
+            </Dialog>
+          </div>
+        )}
+
+        {deleteHandler && (
+          <DropdownMenuItem>
+            <ButtonCircle
+              args={{ size: 'sm' }}
+              isLoading={isPending}
+              label='Delete'
+              onClick={() => deleteHandler(original.id)}
+              icon={<FaTrash />}
+              className='btn-error justify-start text-white bg-red-500'
+            />
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}

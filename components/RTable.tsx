@@ -39,8 +39,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { DialogTrigger } from './ui/dialog'
+import { Dialog } from '@radix-ui/react-dialog'
 
 interface RTableProps {
+  children?: React.ReactNode
   data: {
     data: any
     page?: number
@@ -61,6 +64,7 @@ interface RTableProps {
 }
 
 const RTable: React.FC<RTableProps> = ({
+  children,
   data,
   columns,
   setPage,
@@ -131,16 +135,16 @@ const RTable: React.FC<RTableProps> = ({
         )}
 
         <div className='flex flex-row justify-start items-center gap-x-2'>
-          {modal && (
-            <Button
-              variant='outline'
-              className='gap-x-1 rounded-md focus:hidden'
-              // @ts-ignore
-              onClick={() => window[modal].showModal()}
-            >
-              <FaPlus />
-              {Capitalize(modal)}
-            </Button>
+          {children && modal && (
+            <Dialog>
+              <DialogTrigger>
+                <div className='gap-x-1 rounded-md focus:hidden border border-input bg-background hover:bg-accent hover:text-accent-foreground flex justify-center items-center h-10 px-4 py-2 text-sm'>
+                  <FaPlus />
+                  {Capitalize(modal)}
+                </div>
+              </DialogTrigger>
+              {children}
+            </Dialog>
           )}
           <DropdownCheckbox
             visibleColumns={visibleColumns}

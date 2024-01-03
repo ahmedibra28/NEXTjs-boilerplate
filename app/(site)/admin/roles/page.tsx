@@ -175,8 +175,6 @@ const Page = () => {
     reset()
     setEdit(false)
     setId(null)
-    // @ts-ignore
-    window[modal].close()
   }
 
   const submitHandler = (data: {
@@ -215,36 +213,32 @@ const Page = () => {
         })
   }
 
+  const formChildren = (
+    <FormView
+      formCleanHandler={formCleanHandler}
+      form={form({
+        register,
+        errors,
+        uniqueClientPermissions,
+        uniquePermissions,
+      })}
+      loading={updateApi?.isPending || postApi?.isPending}
+      handleSubmit={handleSubmit}
+      submitHandler={submitHandler}
+      label={`${edit ? 'Edit' : 'Add New'} ${label}`}
+    />
+  )
+
   return (
     <>
       {deleteApi?.isSuccess && (
-        <Message
-          variant='success'
-          value={`${label} has been cancelled successfully.`}
-        />
+        <Message value={`${label} has been cancelled successfully.`} />
       )}
       {deleteApi?.isError && <Message value={deleteApi?.error} />}
       {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
       {updateApi?.isError && <Message value={updateApi?.error} />}
       {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
       {postApi?.isError && <Message value={postApi?.error} />}
-
-      <FormView
-        formCleanHandler={formCleanHandler}
-        form={form({
-          register,
-          errors,
-          uniqueClientPermissions,
-          uniquePermissions,
-        })}
-        isLoadingUpdate={updateApi?.isPending}
-        isLoadingPost={postApi?.isPending}
-        handleSubmit={handleSubmit}
-        submitHandler={submitHandler}
-        modal={modal}
-        label={`${edit ? 'Edit' : 'Add New'} ${label}`}
-        modalSize='max-w-xl'
-      />
 
       {getApi?.isPending ? (
         <Spinner />
@@ -258,7 +252,7 @@ const Page = () => {
               editHandler,
               deleteHandler,
               isPending: deleteApi?.isPending || false,
-              modal,
+              formChildren,
             })}
             setPage={setPage}
             setLimit={setLimit}
@@ -268,7 +262,9 @@ const Page = () => {
             searchHandler={searchHandler}
             modal={modal}
             caption='Roles List'
-          />
+          >
+            {formChildren}
+          </RTable>
         </div>
       )}
     </>

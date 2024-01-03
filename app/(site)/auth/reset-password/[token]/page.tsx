@@ -7,7 +7,11 @@ import useApi from '@/hooks/useApi'
 import FormContainer from '@/components/FormContainer'
 import Message from '@/components/Message'
 import { useRouter } from 'next/navigation'
-import { FormButton, FormInput } from '@/components/ui/Form'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
 
 const Reset = ({
   params,
@@ -20,28 +24,41 @@ const Reset = ({
   const { token } = params
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset: resetForm,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {},
-  })
-
   const postApi = useApi({
     key: ['reset-password'],
     method: 'POST',
     url: `auth/reset-password`,
   })?.post
 
+  const formSchema = z
+    .object({
+      password: z.string().min(6),
+      confirmPassword: z.string().min(6),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: 'Password do not match',
+      path: ['confirmPassword'],
+    })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const password = values.password
+    postApi?.mutateAsync({ password, resetToken: token })
+  }
+
   useEffect(() => {
     if (postApi?.isSuccess) {
-      resetForm()
+      form.reset()
       router.push('/auth/login')
     }
-  }, [postApi?.isSuccess, resetForm, router])
+  }, [postApi?.isSuccess, form.reset, router])
 
   useEffect(() => {
     userInfo.id && router.push('/')
@@ -62,34 +79,31 @@ const Reset = ({
 
       {postApi?.isError && <Message value={postApi?.error} />}
 
-      <form onSubmit={handleSubmit(submitHandler)} className='space-y-2'>
-        <FormInput
-          register={register}
-          minLength={6}
-          errors={errors}
-          name='password'
-          label='Password'
-          placeholder='Password'
-          type='password'
-        />
-        <FormInput
-          register={register}
-          errors={errors}
-          watch={watch}
-          validate={true}
-          minLength={6}
-          name='confirmPassword'
-          label='Confirm Password'
-          placeholder='Confirm Password'
-          type='password'
-        />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+          <CustomFormField
+            form={form}
+            name='password'
+            label='Password'
+            placeholder='Enter password'
+            type='password'
+          />
 
-        <FormButton
-          loading={postApi?.isPending}
-          label='Reset Password'
-          className='w-full'
-        />
-      </form>
+          <CustomFormField
+            form={form}
+            name='confirmPassword'
+            label='Confirm Password'
+            placeholder='Enter confirm password'
+            type='password'
+          />
+
+          <FormButton
+            loading={postApi?.isPending}
+            label='Reset Password'
+            className='w-full'
+          />
+        </form>
+      </Form>
     </FormContainer>
   )
 }

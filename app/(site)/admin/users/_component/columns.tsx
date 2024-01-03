@@ -1,4 +1,4 @@
-import { actionButton } from '@/components/dForms'
+import { ActionButton } from '@/components/dForms'
 import DateTime from '@/lib/dateTime'
 import { FaCircleCheck, FaCircleXmark } from 'react-icons/fa6'
 
@@ -6,14 +6,14 @@ type Column = {
   editHandler: (item: any) => void
   isPending: boolean
   deleteHandler: (item: any) => void
-  modal?: string
+  formChildren?: React.ReactNode
 }
 
 export const columns = ({
   editHandler,
   isPending,
   deleteHandler,
-  modal,
+  formChildren,
 }: Column) => [
   { header: 'Name', accessorKey: 'name', active: true },
   { header: 'Email', accessorKey: 'email', active: true },
@@ -47,11 +47,13 @@ export const columns = ({
     cell: ({ row: { original } }: any) =>
       DateTime(original?.createdAt).format('DD-MM-YYYY'),
   },
-
   {
     header: 'Action',
     active: true,
-    cell: ({ row: { original } }: any) =>
-      actionButton({ editHandler, isPending, deleteHandler, modal, original }),
+    cell: ({ row: { original } }: any) => (
+      <ActionButton
+        {...{ editHandler, isPending, deleteHandler, original, formChildren }}
+      />
+    ),
   },
 ]
