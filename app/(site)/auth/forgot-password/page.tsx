@@ -16,18 +16,18 @@ const Page = () => {
   const router = useRouter()
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const formSchema = z.object({
+  const FormSchema = z.object({
     email: z.string().email(),
   })
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       email: '',
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof FormSchema>) {
     postApi?.mutateAsync(values)
   }
   const postApi = useApi({

@@ -30,7 +30,7 @@ const Reset = ({
     url: `auth/reset-password`,
   })?.post
 
-  const formSchema = z
+  const FormSchema = z
     .object({
       password: z.string().min(6),
       confirmPassword: z.string().min(6),
@@ -40,15 +40,15 @@ const Reset = ({
       path: ['confirmPassword'],
     })
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       password: '',
       confirmPassword: '',
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof FormSchema>) {
     const password = values.password
     postApi?.mutateAsync({ password, resetToken: token })
   }

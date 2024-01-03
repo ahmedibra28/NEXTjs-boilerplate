@@ -49,20 +49,20 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, userInfo.id])
 
-  const formSchema = z.object({
+  const FormSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
   })
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof FormSchema>) {
     postApi?.mutateAsync(values)
   }
 

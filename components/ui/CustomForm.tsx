@@ -6,11 +6,25 @@ import {
   FormLabel,
   FormMessage,
 } from './form'
-import { Input } from './input'
+import { Input } from '@/components/ui/input'
 import { UseFormReturn } from 'react-hook-form'
-import { Button, ButtonProps } from './button'
-import { FaSpinner } from 'react-icons/fa6'
-import { Textarea } from './textarea'
+import { Button, ButtonProps } from '@/components/ui/button'
+import { FaCheck, FaSort, FaSpinner } from 'react-icons/fa6'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 export interface FormProps {
   form: UseFormReturn<any, any, undefined>
@@ -21,6 +35,11 @@ export interface FormProps {
   cols?: number
   rows?: number
   step?: string
+  fieldType?: 'command'
+  data?: {
+    label: string
+    value: string
+  }[]
 }
 export interface FormButtonProp {
   label: string
@@ -40,15 +59,66 @@ export default function CustomFormField({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className='flex flex-col mb-3'>
           <FormLabel>{label}</FormLabel>
-          <FormControl>
-            {props.cols && props.rows ? (
-              <Textarea {...field} {...props} />
-            ) : (
-              <Input {...field} {...props} />
-            )}
-          </FormControl>
+          {props?.fieldType === 'command' ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant='outline'
+                    role='combobox'
+                    className={cn(
+                      'w-full justify-between',
+                      !field.value && 'text-muted-foreground'
+                    )}
+                  >
+                    {field.value
+                      ? props?.data?.find((item) => item.value === field.value)
+                          ?.label
+                      : 'Select item'}
+                    <FaSort className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent align='start' className='w-full p-0'>
+                <Command>
+                  <CommandInput placeholder='Search item...' className='h-9' />
+                  <CommandEmpty>No item found.</CommandEmpty>
+                  <CommandGroup>
+                    {props?.data?.map((item) => (
+                      <CommandItem
+                        value={item.label}
+                        key={item.value}
+                        onSelect={() => {
+                          form.setValue(name, item.value)
+                        }}
+                      >
+                        {item.label}
+                        <FaCheck
+                          className={cn(
+                            'ml-auto h-4 w-4',
+                            item.value === field.value
+                              ? 'opacity-100'
+                              : 'opacity-0'
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <FormControl>
+              {props.cols && props.rows ? (
+                <Textarea {...field} {...props} />
+              ) : (
+                <Input {...field} {...props} />
+              )}
+            </FormControl>
+          )}
+
           <FormMessage />
         </FormItem>
       )}

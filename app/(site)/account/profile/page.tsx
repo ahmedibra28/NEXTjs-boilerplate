@@ -41,7 +41,7 @@ const Profile = () => {
     url: `profile`,
   })?.put
 
-  const formSchema = z
+  const FormSchema = z
     .object({
       name: z.string(),
       address: z.string(),
@@ -61,8 +61,8 @@ const Profile = () => {
       path: ['confirmPassword'],
     })
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
       address: '',
@@ -73,7 +73,7 @@ const Profile = () => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof FormSchema>) {
     updateApi?.mutateAsync({
       ...values,
       id: getApi?.data?.id,

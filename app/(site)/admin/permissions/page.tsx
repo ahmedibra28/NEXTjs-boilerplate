@@ -20,14 +20,18 @@ import { Form } from '@/components/ui/form'
 import CustomFormField from '@/components/ui/CustomForm'
 import useEditStore from '@/zustand/editStore'
 import { useColumn } from './hook/useColumn'
+import { TopLoadingBar } from '@/components/TopLoadingBar'
 
-const formSchema = z.object({
+const FormSchema = z.object({
   name: z.string().refine((value) => value !== '', {
     message: 'Name is required',
   }),
   method: z.string().refine((value) => value !== '', {
     message: 'Method is required',
   }),
+  // method: z.string({
+  //   required_error: 'Please select a method',
+  // }),
   route: z.string().refine((value) => value !== '', {
     message: 'Route is required',
   }),
@@ -74,8 +78,8 @@ const Page = () => {
     url: `permissions`,
   })?.deleteObj
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
       method: '',
@@ -144,6 +148,13 @@ const Page = () => {
     refId.current = null
   }
 
+  const methods = [
+    { label: 'GET', value: 'GET' },
+    { label: 'POST', value: 'POST' },
+    { label: 'PUT', value: 'PUT' },
+    { label: 'DELETE', value: 'DELETE' },
+  ]
+
   const formFields = (
     <Form {...form}>
       <CustomFormField
@@ -158,7 +169,8 @@ const Page = () => {
         name='method'
         label='Method'
         placeholder='Method'
-        type='text'
+        fieldType='command'
+        data={methods}
       />
       <CustomFormField
         form={form}
@@ -178,7 +190,7 @@ const Page = () => {
     </Form>
   )
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof FormSchema>) => {
     refEdit.current
       ? updateApi?.mutateAsync({
           id: refId.current,
@@ -213,6 +225,8 @@ const Page = () => {
       {updateApi?.isError && <Message value={updateApi?.error} />}
       {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
       {postApi?.isError && <Message value={postApi?.error} />}
+
+      <TopLoadingBar isFetching={getApi?.isFetching || getApi?.isPending} />
 
       {getApi?.isPending ? (
         <Spinner />
