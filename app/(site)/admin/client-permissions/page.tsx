@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Message from '@/components/Message'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
-import { IClientPermission } from '@/types'
+import type { ClientPermission as IClientPermission } from '@prisma/client'
 import RTable from '@/components/RTable'
 import { useColumn } from './hook/useColumn'
 

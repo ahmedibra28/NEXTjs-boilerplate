@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Message from '@/components/Message'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
-import { IRole, IUser } from '@/types'
+import type { User as IUser } from '@prisma/client'
 import RTable from '@/components/RTable'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -56,7 +56,6 @@ const Page = () => {
   const [id, setId] = useState<string | null>(null)
   const { edit, setEdit } = useEditStore((state) => state)
   const [q, setQ] = useState('')
-  const [roleValue, setRoleValue] = useState('')
 
   const path = useAuthorization()
   const router = useRouter()
@@ -104,19 +103,6 @@ const Page = () => {
     },
   })
 
-  const getRolesApi = useApi({
-    key: ['roles'],
-    method: 'GET',
-    url: `roles?page=1&q=${form.watch().roleId}&limit=${10}`,
-  })?.get
-
-  React.useEffect(() => {
-    if (roleValue) {
-      getRolesApi?.refetch()
-    }
-    // eslint-disable-next-line
-  }, [roleValue])
-
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess)
       formCleanHandler()
@@ -148,7 +134,7 @@ const Page = () => {
   const refEdit = React.useRef(edit)
   const refId = React.useRef(id)
 
-  const editHandler = (item: IUser) => {
+  const editHandler = (item: IUser & { role: { id: string } }) => {
     setId(item.id!)
     setEdit(true)
 
@@ -172,13 +158,7 @@ const Page = () => {
     setId(null)
     refEdit.current = false
     refId.current = null
-    getRolesApi?.refetch()
   }
-
-  const roles = getRolesApi?.data?.data?.map((item: IRole) => ({
-    label: item?.name,
-    value: item?.id,
-  }))
 
   const formFields = (
     <Form {...form}>
@@ -202,7 +182,9 @@ const Page = () => {
         label='Role'
         placeholder='Role'
         fieldType='command'
-        data={roles}
+        data={[]}
+        key='roles'
+        url='roles?page=1&limit=10'
       />
       <CustomFormField
         form={form}

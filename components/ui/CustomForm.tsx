@@ -25,8 +25,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
+import useApi from '@/hooks/useApi'
+import { useDebounce } from 'use-debounce'
 
 export interface FormProps {
   form: UseFormReturn<any, any, undefined>
@@ -42,6 +43,8 @@ export interface FormProps {
     label: string
     value: string
   }[]
+  key?: string
+  url?: string
 }
 export interface FormButtonProp {
   label: string
@@ -56,6 +59,31 @@ export default function CustomFormField({
   label,
   ...props
 }: FormProps) {
+  const [search, setSearch] = React.useState('')
+  const [data, setData] = React.useState(props?.data)
+
+  const getData = useApi({
+    key: [props?.key!, props?.url!],
+    method: 'GET',
+    url: props?.url + `&q=${search}`,
+  })?.get
+
+  const [value] = useDebounce(search, 1000)
+
+  React.useEffect(() => {
+    if (props?.data?.length === 0) {
+      getData?.refetch()?.then((res) => {
+        setData(
+          res?.data?.data?.map((item: { name?: string; id?: string }) => ({
+            label: item?.name,
+            value: item?.id,
+          }))
+        )
+      })
+    }
+    // eslint-disable-next-line
+  }, [value])
+
   return (
     <FormField
       control={form.control}
@@ -77,19 +105,23 @@ export default function CustomFormField({
                     )}
                   >
                     {field.value
-                      ? props?.data?.find((item) => item.value === field.value)
-                          ?.label
+                      ? data?.find((item) => item.value === field.value)?.label
                       : 'Select item'}
                     <FaSort className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                   </Button>
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent align='start' className='w-full p-0'>
-                <Command>
-                  <CommandInput placeholder='Search item...' className='h-9' />
+                <Command shouldFilter={true}>
+                  <CommandInput
+                    onValueChange={setSearch}
+                    value={search}
+                    placeholder='Search item...'
+                    className='h-9'
+                  />
                   <CommandEmpty>No item found.</CommandEmpty>
                   <CommandGroup>
-                    {props?.data?.map((item) => (
+                    {data?.map((item) => (
                       <CommandItem
                         value={item.label}
                         key={item.value}
@@ -98,6 +130,7 @@ export default function CustomFormField({
                         }}
                       >
                         {item.label}
+
                         <FaCheck
                           className={cn(
                             'ml-auto h-4 w-4',
