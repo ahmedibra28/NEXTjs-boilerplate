@@ -25,6 +25,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Switch } from '@/components/ui/switch'
 
 export interface FormProps {
   form: UseFormReturn<any, any, undefined>
@@ -35,7 +37,7 @@ export interface FormProps {
   cols?: number
   rows?: number
   step?: string
-  fieldType?: 'command'
+  fieldType?: 'command' | 'switch'
   data?: {
     label: string
     value: string
@@ -61,6 +63,7 @@ export default function CustomFormField({
       render={({ field }) => (
         <FormItem className='flex flex-col mb-3'>
           <FormLabel>{label}</FormLabel>
+
           {props?.fieldType === 'command' ? (
             <Popover>
               <PopoverTrigger asChild>
@@ -109,6 +112,8 @@ export default function CustomFormField({
                 </Command>
               </PopoverContent>
             </Popover>
+          ) : props?.fieldType === 'switch' ? (
+            <Switch checked={field.value} onCheckedChange={field.onChange} />
           ) : (
             <FormControl>
               {props.cols && props.rows ? (

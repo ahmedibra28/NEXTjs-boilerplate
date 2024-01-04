@@ -10,7 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Dialog, DialogTrigger } from './ui/dialog'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import ConfirmDialog from './ConfirmDialog'
 
 export interface DynamicFormProps {
   register: any
@@ -790,7 +792,7 @@ export const ActionButton = ({
               <DialogTrigger>
                 <div
                   onClick={() => editHandler(original)}
-                  className='h-10 min-w-24 flex justify-start items-center gap-x-1 rounded-lg bg-primary text-white py-2 px-4 mx-2 text-sm'
+                  className='h-9 min-w-24 flex justify-start items-center gap-x-1 rounded-lg bg-primary text-white py-2 px-4 mx-2 text-sm mb-1'
                 >
                   <FaFilePen />
                   Edit
@@ -802,16 +804,23 @@ export const ActionButton = ({
         )}
 
         {deleteHandler && (
-          <DropdownMenuItem>
-            <ButtonCircle
-              args={{ size: 'sm' }}
-              isLoading={isPending}
-              label='Delete'
-              onClick={() => deleteHandler(original.id)}
-              icon={<FaTrash />}
-              className='btn-error justify-start text-white bg-red-500'
-            />
-          </DropdownMenuItem>
+          <AlertDialog>
+            <AlertDialogTrigger>
+              <div className='h-9 min-w-24 flex justify-start items-center gap-x-1 rounded-lg bg-red-500 text-white py-2 px-4 mx-2 text-sm'>
+                {isPending ? (
+                  <>
+                    <FaSpinner className='mr-1 animate-spin' />
+                    Loading
+                  </>
+                ) : (
+                  <>
+                    <FaTrash /> Delete
+                  </>
+                )}
+              </div>
+            </AlertDialogTrigger>
+            <ConfirmDialog onClick={() => deleteHandler(original.id)} />
+          </AlertDialog>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

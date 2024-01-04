@@ -2,11 +2,9 @@
 
 import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
-import Confirm from '@/components/Confirm'
 import { useRouter } from 'next/navigation'
 import Message from '@/components/Message'
 import FormView from '@/components/FormView'
@@ -29,9 +27,6 @@ const FormSchema = z.object({
   method: z.string().refine((value) => value !== '', {
     message: 'Method is required',
   }),
-  // method: z.string({
-  //   required_error: 'Please select a method',
-  // }),
   route: z.string().refine((value) => value !== '', {
     message: 'Route is required',
   }),
@@ -129,13 +124,9 @@ const Page = () => {
     form.setValue('description', item?.description || '')
     form.setValue('method', item?.method)
     form.setValue('route', item?.route)
-
-    setEdit(true)
   }
 
-  const deleteHandler = (id: any) => {
-    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
-  }
+  const deleteHandler = (id: any) => deleteApi?.mutateAsync(id)
 
   const label = 'Permission'
   const modal = 'permission'

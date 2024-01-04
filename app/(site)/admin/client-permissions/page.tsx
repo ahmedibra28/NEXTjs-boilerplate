@@ -1,12 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, FormEvent, use } from 'react'
+import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
-import Confirm from '@/components/Confirm'
 import { useRouter } from 'next/navigation'
 import Message from '@/components/Message'
 import FormView from '@/components/FormView'
@@ -127,9 +125,7 @@ const Page = () => {
     form.setValue('sort', item?.sort?.toString())
   }
 
-  const deleteHandler = (id: any) => {
-    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
-  }
+  const deleteHandler = (id: any) => deleteApi?.mutateAsync(id)
 
   const label = 'Client Permission'
   const modal = 'clientPermission'

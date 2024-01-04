@@ -58,6 +58,7 @@ const Reset = ({
       form.reset()
       router.push('/auth/login')
     }
+    // eslint-disable-next-line
   }, [postApi?.isSuccess, form.reset, router])
 
   useEffect(() => {
