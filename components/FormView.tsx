@@ -19,18 +19,7 @@ interface Props {
   handleSubmit: (data: any) => () => void
   submitHandler: (data: any) => void
   label: string
-  width?: string
-}
-
-interface DialogContentsProps {
-  children: React.ReactNode
-  edit?: boolean
-  label: string
-  form: React.ReactNode
-  handleSubmit: any
-  submitHandler: any
-  formCleanHandler: any
-  loading: boolean
+  height?: string
   width?: string
 }
 
@@ -41,12 +30,19 @@ const FormView = ({
   handleSubmit,
   submitHandler,
   label,
+  height,
   width,
 }: Props) => {
   const { edit } = useEditStore((state) => state)
 
   return (
-    <DialogContent className={`${width}`}>
+    <DialogContent
+      className={`${height} ${width} overflow-y-auto
+    scrollbar-hide
+
+    
+    `}
+    >
       <DialogHeader>
         <DialogTitle>
           {edit ? 'Edit' : 'Add New'} {label}
@@ -66,7 +62,11 @@ const FormView = ({
             </Button>
           </DialogClose>
 
-          <FormButton loading={loading} type='submit' label='Save changes' />
+          <FormButton
+            loading={loading}
+            type='submit'
+            label={edit ? 'Save edited changes' : 'Save changes'}
+          />
         </DialogFooter>
       </form>
     </DialogContent>

@@ -292,6 +292,7 @@ const Page = () => {
       handleSubmit={form.handleSubmit}
       submitHandler={onSubmit}
       label={label}
+      height='h-[80vh]'
     />
   )
 
