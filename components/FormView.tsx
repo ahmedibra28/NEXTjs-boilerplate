@@ -10,6 +10,7 @@ import {
 import { Button } from './ui/button'
 import { FormButton } from './ui/CustomForm'
 import useEditStore from '@/zustand/editStore'
+import React from 'react'
 
 interface Props {
   formCleanHandler: () => void
@@ -18,6 +19,18 @@ interface Props {
   handleSubmit: (data: any) => () => void
   submitHandler: (data: any) => void
   label: string
+  width?: string
+}
+
+interface DialogContentsProps {
+  children: React.ReactNode
+  edit?: boolean
+  label: string
+  form: React.ReactNode
+  handleSubmit: any
+  submitHandler: any
+  formCleanHandler: any
+  loading: boolean
   width?: string
 }
 
@@ -33,7 +46,7 @@ const FormView = ({
   const { edit } = useEditStore((state) => state)
 
   return (
-    <DialogContent className={`${width} `}>
+    <DialogContent className={`${width}`}>
       <DialogHeader>
         <DialogTitle>
           {edit ? 'Edit' : 'Add New'} {label}
@@ -47,6 +60,7 @@ const FormView = ({
               onClick={formCleanHandler}
               type='button'
               variant='secondary'
+              id='dialog-close'
             >
               Close
             </Button>

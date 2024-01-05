@@ -18,9 +18,7 @@ import RTable from '@/components/RTable'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
-import CustomFormField, {
-  CustomFormMultipleCheckbox,
-} from '@/components/ui/CustomForm'
+import CustomFormField from '@/components/ui/CustomForm'
 import useEditStore from '@/zustand/editStore'
 import { useColumn } from './hook/useColumn'
 import { TopLoadingBar } from '@/components/TopLoadingBar'
@@ -103,28 +101,6 @@ const Page = () => {
       clientPermissions: [],
     },
   })
-
-  const uniquePermissions = [
-    ...(new Set(
-      getPermissionsApi?.data?.data?.map((item: IPermission) => item.name)
-    ) as any),
-  ]?.map((group) => ({
-    [group]: getPermissionsApi?.data?.data?.filter(
-      (permission: IPermission) => permission?.name === group
-    ),
-  }))
-
-  const uniqueClientPermissions = [
-    ...(new Set(
-      getClientPermissionsApi?.data?.data?.map(
-        (item: IClientPermission) => item.menu
-      )
-    ) as any),
-  ]?.map((group) => ({
-    [group]: getClientPermissionsApi?.data?.data?.filter(
-      (clientPermission: IClientPermission) => clientPermission?.menu === group
-    ),
-  }))
 
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
@@ -250,6 +226,10 @@ const Page = () => {
     setId(null)
     refEdit.current = false
     refId.current = null
+    getClientPermissionsApi?.refetch()
+    getPermissionsApi?.refetch()
+
+    window.document.getElementById('dialog-close')?.click()
   }
 
   const formFields = (
@@ -261,13 +241,13 @@ const Page = () => {
         placeholder='Name'
         type='text'
       />
-      <CustomFormMultipleCheckbox
+      <CustomFormField
         form={form}
         label='Permission'
         name='permissions'
         placeholder='Permission'
         items={permissionsList(getPermissionsApi?.data?.data || [])}
-        fieldType='switch'
+        fieldType='multipleCheckbox'
         data={[]}
       />
 
@@ -280,13 +260,13 @@ const Page = () => {
         rows={3}
       />
 
-      <CustomFormMultipleCheckbox
+      <CustomFormField
         form={form}
         label='Client Permission'
         name='clientPermissions'
         placeholder='Client Permission'
         items={clientPermissionsList(getClientPermissionsApi?.data?.data || [])}
-        fieldType='switch'
+        fieldType='multipleCheckbox'
         data={[]}
       />
     </Form>

@@ -64,7 +64,7 @@ export interface FormProps {
   cols?: number
   rows?: number
   step?: string
-  fieldType?: 'command' | 'switch'
+  fieldType?: 'command' | 'switch' | 'multipleCheckbox'
   data?: {
     label: string
     value: string
@@ -98,7 +98,7 @@ export default function CustomFormField({
   const [value] = useDebounce(search, 1000)
 
   React.useEffect(() => {
-    if (props?.data?.length === 0) {
+    if (props?.data?.length === 0 && props?.fieldType !== 'multipleCheckbox') {
       getData?.refetch()?.then((res) => {
         setData(
           res?.data?.data?.map((item: { name?: string; id?: string }) => ({
@@ -115,78 +115,126 @@ export default function CustomFormField({
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
-        <FormItem className='flex flex-col mb-3'>
-          <FormLabel>{label}</FormLabel>
-
-          {props?.fieldType === 'command' ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant='outline'
-                    role='combobox'
-                    className={cn(
-                      'w-full justify-between',
-                      !field.value && 'text-muted-foreground'
-                    )}
-                  >
-                    {field.value
-                      ? data?.find((item) => item.value === field.value)?.label
-                      : 'Select item'}
-                    <FaSort className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent align='start' className='w-full p-0'>
-                <Command shouldFilter={true}>
-                  <CommandInput
-                    onValueChange={setSearch}
-                    value={search}
-                    placeholder='Search item...'
-                    className='h-9'
+      render={({ field }) =>
+        props?.fieldType === 'multipleCheckbox' ? (
+          <FormItem className='flex flex-col mb-3'>
+            {props?.items?.map((item, i) => (
+              <div key={i} className='mb-2 bg-slate-100 p-3 gap-y-2'>
+                <FormLabel className='mb-2 pb-3 font-bold'>
+                  {item.label}
+                </FormLabel>
+                {item?.children?.map((child, childId) => (
+                  <FormField
+                    key={childId}
+                    control={form.control}
+                    name={name}
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={childId}
+                          className='flex flex-row items-start space-x-3 space-y-0'
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(child.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, child.id])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value: string) => value !== child.id
+                                      )
+                                    )
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className='text-sm font-normal'>
+                            {child?.method || child?.path} {child.label}
+                          </FormLabel>
+                        </FormItem>
+                      )
+                    }}
                   />
-                  <CommandEmpty>No item found.</CommandEmpty>
-                  <CommandGroup>
-                    {data?.map((item) => (
-                      <CommandItem
-                        value={item.label}
-                        key={item.value}
-                        onSelect={() => {
-                          form.setValue(name, item.value)
-                        }}
-                      >
-                        {item.label}
+                ))}
+              </div>
+            ))}
 
-                        <FaCheck
-                          className={cn(
-                            'ml-auto h-4 w-4',
-                            item.value === field.value
-                              ? 'opacity-100'
-                              : 'opacity-0'
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          ) : props?.fieldType === 'switch' ? (
-            <Switch checked={field.value} onCheckedChange={field.onChange} />
-          ) : (
-            <FormControl>
-              {props.cols && props.rows ? (
-                <Textarea {...field} {...props} />
-              ) : (
-                <Input {...field} {...props} />
-              )}
-            </FormControl>
-          )}
+            <FormMessage />
+          </FormItem>
+        ) : (
+          <FormItem className='flex flex-col mb-3'>
+            <FormLabel>{label}</FormLabel>
 
-          <FormMessage />
-        </FormItem>
-      )}
+            {props?.fieldType === 'command' ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant='outline'
+                      role='combobox'
+                      className={cn(
+                        'w-full justify-between',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      {field.value
+                        ? data?.find((item) => item.value === field.value)
+                            ?.label
+                        : 'Select item'}
+                      <FaSort className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent align='start' className='w-full p-0'>
+                  <Command shouldFilter={true}>
+                    <CommandInput
+                      onValueChange={setSearch}
+                      value={search}
+                      placeholder='Search item...'
+                      className='h-9'
+                    />
+                    <CommandEmpty>No item found.</CommandEmpty>
+                    <CommandGroup>
+                      {data?.map((item) => (
+                        <CommandItem
+                          value={item.label}
+                          key={item.value}
+                          onSelect={() => {
+                            form.setValue(name, item.value)
+                          }}
+                        >
+                          {item.label}
+
+                          <FaCheck
+                            className={cn(
+                              'ml-auto h-4 w-4',
+                              item.value === field.value
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            ) : props?.fieldType === 'switch' ? (
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
+            ) : (
+              <FormControl>
+                {props.cols && props.rows ? (
+                  <Textarea {...field} {...props} />
+                ) : (
+                  <Input {...field} {...props} />
+                )}
+              </FormControl>
+            )}
+
+            <FormMessage />
+          </FormItem>
+        )
+      }
     />
   )
 }
@@ -216,68 +264,6 @@ export const FormButton = ({
 
       {label}
     </Button>
-  )
-}
-
-export const CustomFormMultipleCheckbox = ({
-  form,
-  name,
-  label,
-  ...props
-}: FormProps) => {
-  const items = props?.items || []
-
-  return (
-    <FormField
-      control={form.control}
-      name={name}
-      render={() => (
-        <FormItem className='flex flex-col mb-3'>
-          {items?.map((item, i) => (
-            <div key={i} className='mb-2 bg-slate-100 p-3 gap-y-2'>
-              <FormLabel className='mb-2 pb-3 font-bold'>
-                {item.label}
-              </FormLabel>
-              {item?.children?.map((child, childId) => (
-                <FormField
-                  key={childId}
-                  control={form.control}
-                  name={name}
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={childId}
-                        className='flex flex-row items-start space-x-3 space-y-0'
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(child.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, child.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value: string) => value !== child.id
-                                    )
-                                  )
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className='text-sm font-normal'>
-                          {child?.method || child?.path} {child.label}
-                        </FormLabel>
-                      </FormItem>
-                    )
-                  }}
-                />
-              ))}
-            </div>
-          ))}
-
-          <FormMessage />
-        </FormItem>
-      )}
-    />
   )
 }
 

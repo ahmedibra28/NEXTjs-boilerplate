@@ -15,8 +15,8 @@ export async function PUT(req: Request, { params }: Params) {
 
     const {
       name,
-      permission: permissionRequest,
-      clientPermission: clientPermissionRequest,
+      permissions: permissionRequest,
+      clientPermissions: clientPermissionRequest,
       description,
     } = await req.json()
 

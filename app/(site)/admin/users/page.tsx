@@ -158,6 +158,8 @@ const Page = () => {
     setId(null)
     refEdit.current = false
     refId.current = null
+
+    window.document.getElementById('dialog-close')?.click()
   }
 
   const formFields = (
