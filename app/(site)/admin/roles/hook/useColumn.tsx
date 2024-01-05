@@ -1,6 +1,5 @@
 import { ActionButton } from '@/components/ui/CustomForm'
 import DateTime from '@/lib/dateTime'
-import { FaCircleCheck, FaCircleXmark } from 'react-icons/fa6'
 
 type Column = {
   editHandler: (item: any) => void
@@ -29,30 +28,14 @@ export const useColumn = ({
 
   const columns = [
     { header: 'Name', accessorKey: 'name', active: true },
-    { header: 'Email', accessorKey: 'email', active: true },
-    { header: 'Role', accessorKey: 'role.name', active: true },
     {
-      header: 'Confirmed',
-      accessorKey: 'confirmed',
+      header: 'Type',
+      accessorKey: 'type',
       active: true,
-      cell: ({ row: { original } }: any) =>
-        original?.confirmed ? (
-          <FaCircleCheck className='text-green-500' />
-        ) : (
-          <FaCircleXmark className='text-red-500' />
-        ),
+      cell: ({ row: { original } }: any) => original?.type?.toUpperCase(),
     },
-    {
-      header: 'Blocked',
-      accessorKey: 'blocked',
-      active: true,
-      cell: ({ row: { original } }: any) =>
-        !original?.blocked ? (
-          <FaCircleCheck className='text-green-500' />
-        ) : (
-          <FaCircleXmark className='text-red-500' />
-        ),
-    },
+    { header: 'Description', accessorKey: 'description', active: true },
+
     {
       header: 'CreatedAt',
       accessorKey: 'createdAt',

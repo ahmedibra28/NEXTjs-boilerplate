@@ -9,7 +9,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { UseFormReturn } from 'react-hook-form'
 import { Button, ButtonProps } from '@/components/ui/button'
-import { FaCheck, FaSort, FaSpinner } from 'react-icons/fa6'
+import {
+  FaCheck,
+  FaEllipsis,
+  FaFilePen,
+  FaSort,
+  FaSpinner,
+  FaTrash,
+} from 'react-icons/fa6'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 
@@ -28,6 +35,25 @@ import {
 import { Switch } from '@/components/ui/switch'
 import useApi from '@/hooks/useApi'
 import { useDebounce } from 'use-debounce'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import ConfirmDialog from '../ConfirmDialog'
+
+interface ListItem {
+  label: string
+  children: Array<{
+    id: string
+    label: string
+    method?: string
+    path?: string
+  }>
+}
 
 export interface FormProps {
   form: UseFormReturn<any, any, undefined>
@@ -45,6 +71,7 @@ export interface FormProps {
   }[]
   key?: string
   url?: string
+  items?: ListItem[]
 }
 export interface FormButtonProp {
   label: string
@@ -189,5 +216,128 @@ export const FormButton = ({
 
       {label}
     </Button>
+  )
+}
+
+export const CustomFormMultipleCheckbox = ({
+  form,
+  name,
+  label,
+  ...props
+}: FormProps) => {
+  const items = props?.items || []
+
+  return (
+    <FormField
+      control={form.control}
+      name={name}
+      render={() => (
+        <FormItem className='flex flex-col mb-3'>
+          {items?.map((item, i) => (
+            <div key={i} className='mb-2 bg-slate-100 p-3 gap-y-2'>
+              <FormLabel className='mb-2 pb-3 font-bold'>
+                {item.label}
+              </FormLabel>
+              {item?.children?.map((child, childId) => (
+                <FormField
+                  key={childId}
+                  control={form.control}
+                  name={name}
+                  render={({ field }) => {
+                    return (
+                      <FormItem
+                        key={childId}
+                        className='flex flex-row items-start space-x-3 space-y-0'
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(child.id)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, child.id])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      (value: string) => value !== child.id
+                                    )
+                                  )
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className='text-sm font-normal'>
+                          {child?.method || child?.path} {child.label}
+                        </FormLabel>
+                      </FormItem>
+                    )
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+}
+
+export const ActionButton = ({
+  editHandler,
+  isPending,
+  deleteHandler,
+  original,
+  formChildren,
+}: {
+  editHandler?: (item: any) => void
+  isPending?: boolean
+  deleteHandler?: (item: any) => void
+  modal?: string
+  original?: any
+  formChildren?: React.ReactNode
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <FaEllipsis className='text-2xl' />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {editHandler && (
+          <div>
+            <Dialog>
+              <DialogTrigger>
+                <div
+                  onClick={() => editHandler(original)}
+                  className='h-9 min-w-24 flex justify-start items-center gap-x-1 rounded-lg bg-primary text-white py-2 px-4 mx-2 text-sm mb-1'
+                >
+                  <FaFilePen />
+                  Edit
+                </div>
+              </DialogTrigger>
+              {formChildren}
+            </Dialog>
+          </div>
+        )}
+
+        {deleteHandler && (
+          <AlertDialog>
+            <AlertDialogTrigger>
+              <div className='h-9 min-w-24 flex justify-start items-center gap-x-1 rounded-lg bg-red-500 text-white py-2 px-4 mx-2 text-sm'>
+                {isPending ? (
+                  <>
+                    <FaSpinner className='mr-1 animate-spin' />
+                    Loading
+                  </>
+                ) : (
+                  <>
+                    <FaTrash /> Delete
+                  </>
+                )}
+              </div>
+            </AlertDialogTrigger>
+            <ConfirmDialog onClick={() => deleteHandler(original.id)} />
+          </AlertDialog>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

@@ -33,7 +33,7 @@ const FormView = ({
   const { edit } = useEditStore((state) => state)
 
   return (
-    <DialogContent className={width}>
+    <DialogContent className={`${width} `}>
       <DialogHeader>
         <DialogTitle>
           {edit ? 'Edit' : 'Add New'} {label}
