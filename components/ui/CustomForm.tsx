@@ -253,7 +253,7 @@ export const FormButton = ({
       disabled={loading}
       type={type}
       onClick={onClick}
-      className={className}
+      className={`${loading ? 'bg-gray-500' : ''} ${className}`}
       {...props}
     >
       {loading ? (

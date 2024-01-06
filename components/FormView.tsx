@@ -36,13 +36,7 @@ const FormView = ({
   const { edit } = useEditStore((state) => state)
 
   return (
-    <DialogContent
-      className={`${height} ${width} overflow-y-auto
-    scrollbar-hide
-
-    
-    `}
-    >
+    <DialogContent className={`${height} ${width} overflow-y-auto`}>
       <DialogHeader>
         <DialogTitle>
           {edit ? 'Edit' : 'Add New'} {label}

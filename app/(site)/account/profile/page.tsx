@@ -94,7 +94,7 @@ const Profile = () => {
       })
       setFileLink([])
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [updateApi?.isSuccess])
 
   useEffect(() => {
@@ -103,11 +103,11 @@ const Profile = () => {
     form.setValue('mobile', !getApi?.isPending ? getApi?.data?.mobile : '')
     form.setValue('bio', !getApi?.isPending ? getApi?.data?.bio : '')
     setFileLink(!getApi?.isPending ? [getApi?.data?.image] : [])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [getApi?.isPending, form.setValue])
 
   return (
-    <div className='max-w-6xl mx-auto'>
+    <div className='max-w-6xl mx-auto bg-white p-3 mt-2'>
       {updateApi?.isError && <Message value={updateApi?.error} />}
 
       {getApi?.isError && <Message value={getApi?.error} />}
