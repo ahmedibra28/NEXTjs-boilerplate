@@ -20,8 +20,30 @@ import {
   FaPlus,
 } from 'react-icons/fa6'
 import DropdownCheckbox from './DropdownCheckbox'
+import { Button } from './ui/button'
+import { FormatNumber } from './FormatNumber'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Capitalize } from '@/lib/capitalize'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { DialogTrigger } from './ui/dialog'
+import { Dialog } from '@radix-ui/react-dialog'
 
 interface RTableProps {
+  children?: React.ReactNode
   data: {
     data: any
     page?: number
@@ -38,9 +60,11 @@ interface RTableProps {
   setQ?: (q: string) => void
   searchHandler?: (e: any) => void
   modal?: string
+  caption?: string
 }
 
 const RTable: React.FC<RTableProps> = ({
+  children,
   data,
   columns,
   setPage,
@@ -50,6 +74,7 @@ const RTable: React.FC<RTableProps> = ({
   setQ,
   searchHandler,
   modal,
+  caption,
 }) => {
   const [sorting, setSorting] = useState<any[]>([])
 
@@ -109,16 +134,17 @@ const RTable: React.FC<RTableProps> = ({
           <span />
         )}
 
-        <div className='flex flex-row justify-start items-center'>
-          {modal && (
-            <button
-              className='btn btn-primary rounded-none text-gray-100'
-              // @ts-ignore
-              onClick={() => window[modal].showModal()}
-            >
-              <FaPlus />
-              {modal}
-            </button>
+        <div className='flex flex-row justify-start items-center gap-x-2'>
+          {children && modal && (
+            <Dialog>
+              <DialogTrigger>
+                <div className='gap-x-1 rounded-md focus:hidden border border-input bg-background hover:bg-accent hover:text-accent-foreground flex justify-center items-center h-10 px-4 py-2 text-sm'>
+                  <FaPlus />
+                  {Capitalize(modal)}
+                </div>
+              </DialogTrigger>
+              {children}
+            </Dialog>
           )}
           <DropdownCheckbox
             visibleColumns={visibleColumns}
@@ -127,12 +153,14 @@ const RTable: React.FC<RTableProps> = ({
         </div>
       </div>
 
-      <table className='table table-xs md:table-sm'>
-        <thead>
+      <Table className='text-xs md:text-sm'>
+        <TableCaption>{caption}</TableCaption>
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th
+                <TableHead
+                  className='py-0 px-2'
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
                 >
@@ -151,22 +179,22 @@ const RTable: React.FC<RTableProps> = ({
                       ) : null}
                     </div>
                   )}
-                </th>
+                </TableHead>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </thead>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {table?.getRowModel()?.rows.length > 0 ? (
             table?.getRowModel()?.rows?.map((row) => (
-              <tr key={row.id}>
+              <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
+                  <TableCell className='py-0 px-2' key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+                  </TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))
           ) : (
             <tr>
@@ -178,58 +206,71 @@ const RTable: React.FC<RTableProps> = ({
               </td>
             </tr>
           )}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
 
       <div className='flex flex-col sm:flex-row justify-between items-center my-3 gap-2'>
         {setLimit && limit && (
-          <div>
-            <span className='text-sm text-gray-700 font-sans'>
-              Rows per page:{' '}
+          <div className='flex justify-start items-center gap-x-1'>
+            <span className='text-sm text-gray-700 font-sans border h-10 flex justify-center items-center rounded-md px-2'>
+              Rows per page
             </span>
-            <select
-              className='input rounded-none border border-gray-300 w-auto mt-5 input-sm'
-              value={limit}
-              onChange={(e) => setLimit(Number(e.target.value))}
+            <Select
+              defaultValue={limit?.toString()}
+              onValueChange={(value) => setLimit(Number(value))}
             >
-              {[10, 20, 30, 50, 100, 200].map((limit) => (
-                <option key={limit} value={limit}>
-                  {limit}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className='w-auto focus:hidden'>
+                <SelectValue placeholder={limit} />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 30, 50, 100, 200].map((limit) => (
+                  <SelectItem key={limit} value={limit?.toString()}>
+                    {limit}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
         {setPage && data?.page && data?.pages ? (
-          <div>
-            <div className='join gap-x-1'>
-              <button className='join-item btn' onClick={() => setPage(1)}>
-                <FaAnglesLeft className='mb-1' />
-              </button>
-              <button
-                className='join-item btn'
-                disabled={data?.page === 1}
-                onClick={() => setPage(Number(data?.page) - 1)}
-              >
-                <FaChevronLeft className='mb-1' />
-              </button>
-              <button className='join-item btn'>
-                {data?.startIndex} - {data?.endIndex} of {data?.total}
-              </button>
-              <button
-                className='join-item btn'
-                disabled={data?.page === data?.pages}
-                onClick={() => setPage(Number(data?.page) + 1)}
-              >
-                <FaChevronRight className='mb-1' />
-              </button>
-              <button
-                className='join-item btn'
-                onClick={() => setPage(Number(data?.pages))}
-              >
-                <FaAnglesRight className='mb-1' />
-              </button>
-            </div>
+          <div className='flex gap-x-1'>
+            <Button
+              className='rounded-tr-none rounded-br-none'
+              variant='outline'
+              onClick={() => setPage(1)}
+            >
+              <FaAnglesLeft />
+            </Button>
+            <Button
+              className='rounded-none'
+              variant='outline'
+              disabled={data?.page === 1}
+              onClick={() => setPage(Number(data?.page) - 1)}
+            >
+              <FaChevronLeft />
+            </Button>
+            <Button className='rounded-none' variant='outline'>
+              <FormatNumber value={data?.startIndex || 0} isCurrency={false} />
+              <span className='mx-1'> - </span>{' '}
+              <FormatNumber value={data?.endIndex || 0} isCurrency={false} />
+              <span className='mx-1'> of </span>
+              <FormatNumber value={data?.total || 0} isCurrency={false} />
+            </Button>
+            <Button
+              className='rounded-none'
+              variant='outline'
+              disabled={data?.page === data?.pages}
+              onClick={() => setPage(Number(data?.page) + 1)}
+            >
+              <FaChevronRight />
+            </Button>
+            <Button
+              className='rounded-tl-none rounded-bl-none'
+              variant='outline'
+              onClick={() => setPage(Number(data?.pages))}
+            >
+              <FaAnglesRight />
+            </Button>
           </div>
         ) : (
           ''

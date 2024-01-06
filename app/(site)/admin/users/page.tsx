@@ -2,33 +2,60 @@
 
 import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
-import Confirm from '@/components/Confirm'
 import { useRouter } from 'next/navigation'
 import Message from '@/components/Message'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
-import { IUser } from '@/types'
-import { form } from './_component/form'
+import type { User as IUser } from '@prisma/client'
 import RTable from '@/components/RTable'
-import { columns } from './_component/columns'
 
-type ISelect = { label?: string; value?: string }
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField from '@/components/ui/CustomForm'
+import useEditStore from '@/zustand/editStore'
+import { useColumn } from './hook/useColumn'
+import { TopLoadingBar } from '@/components/TopLoadingBar'
+
+const FormSchema = z
+  .object({
+    name: z.string().refine((value) => value !== '', {
+      message: 'Name is required',
+    }),
+    email: z
+      .string()
+      .email()
+      .refine((value) => value !== '', {
+        message: 'Email is required',
+      }),
+    roleId: z.string().refine((value) => value !== '', {
+      message: 'Role is required',
+    }),
+    confirmed: z.boolean(),
+    blocked: z.boolean(),
+    password: z.string().refine((val) => val.length === 0 || val.length > 6, {
+      message: "Password can't be less than 6 characters",
+    }),
+    confirmPassword: z
+      .string()
+      .refine((val) => val.length === 0 || val.length > 6, {
+        message: "Confirm password can't be less than 6 characters",
+      }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Password do not match',
+    path: ['confirmPassword'],
+  })
 
 const Page = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
-  const [id, setId] = useState<any>(null)
-  const [edit, setEdit] = useState(false)
+  const [id, setId] = useState<string | null>(null)
+  const { edit, setEdit } = useEditStore((state) => state)
   const [q, setQ] = useState('')
-  const [roleValue, setRoleValue] = useState('')
-
-  const [reactSelect, setReactSelect] = useState<
-    { label?: string; value?: string; id?: string }[]
-  >([])
 
   const path = useAuthorization()
   const router = useRouter()
@@ -43,12 +70,6 @@ const Page = () => {
     key: ['users'],
     method: 'GET',
     url: `users?page=${page}&q=${q}&limit=${limit}`,
-  })?.get
-
-  const getRolesApi = useApi({
-    key: ['roles'],
-    method: 'GET',
-    url: `roles?page=1&q=${roleValue}&limit=${10}`,
   })?.get
 
   const postApi = useApi({
@@ -69,21 +90,18 @@ const Page = () => {
     url: `users`,
   })?.deleteObj
 
-  React.useEffect(() => {
-    if (roleValue) {
-      getRolesApi?.refetch()
-    }
-    // eslint-disable-next-line
-  }, [roleValue])
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm({})
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      roleId: '',
+      password: '',
+      confirmPassword: '',
+      confirmed: false,
+      blocked: false,
+    },
+  })
 
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess)
@@ -98,6 +116,11 @@ const Page = () => {
   }, [page])
 
   useEffect(() => {
+    getApi?.refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [limit])
+
+  useEffect(() => {
     if (!q) getApi?.refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
@@ -108,106 +131,141 @@ const Page = () => {
     setPage(1)
   }
 
-  const editHandler = (item: IUser) => {
-    setId(item.id)
-    setValue('blocked', item?.blocked)
-    setValue('confirmed', item?.confirmed)
-    setValue('name', item?.name)
-    setValue('email', item?.email)
-    const role: ISelect = { label: item?.role?.name, value: item?.role?.id }
-    setValue('roleId', role)
-    setReactSelect([
-      ...reactSelect.filter((item) => item.id !== 'roleId'),
-      { ...role, id: 'roleId' },
-    ])
+  const refEdit = React.useRef(edit)
+  const refId = React.useRef(id)
 
+  const editHandler = (item: IUser & { role: { id: string } }) => {
+    setId(item.id!)
     setEdit(true)
+
+    refEdit.current = true
+    refId.current = item.id!
+    form.setValue('blocked', Boolean(item?.blocked))
+    form.setValue('confirmed', Boolean(item?.confirmed))
+    form.setValue('name', item?.name)
+    form.setValue('email', item?.email)
+    form.setValue('roleId', item?.role?.id!)
   }
 
-  const deleteHandler = (id: any) => {
-    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
-  }
+  const deleteHandler = (id: any) => deleteApi?.mutateAsync(id)
 
   const label = 'User'
   const modal = 'user'
 
-  // FormView
   const formCleanHandler = () => {
-    reset()
+    form.reset()
     setEdit(false)
     setId(null)
-    setValue('roleId', null)
-    setReactSelect([])
-    getRolesApi?.refetch()
-    // @ts-ignore
-    window[modal].close()
+    refEdit.current = false
+    refId.current = null
+
+    window.document.getElementById('dialog-close')?.click()
   }
 
-  const submitHandler = (data: any) => {
-    edit
+  const formFields = (
+    <Form {...form}>
+      <CustomFormField
+        form={form}
+        name='name'
+        label='Name'
+        placeholder='Name'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        name='email'
+        label='Email'
+        placeholder='Email'
+        type='email'
+      />
+      <CustomFormField
+        form={form}
+        name='roleId'
+        label='Role'
+        placeholder='Role'
+        fieldType='command'
+        data={[]}
+        key='roles'
+        url='roles?page=1&limit=10'
+      />
+      <CustomFormField
+        form={form}
+        name='password'
+        label='Password'
+        placeholder='Password'
+        type='password'
+      />
+      <CustomFormField
+        form={form}
+        name='confirmPassword'
+        label='Confirm Password'
+        placeholder='Confirm password'
+        type='password'
+      />
+      <CustomFormField
+        form={form}
+        name='confirmed'
+        label='Confirmed'
+        placeholder='Confirmed'
+        fieldType='switch'
+      />
+      <CustomFormField
+        form={form}
+        name='blocked'
+        label='Blocked'
+        placeholder='Blocked'
+        fieldType='switch'
+      />
+    </Form>
+  )
+
+  const onSubmit = (values: z.infer<typeof FormSchema>) => {
+    refEdit.current
       ? updateApi?.mutateAsync({
-          id: id,
-          ...data,
-          roleId: data?.roleId?.value,
+          id: refId.current,
+          ...values,
         })
-      : postApi?.mutateAsync({ ...data, roleId: data?.roleId?.value })
+      : postApi?.mutateAsync(values)
   }
+
+  const formChildren = (
+    <FormView
+      formCleanHandler={formCleanHandler}
+      form={formFields}
+      loading={updateApi?.isPending || postApi?.isPending}
+      handleSubmit={form.handleSubmit}
+      submitHandler={onSubmit}
+      label={label}
+    />
+  )
+
+  const { columns } = useColumn({
+    editHandler,
+    isPending: deleteApi?.isPending || false,
+    deleteHandler,
+    formChildren,
+  })
 
   return (
     <>
-      {deleteApi?.isSuccess && (
-        <Message variant='success' value={deleteApi?.data?.message} />
-      )}
-      {deleteApi?.isError && (
-        <Message variant='error' value={deleteApi?.error} />
-      )}
-      {updateApi?.isSuccess && (
-        <Message variant='success' value={updateApi?.data?.message} />
-      )}
-      {updateApi?.isError && (
-        <Message variant='error' value={updateApi?.error} />
-      )}
-      {postApi?.isSuccess && (
-        <Message variant='success' value={postApi?.data?.message} />
-      )}
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {deleteApi?.isSuccess && <Message value={deleteApi?.data?.message} />}
+      {deleteApi?.isError && <Message value={deleteApi?.error} />}
+      {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
+      {updateApi?.isError && <Message value={updateApi?.error} />}
+      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <FormView
-        formCleanHandler={formCleanHandler}
-        form={form({
-          register,
-          errors,
-          edit,
-          watch,
-          setValue,
-          getRolesApi,
-          reactSelect,
-          setReactSelect,
-          setRoleValue,
-        })}
-        isLoadingUpdate={updateApi?.isPending}
-        isLoadingPost={postApi?.isPending}
-        handleSubmit={handleSubmit}
-        submitHandler={submitHandler}
-        modal={modal}
-        label={`${edit ? 'Edit' : 'Add New'} ${label}`}
-        modalSize='max-w-xl'
-      />
+      <TopLoadingBar isFetching={getApi?.isFetching || getApi?.isPending} />
 
       {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
-        <Message variant='error' value={getApi?.error} />
+        <Message value={getApi?.error} />
       ) : (
         <div className='overflow-x-auto bg-white p-3 mt-2'>
           <RTable
             data={getApi?.data}
-            columns={columns({
-              editHandler,
-              deleteHandler,
-              isPending: deleteApi?.isPending || false,
-              modal,
-            })}
+            columns={columns}
             setPage={setPage}
             setLimit={setLimit}
             limit={limit}
@@ -215,7 +273,10 @@ const Page = () => {
             setQ={setQ}
             searchHandler={searchHandler}
             modal={modal}
-          />
+            caption='Users List'
+          >
+            {formChildren}
+          </RTable>
         </div>
       )}
     </>

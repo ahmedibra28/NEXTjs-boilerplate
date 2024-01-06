@@ -1,10 +1,30 @@
 'use client'
 import useUserInfoStore from '@/zustand/userStore'
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
 import Link from 'next/link'
 import React, { Fragment } from 'react'
-import { FaAngleDown, FaAngleUp, FaBars, FaPowerOff } from 'react-icons/fa6'
+import { FaBars, FaPowerOff } from 'react-icons/fa6'
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+  MenubarPortal,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+} from '@/components/ui/menubar'
 
 const Navigation = () => {
   const { userInfo } = useUserInfoStore((state) => state)
@@ -28,171 +48,136 @@ const Navigation = () => {
     return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
-  React.useEffect(() => {
-    const handleClickOutside = () => {
-      const details = document.getElementsByTagName('details')
-      for (let i = 0; i < details.length; i++) {
-        details[i].removeAttribute('open')
-      }
-    }
-    document.addEventListener('click', handleClickOutside)
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
-    }
-  }, [])
-
-  const handleToggle = (item: any) => {
-    const newMenu = menu.map((x: any) => {
-      if (x.name === item.name) {
-        return { ...x, open: !x.open }
-      }
-      return { ...x, open: false }
-    })
-    setMenu(newMenu)
-  }
-
   const auth = (
     <>
-      <div className='flex-none hidden lg:block'>
-        <ul className='menu menu-horizontal px-1'>
+      <div className='hidden lg:block flex-row'>
+        <ul className='px-1 flex space-x-4 items-center'>
           {menu.map((item: any, i: number) => (
             <Fragment key={i}>
-              {!item?.children && (
-                <li>
-                  <Link href={item.path}>{item.name}</Link>
-                </li>
-              )}
+              {!item?.children && <Link href={item.path}>{item.name}</Link>}
 
               {item?.children && (
-                <li key={item.name}>
-                  <details>
-                    <summary> {capitalizeFirstLetter(item.name)}</summary>
-
-                    <ul className='p-2 bg-base-100 rounded z-20 w-44 top-10 right-0'>
-                      {item.children.map((child: any, i: number) => (
-                        <li key={i}>
-                          <Link href={child.path}>{child.name}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                </li>
+                <DropdownMenu key={item.name}>
+                  <DropdownMenuTrigger className='outline-none'>
+                    {capitalizeFirstLetter(item.name)}
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className='hidden lg:block'>
+                    {item.children.map((child: any, i: number) => (
+                      <DropdownMenuItem key={i}>
+                        <Link href={child.path} className='justify-between'>
+                          {child.name}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </Fragment>
           ))}
-        </ul>
-      </div>
 
-      <div
-        suppressHydrationWarning={true}
-        className='dropdown dropdown-end  hidden lg:block z-20'
-      >
-        <label tabIndex={0} className='btn btn-ghost btn-circle avatar'>
-          <div className='w-10 rounded-full'>
-            <Image
-              src={
-                userInfo.image ||
-                `https://ui-avatars.com/api/?uppercase=true&name=${userInfo?.name}`
-              }
-              width={40}
-              height={40}
-              alt='profile'
-            />
-          </div>
-        </label>
-        <ul
-          tabIndex={0}
-          className='mt-3 z-[1] p-2 menu menu-sm dropdown-content bg-base-100 rounded w-44 shadow-xl'
-        >
-          <li>
-            <Link href='/account/profile' className='justify-between'>
-              Profile
-            </Link>
-          </li>
-
-          <li>
-            <button onClick={() => handleLogout()}>
-              <Link href='/auth/login'>Logout</Link>
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <div className='dropdown lg:hidden'>
-        <div
-          tabIndex={0}
-          role='button'
-          className='btn border bg-transparent m-1'
-        >
-          <FaBars className='text-gray-500 text-2xl' />
-        </div>
-        <ul
-          tabIndex={0}
-          className='dropdown-content z-20 menu p-2 bg-base-100 rounded w-52 shadow-xl top-[66px] right-0'
-        >
-          <li>
-            <Link href='/account/profile' className='justify-between'>
-              Profile
-            </Link>
-          </li>
-
-          {menu.map((item: any, i: number) => (
-            <Fragment key={i}>
-              {!item?.children && (
-                <li>
-                  <Link href={item.path}>{item.name}</Link>
-                </li>
-              )}
-
-              {item?.children && (
-                <li key={item.name}>
-                  <span
-                    onClick={() => handleToggle(item)}
-                    className='flex justify-between items-center'
+          <DropdownMenu>
+            <DropdownMenuTrigger className='outline-none'>
+              <Avatar>
+                <AvatarImage
+                  src={
+                    userInfo.image ||
+                    `https://ui-avatars.com/api/?uppercase=true&name=${userInfo?.name}`
+                  }
+                />
+                <AvatarFallback>AI</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='hidden lg:block'>
+              <DropdownMenuItem>
+                <Link href='/account/profile' className='justify-between'>
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <button onClick={() => handleLogout()}>
+                  <Link
+                    href='/auth/login'
+                    className='flex justify-start items-center flex-row gap-x-1 text-red-500'
                   >
-                    <span className='flex justify-start items-center'>
-                      {capitalizeFirstLetter(item.name)}
-                    </span>
-                    {!item.open ? (
-                      <FaAngleDown className='text-gray-700 text-lg' />
-                    ) : (
-                      <FaAngleUp className='text-gray-700 text-lg' />
-                    )}
-                  </span>
-                  <div className='dropdown dropdown-end hover:bg-transparent py-0'>
-                    {item.open && (
-                      <ul className='p-2 bg-ghost border-0'>
-                        {item.children.map((child: any, i: number) => (
-                          <li key={i}>
-                            <Link href={child.path}>{child.name}</Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </li>
-              )}
-            </Fragment>
-          ))}
-          <hr className='my-2' />
-          <li>
-            <button onClick={() => handleLogout()}>
-              <Link
-                href='/auth/login'
-                className='flex justify-start items-center flex-row gap-x-1 text-red-500'
-              >
-                <FaPowerOff /> <span>Logout</span>
-              </Link>
-            </button>
-          </li>
+                    <FaPowerOff /> <span>Logout</span>
+                  </Link>
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </ul>
+      </div>
+
+      <div className='lg:hidden'>
+        <Menubar className='border-none lg:hidden'>
+          <MenubarMenu>
+            <MenubarTrigger>
+              <FaBars className='text-gray-500 text-2xl' />
+            </MenubarTrigger>
+            <MenubarContent className='lg:hidden'>
+              <ul>
+                <MenubarItem>
+                  <Link href='/account/profile' className='justify-between'>
+                    Profile
+                  </Link>
+                </MenubarItem>
+                {menu.map((item: any, i: number) => (
+                  <Fragment key={i}>
+                    {!item?.children && (
+                      <MenubarItem>
+                        <Link href={item.path}>{item.name}</Link>
+                      </MenubarItem>
+                    )}
+
+                    {item?.children && (
+                      <MenubarSub key={item.name}>
+                        <MenubarSubTrigger className='px-2 py-1.5 text-sm flex flex-row items-center outline-none'>
+                          {capitalizeFirstLetter(item.name)}
+                        </MenubarSubTrigger>
+                        <MenubarPortal>
+                          <MenubarSubContent className='bg-white p-1 rounded-md border border-gray-200 w-auto z-50 lg:hidden'>
+                            {item.children.map((child: any, i: number) => (
+                              <MenubarItem key={i}>
+                                <Link
+                                  href={child.path}
+                                  className='justify-between'
+                                >
+                                  {child.name}
+                                </Link>
+                              </MenubarItem>
+                            ))}
+                          </MenubarSubContent>
+                        </MenubarPortal>
+                      </MenubarSub>
+                    )}
+                  </Fragment>
+                ))}
+
+                <MenubarSeparator />
+                <MenubarItem>
+                  <li>
+                    <button onClick={() => handleLogout()}>
+                      <Link
+                        href='/auth/login'
+                        className='flex justify-start items-center flex-row gap-x-1 text-red-500'
+                      >
+                        <FaPowerOff /> <span>Logout</span>
+                      </Link>
+                    </button>
+                  </li>
+                </MenubarItem>
+              </ul>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
       </div>
     </>
   )
 
   return (
     <div className='flex-none'>
-      <ul className='menu menu-horizontal px-1'>
+      <ul className='px-1 w-full'>
         {!userInfo.id && (
           <li>
             <Link href='/auth/login'>Login</Link>

@@ -2,25 +2,42 @@
 
 import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useAuthorization from '@/hooks/useAuthorization'
 import useApi from '@/hooks/useApi'
-import Confirm from '@/components/Confirm'
 import { useRouter } from 'next/navigation'
 import Message from '@/components/Message'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
-import { IPermission } from '@/types'
-import { form } from './_component/form'
+import type { Permission as IPermission } from '@prisma/client'
 import RTable from '@/components/RTable'
-import { columns } from './_component/columns'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField from '@/components/ui/CustomForm'
+import useEditStore from '@/zustand/editStore'
+import { useColumn } from './hook/useColumn'
+import { TopLoadingBar } from '@/components/TopLoadingBar'
+
+const FormSchema = z.object({
+  name: z.string().refine((value) => value !== '', {
+    message: 'Name is required',
+  }),
+  method: z.string().refine((value) => value !== '', {
+    message: 'Method is required',
+  }),
+  route: z.string().refine((value) => value !== '', {
+    message: 'Route is required',
+  }),
+  description: z.string().optional(),
+})
 
 const Page = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
-  const [id, setId] = useState<any>(null)
-  const [edit, setEdit] = useState(false)
+  const [id, setId] = useState<string | null>(null)
+  const { edit, setEdit } = useEditStore((state) => state)
   const [q, setQ] = useState('')
 
   const path = useAuthorization()
@@ -56,29 +73,36 @@ const Page = () => {
     url: `permissions`,
   })?.deleteObj
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm({})
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: '',
+      method: '',
+      route: '',
+      description: '',
+    },
+  })
 
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess)
       formCleanHandler()
     getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
     getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [page])
 
   useEffect(() => {
+    getApi?.refetch()
+    // eslint-disable-next-line
+  }, [limit])
+
+  useEffect(() => {
     if (!q) getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [q])
 
   const searchHandler = (e: FormEvent) => {
@@ -87,87 +111,125 @@ const Page = () => {
     setPage(1)
   }
 
+  const refEdit = React.useRef(edit)
+  const refId = React.useRef(id)
+
   const editHandler = (item: IPermission) => {
-    setId(item.id)
-    setValue('name', item?.name)
-    setValue('description', item?.description)
-    setValue('method', item?.method)
-    setValue('route', item?.route)
-
+    setId(item.id!)
     setEdit(true)
+
+    refEdit.current = true
+    refId.current = item.id!
+    form.setValue('name', item?.name)
+    form.setValue('description', item?.description || '')
+    form.setValue('method', item?.method)
+    form.setValue('route', item?.route)
   }
 
-  const deleteHandler = (id: any) => {
-    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
-  }
+  const deleteHandler = (id: any) => deleteApi?.mutateAsync(id)
 
-  const name = 'Permissions List'
   const label = 'Permission'
   const modal = 'permission'
 
-  // FormView
   const formCleanHandler = () => {
-    reset()
+    form.reset()
     setEdit(false)
     setId(null)
-    // @ts-ignore
-    window[modal].close()
+    refEdit.current = false
+    refId.current = null
+
+    window.document.getElementById('dialog-close')?.click()
   }
 
-  const submitHandler = (data: object) => {
-    edit
+  const methods = [
+    { label: 'GET', value: 'GET' },
+    { label: 'POST', value: 'POST' },
+    { label: 'PUT', value: 'PUT' },
+    { label: 'DELETE', value: 'DELETE' },
+  ]
+
+  const formFields = (
+    <Form {...form}>
+      <CustomFormField
+        form={form}
+        name='name'
+        label='Name'
+        placeholder='Name'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        name='method'
+        label='Method'
+        placeholder='Method'
+        fieldType='command'
+        data={methods}
+      />
+      <CustomFormField
+        form={form}
+        name='route'
+        label='Route'
+        placeholder='Route'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        name='description'
+        label='Description'
+        placeholder='Description'
+        cols={3}
+        rows={3}
+      />
+    </Form>
+  )
+
+  const onSubmit = (values: z.infer<typeof FormSchema>) => {
+    refEdit.current
       ? updateApi?.mutateAsync({
-          id: id,
-          ...data,
+          id: refId.current,
+          ...values,
         })
-      : postApi?.mutateAsync(data)
+      : postApi?.mutateAsync(values)
   }
+
+  const formChildren = (
+    <FormView
+      formCleanHandler={formCleanHandler}
+      form={formFields}
+      loading={updateApi?.isPending || postApi?.isPending}
+      handleSubmit={form.handleSubmit}
+      submitHandler={onSubmit}
+      label={label}
+    />
+  )
+
+  const { columns } = useColumn({
+    editHandler,
+    isPending: deleteApi?.isPending || false,
+    deleteHandler,
+    formChildren,
+  })
 
   return (
     <>
-      {deleteApi?.isSuccess && (
-        <Message variant='success' value={deleteApi?.data?.message} />
-      )}
-      {deleteApi?.isError && (
-        <Message variant='error' value={deleteApi?.error} />
-      )}
-      {updateApi?.isSuccess && (
-        <Message variant='success' value={updateApi?.data?.message} />
-      )}
-      {updateApi?.isError && (
-        <Message variant='error' value={updateApi?.error} />
-      )}
-      {postApi?.isSuccess && (
-        <Message variant='success' value={postApi?.data?.message} />
-      )}
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {deleteApi?.isSuccess && <Message value={deleteApi?.data?.message} />}
+      {deleteApi?.isError && <Message value={deleteApi?.error} />}
+      {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
+      {updateApi?.isError && <Message value={updateApi?.error} />}
+      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <FormView
-        formCleanHandler={formCleanHandler}
-        form={form({ register, errors })}
-        isLoadingUpdate={updateApi?.isPending}
-        isLoadingPost={postApi?.isPending}
-        handleSubmit={handleSubmit}
-        submitHandler={submitHandler}
-        modal={modal}
-        label={`${edit ? 'Edit' : 'Add New'} ${label}`}
-        modalSize='max-w-xl'
-      />
+      <TopLoadingBar isFetching={getApi?.isFetching || getApi?.isPending} />
 
       {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
-        <Message variant='error' value={getApi?.error} />
+        <Message value={getApi?.error} />
       ) : (
         <div className='overflow-x-auto bg-white p-3 mt-2'>
           <RTable
             data={getApi?.data}
-            columns={columns({
-              editHandler,
-              deleteHandler,
-              isPending: deleteApi?.isPending || false,
-              modal,
-            })}
+            columns={columns}
             setPage={setPage}
             setLimit={setLimit}
             limit={limit}
@@ -175,7 +237,10 @@ const Page = () => {
             setQ={setQ}
             searchHandler={searchHandler}
             modal={modal}
-          />
+            caption='Permissions List'
+          >
+            {formChildren}
+          </RTable>
         </div>
       )}
     </>

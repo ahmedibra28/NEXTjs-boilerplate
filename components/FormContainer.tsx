@@ -9,18 +9,21 @@ type Props = {
 
 const FormContainer: React.FC<Props> = ({ children, title, margin = '' }) => {
   return (
-    <div className={`max-w-6xl mx-auto ${margin}`}>
-      <div className='flex flex-row justify-center items-center h-[85vh] max-auto'>
+    <div className={`max-w-6xl mx-auto ${margin} w-full`}>
+      <div className='flex flex-row justify-center items-center w-92 h-[85vh] max-auto'>
         <div className='w-full sm:w-[80%] md:w-[70%] lg:w-[45%] p-6 bg-white'>
           {title && (
-            <div className='divider text-3xl uppercase mb-10'>{title}</div>
+            <div className='mb-10 space-y-3'>
+              <div className='text-3xl uppercase text-center'>{title}</div>
+            </div>
           )}
           {children}
 
-          <div className='divider mt-10'>CONTACT</div>
-          <div className='text-center'>
+          <div className='mt-10 space-y-3 text-center'>
+            <hr />
+            <div>CONTACT</div>
             <a
-              className='text-gray-500 underline'
+              className='text-gray-500 underline font-light'
               href='mailto:info@ahmedibra.com'
             >
               info@ahmedibra.com

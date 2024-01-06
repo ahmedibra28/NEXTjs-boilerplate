@@ -55,8 +55,8 @@ export async function POST(req: Request) {
     const {
       name,
       description,
-      permission: permissionRequest,
-      clientPermission: clientPermissionRequest,
+      permissions: permissionRequest,
+      clientPermissions: clientPermissionRequest,
     } = await req.json()
 
     let type

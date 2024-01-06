@@ -1,6 +1,8 @@
 'use client'
 import { FormEvent } from 'react'
 import { FaMagnifyingGlass } from 'react-icons/fa6'
+import { Input } from '@/components/ui/input'
+import { Button } from './ui/button'
 
 interface Props {
   q: string
@@ -19,21 +21,16 @@ const Search = ({
 }: Props) => {
   return (
     <form onSubmit={searchHandler}>
-      <div className='form-control'>
-        <label className='input-group'>
-          <input
-            className='input rounded-none border border-gray-300 w-full focus:outline-none'
-            type={type}
-            placeholder={placeholder}
-            aria-label='Search'
-            onChange={(e) => setQ(e.target.value)}
-            value={q}
-          />
-          {/* <span>BTC</span> */}
-          <button type='submit' className='btn btn-outline-secondary'>
-            <FaMagnifyingGlass />
-          </button>
-        </label>
+      <div className='flex w-full max-w-sm items-center space-x-2'>
+        <Input
+          onChange={(e) => setQ(e.target.value)}
+          value={q}
+          type={type}
+          placeholder={placeholder}
+        />
+        <Button type='submit'>
+          <FaMagnifyingGlass />
+        </Button>
       </div>
     </form>
   )

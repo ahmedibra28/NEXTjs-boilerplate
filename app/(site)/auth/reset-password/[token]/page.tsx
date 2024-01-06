@@ -6,8 +6,12 @@ import useUserInfoStore from '@/zustand/userStore'
 import useApi from '@/hooks/useApi'
 import FormContainer from '@/components/FormContainer'
 import Message from '@/components/Message'
-import { CustomSubmitButton, InputPassword } from '@/components/dForms'
 import { useRouter } from 'next/navigation'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
 
 const Reset = ({
   params,
@@ -20,28 +24,42 @@ const Reset = ({
   const { token } = params
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset: resetForm,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {},
-  })
-
   const postApi = useApi({
     key: ['reset-password'],
     method: 'POST',
     url: `auth/reset-password`,
   })?.post
 
+  const FormSchema = z
+    .object({
+      password: z.string().min(6),
+      confirmPassword: z.string().min(6),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: 'Password do not match',
+      path: ['confirmPassword'],
+    })
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof FormSchema>) {
+    const password = values.password
+    postApi?.mutateAsync({ password, resetToken: token })
+  }
+
   useEffect(() => {
     if (postApi?.isSuccess) {
-      resetForm()
+      form.reset()
       router.push('/auth/login')
     }
-  }, [postApi?.isSuccess, resetForm, router])
+    // eslint-disable-next-line
+  }, [postApi?.isSuccess, form.reset, router])
 
   useEffect(() => {
     userInfo.id && router.push('/')
@@ -58,38 +76,35 @@ const Reset = ({
         <title>Reset</title>
         <meta property='og:title' content='Reset' key='title' />
       </Head>
-      {postApi?.isSuccess && (
-        <Message variant='success' value={postApi?.data?.message} />
-      )}
+      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
 
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <InputPassword
-          register={register}
-          errors={errors}
-          label='Password'
-          name='password'
-          minLength={true}
-          placeholder='Password'
-        />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+          <CustomFormField
+            form={form}
+            name='password'
+            label='Password'
+            placeholder='Enter password'
+            type='password'
+          />
 
-        <InputPassword
-          register={register}
-          errors={errors}
-          label='Confirm Password'
-          name='confirmPassword'
-          watch={watch}
-          validate={true}
-          minLength={true}
-          placeholder='Confirm Password'
-        />
+          <CustomFormField
+            form={form}
+            name='confirmPassword'
+            label='Confirm Password'
+            placeholder='Enter confirm password'
+            type='password'
+          />
 
-        <CustomSubmitButton
-          label='Reset Password'
-          isLoading={postApi?.isPending}
-        />
-      </form>
+          <FormButton
+            loading={postApi?.isPending}
+            label='Reset Password'
+            className='w-full'
+          />
+        </form>
+      </Form>
     </FormContainer>
   )
 }

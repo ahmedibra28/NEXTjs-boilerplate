@@ -2,25 +2,49 @@
 
 import React, { useState, useEffect, FormEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { confirmAlert } from 'react-confirm-alert'
 import { useForm } from 'react-hook-form'
 import useApi from '@/hooks/useApi'
 import useAuthorization from '@/hooks/useAuthorization'
 import { useRouter } from 'next/navigation'
-import { IClientPermission, IPermission, IRole } from '@/types'
-import Confirm from '@/components/Confirm'
+import type {
+  Permission as IPermission,
+  ClientPermission as IClientPermission,
+} from '@prisma/client'
 import Message from '@/components/Message'
 import FormView from '@/components/FormView'
 import Spinner from '@/components/Spinner'
 import RTable from '@/components/RTable'
-import { columns } from './_component/columns'
-import { form } from './_component/form'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField from '@/components/ui/CustomForm'
+import useEditStore from '@/zustand/editStore'
+import { useColumn } from './hook/useColumn'
+import { TopLoadingBar } from '@/components/TopLoadingBar'
+
+const FormSchema = z.object({
+  name: z.string().refine((value) => value !== '', {
+    message: 'Name is required',
+  }),
+  description: z.string().optional(),
+  permissions: z
+    .array(z.string())
+    .refine((value) => value.some((item) => item), {
+      message: 'You have to select at least one item.',
+    }),
+  clientPermissions: z
+    .array(z.string())
+    .refine((value) => value.some((item) => item), {
+      message: 'You have to select at least one item.',
+    }),
+})
 
 const Page = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
-  const [id, setId] = useState<any>(null)
-  const [edit, setEdit] = useState(false)
+  const [id, setId] = useState<string | null>(null)
+  const { edit, setEdit } = useEditStore((state) => state)
   const [q, setQ] = useState('')
 
   const path = useAuthorization()
@@ -68,35 +92,15 @@ const Page = () => {
     url: `permissions?page=${page}&q=${q}&limit=${250}`,
   })?.get
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm({})
-
-  const uniquePermissions = [
-    ...(new Set(
-      getPermissionsApi?.data?.data?.map((item: IPermission) => item.name)
-    ) as any),
-  ]?.map((group) => ({
-    [group]: getPermissionsApi?.data?.data?.filter(
-      (permission: IPermission) => permission?.name === group
-    ),
-  }))
-
-  const uniqueClientPermissions = [
-    ...(new Set(
-      getClientPermissionsApi?.data?.data?.map(
-        (item: IClientPermission) => item.menu
-      )
-    ) as any),
-  ]?.map((group) => ({
-    [group]: getClientPermissionsApi?.data?.data?.filter(
-      (clientPermission: IClientPermission) => clientPermission?.menu === group
-    ),
-  }))
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      permissions: [],
+      clientPermissions: [],
+    },
+  })
 
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
@@ -122,152 +126,205 @@ const Page = () => {
     setPage(1)
   }
 
-  const editHandler = (item: IRole) => {
-    setId(item.id)
+  interface CheckboxListItem {
+    label: string
+    children: Array<{
+      id: string
+      label: string
+      method?: string
+      path?: string
+    }>
+  }
 
-    setValue('name', item?.name)
-    setValue('description', item?.description)
+  const permissionsList = (items: IPermission[]): CheckboxListItem[] =>
+    items?.reduce((acc: CheckboxListItem[], curr: IPermission) => {
+      const found = acc.find((item) => item.label === curr.name)
+      if (found) {
+        found.children.push({
+          id: curr.id,
+          label: curr.description || '',
+          method: curr.method,
+        })
+      } else {
+        acc.push({
+          label: curr.name,
+          children: [
+            {
+              id: curr.id,
+              label: curr.description || '',
+              method: curr.method,
+            },
+          ],
+        })
+      }
+      return acc
+    }, [])
+
+  const clientPermissionsList = (
+    items: IClientPermission[]
+  ): CheckboxListItem[] =>
+    items?.reduce((acc: CheckboxListItem[], curr: IClientPermission) => {
+      const found = acc.find((item) => item.label === curr.menu)
+      if (found) {
+        found.children.push({
+          id: curr.id,
+          label: curr.description || '',
+          path: curr.path,
+        })
+      } else {
+        acc.push({
+          label: curr.menu,
+          children: [
+            {
+              id: curr.id,
+              label: curr.description || '',
+              path: curr.path,
+            },
+          ],
+        })
+      }
+      return acc
+    }, [])
+
+  const refEdit = React.useRef(edit)
+  const refId = React.useRef(id)
+
+  const editHandler = (
+    item: IClientPermission & {
+      role: { id: string }
+      permissions: IPermission[]
+      clientPermissions: IClientPermission[]
+    }
+  ) => {
+    setId(item.id!)
     setEdit(true)
 
-    const permission = [
-      ...(new Set(item?.permissions?.map((item) => item.name)) as any),
-    ]
-      ?.map((group) => ({
-        [group]: item?.permissions?.filter(
-          (permission) => permission?.name === group
-        ),
-      }))
-      ?.map((per) => {
-        setValue(
-          `permission-${Object.keys(per)[0]}`,
-          Object.values(per)[0]?.map((per) => per?.id?.toString())
-        )
-      })
+    refEdit.current = true
+    refId.current = item.id!
 
-    const clientPermission = [
-      ...(new Set(item.clientPermissions?.map((item) => item.menu)) as any),
-    ]
-      ?.map((group) => ({
-        [group]: item?.clientPermissions?.filter(
-          (clientPermission) => clientPermission?.menu === group
-        ),
-      }))
-      ?.map((per) => {
-        setValue(
-          `clientPermission-${Object.keys(per)[0]}`,
-          Object.values(per)[0]?.map((p) => p?.id?.toString())
-        )
-      })
+    form.setValue('name', item?.name)
+    form.setValue('description', item?.description || '')
 
-    permission
-    clientPermission
+    form.setValue(
+      'permissions',
+      item?.permissions?.map((item) => item?.id)
+    )
+    form.setValue(
+      'clientPermissions',
+      item?.clientPermissions?.map((item) => item?.id)
+    )
   }
 
-  const deleteHandler = (id: any) => {
-    confirmAlert(Confirm(() => deleteApi?.mutateAsync(id)))
-  }
+  const deleteHandler = (id: any) => deleteApi?.mutateAsync(id)
 
   const label = 'Role'
   const modal = 'role'
 
-  // FormView
   const formCleanHandler = () => {
-    reset()
+    form.reset()
     setEdit(false)
     setId(null)
-    // @ts-ignore
-    window[modal].close()
+    refEdit.current = false
+    refId.current = null
+    getClientPermissionsApi?.refetch()
+    getPermissionsApi?.refetch()
+
+    window.document.getElementById('dialog-close')?.click()
   }
 
-  const submitHandler = (data: {
-    [x: string]: any
-    name?: any
-    description?: any
-  }) => {
-    const permission = Object.keys(data)
-      .filter((key) => key.startsWith('permission-'))
-      ?.map((key) => data[key])
-      ?.filter((value) => value)
-      ?.join(',')
-      .split(',')
+  const formFields = (
+    <Form {...form}>
+      <CustomFormField
+        form={form}
+        name='name'
+        label='Name'
+        placeholder='Name'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        label='Permission'
+        name='permissions'
+        placeholder='Permission'
+        items={permissionsList(getPermissionsApi?.data?.data || [])}
+        fieldType='multipleCheckbox'
+        data={[]}
+      />
 
-    const clientPermission = Object.keys(data)
-      .filter((key) => key.startsWith('clientPermission-'))
-      ?.map((key) => data[key])
-      ?.filter((value) => value)
-      ?.join(',')
-      .split(',')
+      <CustomFormField
+        form={form}
+        name='description'
+        label='Description'
+        placeholder='Description'
+        cols={3}
+        rows={3}
+      />
 
-    edit
+      <CustomFormField
+        form={form}
+        label='Client Permission'
+        name='clientPermissions'
+        placeholder='Client Permission'
+        items={clientPermissionsList(getClientPermissionsApi?.data?.data || [])}
+        fieldType='multipleCheckbox'
+        data={[]}
+      />
+    </Form>
+  )
+
+  const onSubmit = (values: z.infer<typeof FormSchema>) => {
+    refEdit.current
       ? updateApi?.mutateAsync({
-          id: id,
-          name: data.name,
-          permission,
-          clientPermission,
-          description: data.description,
+          ...values,
+          id: refId.current,
         })
       : postApi?.mutateAsync({
-          id: id,
-          name: data.name,
-          permission,
-          clientPermission,
-          description: data.description,
+          ...values,
+          id: refId.current,
         })
   }
+
+  const formChildren = (
+    <FormView
+      formCleanHandler={formCleanHandler}
+      form={formFields}
+      loading={updateApi?.isPending || postApi?.isPending}
+      handleSubmit={form.handleSubmit}
+      submitHandler={onSubmit}
+      label={label}
+      height='h-[80vh]'
+    />
+  )
+
+  const { columns } = useColumn({
+    editHandler,
+    isPending: deleteApi?.isPending || false,
+    deleteHandler,
+    formChildren,
+  })
 
   return (
     <>
       {deleteApi?.isSuccess && (
-        <Message
-          variant='success'
-          value={`${label} has been cancelled successfully.`}
-        />
+        <Message value={`${label} has been cancelled successfully.`} />
       )}
-      {deleteApi?.isError && (
-        <Message variant='error' value={deleteApi?.error} />
-      )}
-      {updateApi?.isSuccess && (
-        <Message variant='success' value={updateApi?.data?.message} />
-      )}
-      {updateApi?.isError && (
-        <Message variant='error' value={updateApi?.error} />
-      )}
-      {postApi?.isSuccess && (
-        <Message variant='success' value={postApi?.data?.message} />
-      )}
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {deleteApi?.isError && <Message value={deleteApi?.error} />}
+      {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
+      {updateApi?.isError && <Message value={updateApi?.error} />}
+      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <FormView
-        formCleanHandler={formCleanHandler}
-        form={form({
-          register,
-          errors,
-          uniqueClientPermissions,
-          uniquePermissions,
-        })}
-        isLoadingUpdate={updateApi?.isPending}
-        isLoadingPost={postApi?.isPending}
-        handleSubmit={handleSubmit}
-        submitHandler={submitHandler}
-        modal={modal}
-        label={`${edit ? 'Edit' : 'Add New'} ${label}`}
-        modalSize='max-w-xl'
-      />
+      <TopLoadingBar isFetching={getApi?.isFetching || getApi?.isPending} />
 
       {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
-        <Message variant='error' value={getApi?.error} />
+        <Message value={getApi?.error} />
       ) : (
         <div className='overflow-x-auto bg-white p-3 mt-2'>
           <RTable
             data={getApi?.data}
-            columns={columns({
-              editHandler,
-              deleteHandler,
-              isPending: deleteApi?.isPending || false,
-              modal,
-            })}
+            columns={columns}
             setPage={setPage}
             setLimit={setLimit}
             limit={limit}
@@ -275,7 +332,10 @@ const Page = () => {
             setQ={setQ}
             searchHandler={searchHandler}
             modal={modal}
-          />
+            caption='Roles List'
+          >
+            {formChildren}
+          </RTable>
         </div>
       )}
     </>

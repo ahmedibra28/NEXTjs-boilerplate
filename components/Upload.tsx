@@ -2,6 +2,17 @@
 
 import useApi from '@/hooks/useApi'
 import React from 'react'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+
+export interface FormInputProp {
+  multiple?: boolean
+  label?: string
+  setFileLink: (e: any) => void
+  fileLink: string[]
+  fileType: 'image' | 'document'
+  showLabel?: boolean
+}
 
 export default function Upload({
   multiple = false,
@@ -9,14 +20,9 @@ export default function Upload({
   setFileLink,
   fileLink,
   fileType,
-}: {
-  multiple?: boolean
-  label: string
-
-  fileType: 'image' | 'document'
-  setFileLink: (e: any) => void
-  fileLink: string[]
-}) {
+  showLabel = true,
+  ...props
+}: FormInputProp) {
   const [file, setFile] = React.useState<string[]>([])
 
   const uploadApi = useApi({
@@ -50,21 +56,22 @@ export default function Upload({
   }, [file])
 
   return (
-    <div className='form-control w-full'>
-      {label && (
-        <label className='label' htmlFor={label?.replace(/\s+/g, '-')}>
+    <div className='w-full'>
+      {label && showLabel && (
+        <Label className='label' htmlFor={label?.replace(/\s+/g, '-')}>
           {label}
-        </label>
+        </Label>
       )}
-      <input
+
+      <Input
         disabled={Boolean(uploadApi?.isPending)}
         multiple={multiple}
         type='file'
-        className='file-input file-input-ghost rounded-none border border-gray-300 w-full mb-1'
         id='formFile'
         onChange={(e: any) =>
           setFile(multiple ? e.target.files : [e.target.files[0]])
         }
+        {...props}
       />
       {uploadApi?.isPending && (
         <div className='flex justify-start items-center'>
@@ -75,12 +82,12 @@ export default function Upload({
         </div>
       )}
       {uploadApi?.isError && (
-        <span className='text-secondary text-sm mt-1'>
+        <span className='text-red-500 text-xs mt-1'>
           {`${uploadApi?.error}` || `${fileType} upload failed`}
         </span>
       )}
       {uploadApi?.isSuccess && (
-        <span className='text-success text-sm mt-1'>
+        <span className='text-green-500 text-xs mt-1'>
           {uploadApi?.data?.message}
         </span>
       )}

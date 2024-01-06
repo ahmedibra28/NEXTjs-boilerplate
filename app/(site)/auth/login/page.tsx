@@ -3,27 +3,21 @@ import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import {
-  CustomSubmitButton,
-  InputEmail,
-  InputPassword,
-} from '@/components/dForms'
 import useUserInfoStore from '@/zustand/userStore'
 import useApi from '@/hooks/useApi'
 import FormContainer from '@/components/FormContainer'
 import Message from '@/components/Message'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Form } from '@/components/ui/form'
+import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
 
 const Page = () => {
   const router = useRouter()
   const params = useSearchParams().get('next')
 
   const { userInfo, updateUserInfo } = useUserInfoStore((state) => state)
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm()
 
   const postApi = useApi({
     key: ['login'],
@@ -55,33 +49,51 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, userInfo.id])
 
-  const submitHandler = async (data: { email?: string; password?: string }) => {
-    postApi?.mutateAsync(data)
+  const FormSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6),
+  })
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof FormSchema>) {
+    postApi?.mutateAsync(values)
   }
 
   return (
     <FormContainer title='Sign In'>
-      {postApi?.isError && <Message variant='error' value={postApi?.error} />}
+      {postApi?.isError && <Message value={postApi?.error} />}
 
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <InputEmail
-          errors={errors}
-          register={register}
-          label='Email'
-          name='email'
-          placeholder='Email'
-        />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+          <CustomFormField
+            form={form}
+            name='email'
+            label='Email'
+            placeholder='Enter email'
+          />
+          <CustomFormField
+            form={form}
+            name='password'
+            label='Password'
+            placeholder='Enter password'
+            type='password'
+          />
 
-        <InputPassword
-          errors={errors}
-          register={register}
-          label='Password'
-          name='password'
-          placeholder='Password'
-        />
+          <FormButton
+            loading={postApi?.isPending}
+            label='Sign In'
+            className='w-full'
+          />
+        </form>
+      </Form>
 
-        <CustomSubmitButton isLoading={postApi?.isPending} label='Sign In' />
-      </form>
       <div className='row pt-3'>
         <div className='col'>
           <Link
