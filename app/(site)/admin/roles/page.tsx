@@ -22,6 +22,7 @@ import CustomFormField from '@/components/ui/CustomForm'
 import useEditStore from '@/zustand/editStore'
 import { useColumn } from './hook/useColumn'
 import { TopLoadingBar } from '@/components/TopLoadingBar'
+import useDataStore from '@/zustand/dataStore'
 
 const FormSchema = z.object({
   name: z.string().refine((value) => value !== '', {
@@ -46,6 +47,8 @@ const Page = () => {
   const [id, setId] = useState<string | null>(null)
   const { edit, setEdit } = useEditStore((state) => state)
   const [q, setQ] = useState('')
+
+  const { setData } = useDataStore((state) => state)
 
   const path = useAuthorization()
   const router = useRouter()
@@ -232,6 +235,21 @@ const Page = () => {
     window.document.getElementById('dialog-close')?.click()
   }
 
+  useEffect(() => {
+    getClientPermissionsApi?.isSuccess &&
+      setData({
+        id: 'clientPermissions',
+        data: clientPermissionsList(getClientPermissionsApi?.data?.data || []),
+      })
+
+    getPermissionsApi?.isSuccess &&
+      setData({
+        id: 'permissions',
+        data: permissionsList(getPermissionsApi?.data?.data || []),
+      })
+    // eslint-disable-next-line
+  }, [getClientPermissionsApi?.isSuccess, getPermissionsApi?.isSuccess])
+
   const formFields = (
     <Form {...form}>
       <CustomFormField
@@ -246,11 +264,9 @@ const Page = () => {
         label='Permission'
         name='permissions'
         placeholder='Permission'
-        items={permissionsList(getPermissionsApi?.data?.data || [])}
         fieldType='multipleCheckbox'
         data={[]}
       />
-
       <CustomFormField
         form={form}
         name='description'
@@ -259,13 +275,11 @@ const Page = () => {
         cols={3}
         rows={3}
       />
-
       <CustomFormField
         form={form}
         label='Client Permission'
         name='clientPermissions'
         placeholder='Client Permission'
-        items={clientPermissionsList(getClientPermissionsApi?.data?.data || [])}
         fieldType='multipleCheckbox'
         data={[]}
       />

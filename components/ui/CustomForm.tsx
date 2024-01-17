@@ -44,6 +44,7 @@ import {
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import ConfirmDialog from '../ConfirmDialog'
+import useDataStore from '@/zustand/dataStore'
 
 interface ListItem {
   label: string
@@ -111,6 +112,10 @@ export default function CustomFormField({
     // eslint-disable-next-line
   }, [value])
 
+  const items = useDataStore((state) => state)?.data.find(
+    (item) => item.id === name
+  )?.data as ListItem[]
+
   return (
     <FormField
       control={form.control}
@@ -118,7 +123,7 @@ export default function CustomFormField({
       render={({ field }) =>
         props?.fieldType === 'multipleCheckbox' ? (
           <FormItem className='flex flex-col mb-3'>
-            {props?.items?.map((item, i) => (
+            {items?.map((item, i) => (
               <div key={i} className='mb-2 bg-slate-100 p-3 gap-y-2'>
                 <FormLabel className='mb-2 pb-3 font-bold'>
                   {item.label}
