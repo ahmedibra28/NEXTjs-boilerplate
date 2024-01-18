@@ -57,7 +57,8 @@ export const api = async (method: string, url: string, obj = {}) => {
     }
   } catch (error: any) {
     const err = error?.response?.data?.error || 'Something went wrong'
-    if (err === 'jwt expired' && typeof window !== 'undefined') {
+    const expectedErrors = ['invalid signature', 'jwt expired']
+    if (expectedErrors.includes(err)) {
       localStorage.removeItem('userInfo')
       window.location.reload()
     }

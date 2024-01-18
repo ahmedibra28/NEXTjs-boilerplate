@@ -23,6 +23,7 @@ import useEditStore from '@/zustand/editStore'
 import { useColumn } from './hook/useColumn'
 import { TopLoadingBar } from '@/components/TopLoadingBar'
 import useDataStore from '@/zustand/dataStore'
+import useResetStore from '@/zustand/resetStore'
 
 const FormSchema = z.object({
   name: z.string().refine((value) => value !== '', {
@@ -49,6 +50,7 @@ const Page = () => {
   const [q, setQ] = useState('')
 
   const { setData } = useDataStore((state) => state)
+  const { reset, setReset } = useResetStore((state) => state)
 
   const path = useAuthorization()
   const router = useRouter()
@@ -107,8 +109,9 @@ const Page = () => {
 
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
-      formCleanHandler()
       getApi?.refetch()
+      setReset(!reset)
+      window.document.getElementById('dialog-close')?.click()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
@@ -223,7 +226,7 @@ const Page = () => {
   const label = 'Role'
   const modal = 'role'
 
-  const formCleanHandler = () => {
+  useEffect(() => {
     form.reset()
     setEdit(false)
     setId(null)
@@ -231,9 +234,8 @@ const Page = () => {
     refId.current = null
     getClientPermissionsApi?.refetch()
     getPermissionsApi?.refetch()
-
-    window.document.getElementById('dialog-close')?.click()
-  }
+    // eslint-disable-next-line
+  }, [reset])
 
   useEffect(() => {
     getClientPermissionsApi?.isSuccess &&
@@ -300,7 +302,6 @@ const Page = () => {
 
   const formChildren = (
     <FormView
-      formCleanHandler={formCleanHandler}
       form={formFields}
       loading={updateApi?.isPending || postApi?.isPending}
       handleSubmit={form.handleSubmit}

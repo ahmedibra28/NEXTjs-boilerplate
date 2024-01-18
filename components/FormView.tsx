@@ -11,9 +11,9 @@ import { Button } from './ui/button'
 import { FormButton } from './ui/CustomForm'
 import useEditStore from '@/zustand/editStore'
 import React from 'react'
+import useResetStore from '@/zustand/resetStore'
 
 interface Props {
-  formCleanHandler: () => void
   form: any
   loading?: boolean
   handleSubmit: (data: any) => () => void
@@ -24,7 +24,6 @@ interface Props {
 }
 
 const FormView = ({
-  formCleanHandler,
   form,
   loading,
   handleSubmit,
@@ -34,6 +33,7 @@ const FormView = ({
   width,
 }: Props) => {
   const { edit } = useEditStore((state) => state)
+  const { setReset, reset } = useResetStore((state) => state)
 
   return (
     <DialogContent className={`${height} ${width} overflow-y-auto`}>
@@ -47,7 +47,7 @@ const FormView = ({
         <DialogFooter className='mt-4 gap-y-2'>
           <DialogClose asChild>
             <Button
-              onClick={formCleanHandler}
+              onClick={() => setReset(!reset)}
               type='button'
               variant='secondary'
               id='dialog-close'
