@@ -5,28 +5,10 @@ type Column = {
   editHandler: (item: any) => void
   isPending: boolean
   deleteHandler: (item: any) => void
-  formChildren: React.ReactNode
 }
 
-export const useColumn = ({
-  editHandler,
-  isPending,
-  deleteHandler,
-  formChildren,
-}: Column) => {
-  const actionDropdown = (original: any) => (
-    <ActionButton
-      {...{
-        editHandler,
-        isPending,
-        deleteHandler,
-        original,
-        formChildren,
-      }}
-    />
-  )
-
-  const columns = [
+export const columns = ({ editHandler, isPending, deleteHandler }: Column) => {
+  return [
     { header: 'Name', accessorKey: 'name', active: true },
     { header: 'Menu', accessorKey: 'menu', active: true },
     { header: 'Sort', accessorKey: 'sort', active: true },
@@ -42,9 +24,14 @@ export const useColumn = ({
     {
       header: 'Action',
       active: true,
-      cell: ({ row: { original } }: any) => actionDropdown(original),
+      cell: ({ row: { original } }: any) => (
+        <ActionButton
+          editHandler={editHandler}
+          isPending={isPending}
+          deleteHandler={deleteHandler}
+          original={original}
+        />
+      ),
     },
   ]
-
-  return { columns }
 }

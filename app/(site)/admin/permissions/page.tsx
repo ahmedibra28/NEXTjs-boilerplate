@@ -16,10 +16,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
 import CustomFormField from '@/components/ui/CustomForm'
-import useEditStore from '@/zustand/editStore'
-import { useColumn } from './hook/useColumn'
 import { TopLoadingBar } from '@/components/TopLoadingBar'
-import useResetStore from '@/zustand/resetStore'
+import { columns } from './columns'
+import useDataStore from '@/zustand/dataStore'
 
 const FormSchema = z.object({
   name: z.string().refine((value) => value !== '', {
@@ -38,10 +37,8 @@ const Page = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
   const [id, setId] = useState<string | null>(null)
-  const { edit, setEdit } = useEditStore((state) => state)
+  const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
-
-  const { reset, setReset } = useResetStore((state) => state)
 
   const path = useAuthorization()
   const router = useRouter()
@@ -51,6 +48,8 @@ const Page = () => {
       router.push(path)
     }
   }, [path, router])
+
+  const { dialogOpen, setDialogOpen } = useDataStore((state) => state)
 
   const getApi = useApi({
     key: ['permissions'],
@@ -89,8 +88,7 @@ const Page = () => {
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
       getApi?.refetch()
-      setReset(!reset)
-      window.document.getElementById('dialog-close')?.click()
+      setDialogOpen(false)
     }
 
     // eslint-disable-next-line
@@ -117,15 +115,10 @@ const Page = () => {
     setPage(1)
   }
 
-  const refEdit = React.useRef(edit)
-  const refId = React.useRef(id)
-
   const editHandler = (item: IPermission) => {
     setId(item.id!)
     setEdit(true)
 
-    refEdit.current = true
-    refId.current = item.id!
     form.setValue('name', item?.name)
     form.setValue('description', item?.description || '')
     form.setValue('method', item?.method)
@@ -138,13 +131,13 @@ const Page = () => {
   const modal = 'permission'
 
   useEffect(() => {
-    form.reset()
-    setEdit(false)
-    setId(null)
-    refEdit.current = false
-    refId.current = null
+    if (!dialogOpen) {
+      form.reset()
+      setEdit(false)
+      setId(null)
+    }
     // eslint-disable-next-line
-  }, [reset])
+  }, [dialogOpen])
 
   const methods = [
     { label: 'GET', value: 'GET' },
@@ -189,30 +182,13 @@ const Page = () => {
   )
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    refEdit.current
+    edit
       ? updateApi?.mutateAsync({
-          id: refId.current,
+          id: id,
           ...values,
         })
       : postApi?.mutateAsync(values)
   }
-
-  const formChildren = (
-    <FormView
-      form={formFields}
-      loading={updateApi?.isPending || postApi?.isPending}
-      handleSubmit={form.handleSubmit}
-      submitHandler={onSubmit}
-      label={label}
-    />
-  )
-
-  const { columns } = useColumn({
-    editHandler,
-    isPending: deleteApi?.isPending || false,
-    deleteHandler,
-    formChildren,
-  })
 
   return (
     <>
@@ -225,6 +201,15 @@ const Page = () => {
 
       <TopLoadingBar isFetching={getApi?.isFetching || getApi?.isPending} />
 
+      <FormView
+        form={formFields}
+        loading={updateApi?.isPending || postApi?.isPending}
+        handleSubmit={form.handleSubmit}
+        submitHandler={onSubmit}
+        label={label}
+        edit={edit}
+      />
+
       {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
@@ -233,7 +218,11 @@ const Page = () => {
         <div className='overflow-x-auto bg-white p-3 mt-2'>
           <RTable
             data={getApi?.data}
-            columns={columns}
+            columns={columns({
+              editHandler,
+              isPending: deleteApi?.isPending || false,
+              deleteHandler,
+            })}
             setPage={setPage}
             setLimit={setLimit}
             limit={limit}
@@ -242,9 +231,7 @@ const Page = () => {
             searchHandler={searchHandler}
             modal={modal}
             caption='Permissions List'
-          >
-            {formChildren}
-          </RTable>
+          />
         </div>
       )}
     </>

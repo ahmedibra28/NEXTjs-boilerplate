@@ -39,6 +39,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
@@ -125,7 +126,7 @@ export default function CustomFormField({
           <FormItem className='flex flex-col mb-3'>
             {items?.map((item, i) => (
               <div key={i} className='mb-2 bg-slate-100 p-3 gap-y-2'>
-                <FormLabel className='mb-2 pb-3 font-bold'>
+                <FormLabel className='mb-2 pb-3 font-bold text-gray-700'>
                   {item.label}
                 </FormLabel>
                 {item?.children?.map((child, childId) => (
@@ -164,11 +165,11 @@ export default function CustomFormField({
               </div>
             ))}
 
-            <FormMessage />
+            <FormMessage className='text-xs' />
           </FormItem>
         ) : (
           <FormItem className='flex flex-col mb-3'>
-            <FormLabel>{label}</FormLabel>
+            <FormLabel className='text-gray-700'>{label}</FormLabel>
 
             {props?.fieldType === 'command' ? (
               <Popover>
@@ -236,7 +237,7 @@ export default function CustomFormField({
               </FormControl>
             )}
 
-            <FormMessage />
+            <FormMessage className='text-xs' />
           </FormItem>
         )
       }
@@ -277,7 +278,6 @@ export const ActionButton = ({
   isPending,
   deleteHandler,
   original,
-  formChildren,
 }: {
   editHandler?: (item: any) => void
   isPending?: boolean
@@ -286,28 +286,27 @@ export const ActionButton = ({
   original?: any
   formChildren?: React.ReactNode
 }) => {
+  const { setDialogOpen } = useDataStore((state) => state)
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <FaEllipsis className='text-2xl' />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {editHandler && (
-          <div>
-            <Dialog>
-              <DialogTrigger>
-                <div
-                  onClick={() => editHandler(original)}
-                  className='h-9 min-w-24 flex justify-start items-center gap-x-1 rounded-lg bg-primary text-white py-2 px-4 mx-2 text-sm mb-1'
-                >
-                  <FaFilePen />
-                  Edit
-                </div>
-              </DialogTrigger>
-              {formChildren}
-            </Dialog>
-          </div>
-        )}
+        <DropdownMenuItem>
+          {editHandler && (
+            <FormButton
+              onClick={() => {
+                editHandler(original)
+                setDialogOpen(true)
+              }}
+              icon={<FaFilePen />}
+              label='Edit'
+              type='button'
+            />
+          )}
+        </DropdownMenuItem>
 
         {deleteHandler && (
           <AlertDialog>

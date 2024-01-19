@@ -19,11 +19,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
 import CustomFormField from '@/components/ui/CustomForm'
-import useEditStore from '@/zustand/editStore'
-import { useColumn } from './hook/useColumn'
 import { TopLoadingBar } from '@/components/TopLoadingBar'
 import useDataStore from '@/zustand/dataStore'
-import useResetStore from '@/zustand/resetStore'
+import { columns } from './columns'
 
 const FormSchema = z.object({
   name: z.string().refine((value) => value !== '', {
@@ -46,11 +44,10 @@ const Page = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
   const [id, setId] = useState<string | null>(null)
-  const { edit, setEdit } = useEditStore((state) => state)
+  const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
 
-  const { setData } = useDataStore((state) => state)
-  const { reset, setReset } = useResetStore((state) => state)
+  const { setData, dialogOpen, setDialogOpen } = useDataStore((state) => state)
 
   const path = useAuthorization()
   const router = useRouter()
@@ -110,8 +107,7 @@ const Page = () => {
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
       getApi?.refetch()
-      setReset(!reset)
-      window.document.getElementById('dialog-close')?.click()
+      setDialogOpen(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
@@ -192,9 +188,6 @@ const Page = () => {
       return acc
     }, [])
 
-  const refEdit = React.useRef(edit)
-  const refId = React.useRef(id)
-
   const editHandler = (
     item: IClientPermission & {
       role: { id: string }
@@ -204,9 +197,6 @@ const Page = () => {
   ) => {
     setId(item.id!)
     setEdit(true)
-
-    refEdit.current = true
-    refId.current = item.id!
 
     form.setValue('name', item?.name)
     form.setValue('description', item?.description || '')
@@ -227,15 +217,15 @@ const Page = () => {
   const modal = 'role'
 
   useEffect(() => {
-    form.reset()
-    setEdit(false)
-    setId(null)
-    refEdit.current = false
-    refId.current = null
-    getClientPermissionsApi?.refetch()
-    getPermissionsApi?.refetch()
+    if (!dialogOpen) {
+      form.reset()
+      setEdit(false)
+      setId(null)
+      getClientPermissionsApi?.refetch()
+      getPermissionsApi?.refetch()
+    }
     // eslint-disable-next-line
-  }, [reset])
+  }, [dialogOpen])
 
   useEffect(() => {
     getClientPermissionsApi?.isSuccess &&
@@ -289,34 +279,16 @@ const Page = () => {
   )
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    refEdit.current
+    edit
       ? updateApi?.mutateAsync({
           ...values,
-          id: refId.current,
+          id: id,
         })
       : postApi?.mutateAsync({
           ...values,
-          id: refId.current,
+          id: id,
         })
   }
-
-  const formChildren = (
-    <FormView
-      form={formFields}
-      loading={updateApi?.isPending || postApi?.isPending}
-      handleSubmit={form.handleSubmit}
-      submitHandler={onSubmit}
-      label={label}
-      height='h-[80vh]'
-    />
-  )
-
-  const { columns } = useColumn({
-    editHandler,
-    isPending: deleteApi?.isPending || false,
-    deleteHandler,
-    formChildren,
-  })
 
   return (
     <>
@@ -331,6 +303,16 @@ const Page = () => {
 
       <TopLoadingBar isFetching={getApi?.isFetching || getApi?.isPending} />
 
+      <FormView
+        form={formFields}
+        loading={updateApi?.isPending || postApi?.isPending}
+        handleSubmit={form.handleSubmit}
+        submitHandler={onSubmit}
+        label={label}
+        height='h-[80vh]'
+        edit={edit}
+      />
+
       {getApi?.isPending ? (
         <Spinner />
       ) : getApi?.isError ? (
@@ -339,7 +321,11 @@ const Page = () => {
         <div className='overflow-x-auto bg-white p-3 mt-2'>
           <RTable
             data={getApi?.data}
-            columns={columns}
+            columns={columns({
+              editHandler,
+              isPending: deleteApi?.isPending || false,
+              deleteHandler,
+            })}
             setPage={setPage}
             setLimit={setLimit}
             limit={limit}
@@ -348,9 +334,7 @@ const Page = () => {
             searchHandler={searchHandler}
             modal={modal}
             caption='Roles List'
-          >
-            {formChildren}
-          </RTable>
+          />
         </div>
       )}
     </>
