@@ -58,7 +58,9 @@ interface RTableProps {
   setQ?: (q: string) => void
   searchHandler?: (e: any) => void
   modal?: string
+  hasAdd?: boolean
   caption?: string
+  searchType?: React.HTMLInputTypeAttribute
 }
 
 const RTable: React.FC<RTableProps> = ({
@@ -71,7 +73,9 @@ const RTable: React.FC<RTableProps> = ({
   setQ,
   searchHandler,
   modal,
+  hasAdd = true,
   caption,
+  searchType = 'text',
 }) => {
   const [sorting, setSorting] = useState<any[]>([])
 
@@ -98,7 +102,7 @@ const RTable: React.FC<RTableProps> = ({
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting: sorting,
-      globalFilter: q,
+      ...(searchType !== 'date' && { globalFilter: q }),
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setQ,
@@ -118,7 +122,7 @@ const RTable: React.FC<RTableProps> = ({
 
   return (
     <>
-      <div className='flex flex-col sm:flex-row justify-between items-center my-3 gap-2'>
+      <div className='my-3 flex flex-col items-center justify-between gap-2 sm:flex-row'>
         {setQ && searchHandler ? (
           <div className='w-full sm:w-[80%] md:w-[50%] lg:w-[30%]'>
             <Search
@@ -126,15 +130,15 @@ const RTable: React.FC<RTableProps> = ({
               searchHandler={searchHandler}
               placeholder='Search'
               q={q!}
-              type='text'
+              type={searchType}
             />
           </div>
         ) : (
           <span />
         )}
 
-        <div className='flex flex-row justify-start items-center gap-x-2'>
-          {modal && (
+        <div className='flex flex-row items-center justify-start gap-x-2'>
+          {modal && hasAdd && (
             <Button onClick={() => setDialogOpen(true)}>
               <FaPlus /> {Capitalize(modal)}
             </Button>
@@ -153,12 +157,12 @@ const RTable: React.FC<RTableProps> = ({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead
-                  className='py-0 px-2'
+                  className='px-2 py-0'
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
                 >
                   {header.isPlaceholder ? null : (
-                    <div className='flex flex-row justify-start items-center gap-1'>
+                    <div className='flex flex-row items-center justify-start gap-1'>
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
@@ -183,7 +187,7 @@ const RTable: React.FC<RTableProps> = ({
             table?.getRowModel()?.rows?.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell className='py-0 px-2' key={cell.id}>
+                  <TableCell className='px-2 py-0' key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -193,7 +197,7 @@ const RTable: React.FC<RTableProps> = ({
             <tr>
               <td
                 colSpan={visibleColumns?.filter((item) => item.active)?.length}
-                className='text-center h-24 text-red-400'
+                className='h-24 text-center text-red-400'
               >
                 No Data Found
               </td>
@@ -202,10 +206,10 @@ const RTable: React.FC<RTableProps> = ({
         </TableBody>
       </Table>
 
-      <div className='flex flex-col sm:flex-row justify-between items-center my-3 gap-2'>
+      <div className='my-3 flex flex-col items-center justify-between gap-2 sm:flex-row'>
         {setLimit && limit && (
-          <div className='flex justify-start items-center gap-x-1'>
-            <span className='text-sm text-gray-700 font-sans border h-10 flex justify-center items-center rounded-md px-2'>
+          <div className='flex items-center justify-start gap-x-1'>
+            <span className='flex h-10 items-center justify-center rounded-md border px-2 font-sans text-sm text-gray-700'>
               Rows per page
             </span>
             <Select
@@ -228,7 +232,7 @@ const RTable: React.FC<RTableProps> = ({
         {setPage && data?.page && data?.pages ? (
           <div className='flex gap-x-1'>
             <Button
-              className='rounded-tr-none rounded-br-none'
+              className='rounded-br-none rounded-tr-none'
               variant='outline'
               onClick={() => setPage(1)}
             >
@@ -258,7 +262,7 @@ const RTable: React.FC<RTableProps> = ({
               <FaChevronRight />
             </Button>
             <Button
-              className='rounded-tl-none rounded-bl-none'
+              className='rounded-bl-none rounded-tl-none'
               variant='outline'
               onClick={() => setPage(Number(data?.pages))}
             >

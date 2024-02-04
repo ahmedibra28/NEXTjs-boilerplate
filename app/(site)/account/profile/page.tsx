@@ -10,11 +10,10 @@ import useApi from '@/hooks/useApi'
 import Message from '@/components/Message'
 import Spinner from '@/components/Spinner'
 import useUserInfoStore from '@/zustand/userStore'
-import Upload from '@/components/Upload'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
-import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
+import CustomFormField, { FormButton, Upload } from '@/components/ui/CustomForm'
 
 const Profile = () => {
   const [fileLink, setFileLink] = React.useState<string[]>([])
