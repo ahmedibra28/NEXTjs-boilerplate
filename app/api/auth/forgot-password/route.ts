@@ -1,17 +1,16 @@
-import { sendEmail } from '@/lib/nodemailer'
 import DeviceDetector from 'device-detector-js'
-import { eTemplate } from '@/lib/eTemplate'
 import { NextResponse } from 'next/server'
 import { getErrorResponse, getResetPasswordToken } from '@/lib/helpers'
 import { prisma } from '@/lib/prisma.db'
+import { render } from '@react-email/render'
+import { handleEmailFire } from '@/lib/email-helper'
+import ResetPassword from '@/emails/ResetPassword'
 
 export async function POST(req: NextApiRequestExtended) {
   try {
     const { email } = await req.json()
-    if (!email) return getErrorResponse('Please enter your email', 400)
 
-    const host = req.headers.get('host') // localhost:3000
-    const protocol = req.headers.get('x-forwarded-proto') // http
+    if (!email) return getErrorResponse('Please enter your email', 400)
 
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
@@ -36,30 +35,21 @@ export async function POST(req: NextApiRequestExtended) {
     ) as any
 
     const {
-      client: { type: clientType, name: clientName },
+      client: { name: clientName },
       os: { name: osName },
-      device: { type: deviceType, brand },
     } = device
 
-    const message = eTemplate({
-      url: `${protocol}://${host}/auth/reset-password/${reset.resetToken}`,
-      user: user.name,
-      clientType,
-      clientName,
-      osName,
-      deviceType,
-      brand,
-      webName: 'Next.JS Boilerplate',
-      validTime: '10 minutes',
-      addressStreet: 'Makka Almukarrama',
-      addressCountry: 'Mogadishu - Somalia',
-    })
-
-    const result = await sendEmail({
-      to: user.email,
-      subject: 'Password Reset Request',
-      text: message,
-      webName: 'Next.JS Boilerplate Team',
+    const result = await handleEmailFire({
+      to: email,
+      subject: 'Reset Password Request',
+      html: render(
+        ResetPassword({
+          clientName,
+          osName,
+          token: reset.resetToken,
+          company: 'Next.JS Boilerplate',
+        })
+      ),
     })
 
     if (result)
