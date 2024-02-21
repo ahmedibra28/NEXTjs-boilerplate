@@ -11,7 +11,7 @@ import {
 } from '@react-email/components'
 import * as React from 'react'
 
-interface ResetPasswordProps {
+interface VerifyAccountProps {
   company: string
   token: string
   clientName: string
@@ -24,13 +24,13 @@ const baseUrl =
     ? `https://ahmedibra.com`
     : 'http://localhost:3000'
 
-export const ResetPassword = ({
+export const VerifyAccount = ({
   company,
   token,
   clientName,
   osName,
   ip,
-}: ResetPasswordProps) => (
+}: VerifyAccountProps) => (
   <Tailwind
     config={{
       theme: {
@@ -44,28 +44,35 @@ export const ResetPassword = ({
   >
     <Html>
       <Head />
-      <Preview>Password Reset Request</Preview>
+      <Preview>Verification code</Preview>
       <Body className='bg-white'>
         <Container className='px-3 mx-auto font-sans'>
           <Heading className='text-2xl font-bold text-black my-10'>
-            Password Reset Request
+            Verification code
           </Heading>
 
           <Text className='mb-4 text-gray-700 my-6'>
-            You recently requested to reset your password for your {company}{' '}
-            account. Use the button below to reset it.{' '}
-            <strong>
-              This password reset is only valid for the next 10 minutes.
-            </strong>
+            Please verify your account to activate your {company} account.
+          </Text>
+
+          <Text className='text-gray-700'>
+            Click the button below to verify your email and complete account
+            setup. This link will expire in 10 minutes.
           </Text>
 
           <a
-            href={baseUrl + '/auth/reset-password/' + token}
+            href={baseUrl + '/auth/verification/' + token}
             target='_blank'
             className='bg-blue-500 text-white font-bold py-2 px-4 rounded cursor-pointer no-underline'
           >
-            Reset your password
+            Verify Your Email
           </a>
+
+          <Text className='my-4 text-gray-700'>
+            If you did not request to verify this email, you can ignore this
+            message. Your account will not be activated until you click the
+            verification link.
+          </Text>
 
           <Text className='text-gray-400 mb-5 mt-3'>
             <strong className='text-gray-900'>Didn&apos;t request this?</strong>{' '}
@@ -93,8 +100,8 @@ export const ResetPassword = ({
           <Text className='text-gray-400 text-xs mt-3 mb-6'>
             If you’re having trouble with the button above, copy and paste the
             URL below into your web browser. <br />
-            <a href={baseUrl + '/auth/reset-password/' + token}>
-              {baseUrl}/auth/reset-password/{token}
+            <a href={baseUrl + '/auth/verification/' + token}>
+              {baseUrl}/auth/verification/{token}
             </a>
           </Text>
         </Container>
@@ -103,4 +110,4 @@ export const ResetPassword = ({
   </Tailwind>
 )
 
-export default ResetPassword
+export default VerifyAccount

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma.db'
 import { render } from '@react-email/render'
 import { handleEmailFire } from '@/lib/email-helper'
 import ResetPassword from '@/emails/ResetPassword'
+import axios from 'axios'
 
 export async function POST(req: NextApiRequestExtended) {
   try {
@@ -39,6 +40,10 @@ export async function POST(req: NextApiRequestExtended) {
       os: { name: osName },
     } = device
 
+    const {
+      data: { ip },
+    } = await axios.get('https://api.ipify.org/?format=json')
+
     const result = await handleEmailFire({
       to: email,
       subject: 'Reset Password Request',
@@ -47,7 +52,8 @@ export async function POST(req: NextApiRequestExtended) {
           clientName,
           osName,
           token: reset.resetToken,
-          company: 'Next.JS Boilerplate',
+          company: 'Book Driving',
+          ip,
         })
       ),
     })
