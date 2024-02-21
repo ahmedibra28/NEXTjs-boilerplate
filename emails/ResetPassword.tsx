@@ -54,7 +54,7 @@ export const ResetPassword = ({
           <Text className='mb-4 text-gray-700 my-6'>
             You recently requested to reset your password for your {company}{' '}
             account. Use the button below to reset it.{' '}
-            <strong>
+            <strong className='font-bold'>
               This password reset is only valid for the next 10 minutes.
             </strong>
           </Text>
@@ -68,7 +68,9 @@ export const ResetPassword = ({
           </a>
 
           <Text className='text-gray-400 mb-5 mt-3'>
-            <strong className='text-gray-900'>Didn&apos;t request this?</strong>{' '}
+            <strong className='text-gray-900 font-bold'>
+              Didn&apos;t request this?
+            </strong>{' '}
             <br />
             For security, this request was received from {ip} a {osName} device
             using {clientName}. If you did not request a password reset, please

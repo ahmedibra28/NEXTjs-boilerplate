@@ -45,7 +45,7 @@ export async function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, salt)
 }
 
-export async function getResetPasswordToken() {
+export async function getResetPasswordToken(minutes = 10) {
   const resetToken = crypto.randomBytes(20).toString('hex')
 
   return {
@@ -54,7 +54,7 @@ export async function getResetPasswordToken() {
       .createHash('sha256')
       .update(resetToken)
       .digest('hex'),
-    resetPasswordExpire: Date.now() + 10 * (60 * 1000), // Ten Minutes
+    resetPasswordExpire: Date.now() + minutes * (60 * 1000), // Ten Minutes
   }
 }
 

@@ -70,6 +70,12 @@ const Page = () => {
           />
         </form>
       </Form>
+
+      {postApi?.isSuccess && (
+        <div className='text-green-500 text-center mt-5'>
+          Please check your email to reset your password
+        </div>
+      )}
     </FormContainer>
   )
 }

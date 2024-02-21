@@ -52,7 +52,7 @@ export async function POST(req: NextApiRequestExtended) {
           clientName,
           osName,
           token: reset.resetToken,
-          company: 'Book Driving',
+          company: 'Ahmed Ibra',
           ip,
         })
       ),

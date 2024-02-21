@@ -55,9 +55,9 @@ export const VerifyAccount = ({
             Please verify your account to activate your {company} account.
           </Text>
 
-          <Text className='text-gray-700'>
+          <Text className='text-gray-700 font-bold'>
             Click the button below to verify your email and complete account
-            setup. This link will expire in 10 minutes.
+            setup. This link will expire in 72 minutes.
           </Text>
 
           <a
@@ -75,7 +75,9 @@ export const VerifyAccount = ({
           </Text>
 
           <Text className='text-gray-400 mb-5 mt-3'>
-            <strong className='text-gray-900'>Didn&apos;t request this?</strong>{' '}
+            <strong className='text-gray-900 font-bold'>
+              Didn&apos;t request this?
+            </strong>{' '}
             <br />
             For security, this request was received from {ip} a {osName} device
             using {clientName}. If you did not request a password reset, please

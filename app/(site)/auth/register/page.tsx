@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect } from 'react'
-import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import useUserInfoStore from '@/zustand/userStore'
@@ -13,52 +12,55 @@ import * as z from 'zod'
 import { Form } from '@/components/ui/form'
 import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
 
+const FormSchema = z
+  .object({
+    name: z.string().refine((value) => value !== '', {
+      message: 'Name is required',
+    }),
+    email: z.string().email(),
+    password: z.string().refine((val) => val.length > 6, {
+      message: "Password can't be less than 6 characters",
+    }),
+    confirmPassword: z.string().refine((val) => val.length > 6, {
+      message: "Confirm password can't be less than 6 characters",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Password do not match',
+    path: ['confirmPassword'],
+  })
+
 const Page = () => {
   const router = useRouter()
   const params = useSearchParams().get('next')
 
-  const { userInfo, updateUserInfo } = useUserInfoStore((state) => state)
+  const { userInfo } = useUserInfoStore((state) => state)
 
   const postApi = useApi({
-    key: ['login'],
+    key: ['register'],
     method: 'POST',
-    url: `auth/login`,
+    url: `auth/register`,
   })?.post
-
-  useEffect(() => {
-    if (postApi?.isSuccess) {
-      const { id, email, menu, routes, token, name, mobile, role, image } =
-        postApi.data
-      updateUserInfo({
-        id,
-        email,
-        menu,
-        routes,
-        token,
-        name,
-        mobile,
-        role,
-        image,
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postApi?.isSuccess])
 
   useEffect(() => {
     userInfo.id && router.push((params as string) || '/')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, userInfo.id])
 
-  const FormSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-  })
+  useEffect(() => {
+    if (postApi?.isSuccess) {
+      form.reset()
+    }
+    // eslint-disable-next-line
+  }, [postApi?.isSuccess, router])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: '',
+      name: '',
       password: '',
+      confirmPassword: '',
     },
   })
 
@@ -67,11 +69,18 @@ const Page = () => {
   }
 
   return (
-    <FormContainer title='Sign In'>
+    <FormContainer title='Sign Up'>
       {postApi?.isError && <Message value={postApi?.error} />}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+          <CustomFormField
+            form={form}
+            name='name'
+            label='Name'
+            placeholder='Name'
+            type='text'
+          />
           <CustomFormField
             form={form}
             name='email'
@@ -82,32 +91,37 @@ const Page = () => {
             form={form}
             name='password'
             label='Password'
-            placeholder='Enter password'
+            placeholder='Password'
+            type='password'
+          />
+          <CustomFormField
+            form={form}
+            name='confirmPassword'
+            label='Confirm Password'
+            placeholder='Confirm password'
             type='password'
           />
 
           <FormButton
             loading={postApi?.isPending}
-            label='Sign In'
+            label='Sign Up'
             className='w-full'
           />
           <FormButton
-            label='Sign up'
+            label='Sign In'
             className='w-full'
             type='button'
             variant='outline'
-            onClick={() => router.push('/auth/register')}
+            onClick={() => router.push('/auth/login')}
           />
         </form>
       </Form>
 
-      <div className='row pt-3'>
-        <div className='col'>
-          <Link href='/auth/forgot-password' className='ps-1'>
-            Forgot Password?
-          </Link>
+      {postApi?.isSuccess && (
+        <div className='text-green-500 text-center mt-5'>
+          Please check your email to verify your account
         </div>
-      </div>
+      )}
     </FormContainer>
   )
 }

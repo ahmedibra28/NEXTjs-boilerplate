@@ -65,11 +65,6 @@ const Reset = ({
     userInfo.id && router.push('/')
   }, [router, userInfo.id])
 
-  const submitHandler = (data: { password?: string; token?: string }) => {
-    const password = data.password
-    postApi?.mutateAsync({ password, resetToken: token })
-  }
-
   return (
     <FormContainer title='Reset Password'>
       <Head>
