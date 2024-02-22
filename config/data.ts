@@ -90,6 +90,14 @@ const clientPermissions = [
     sort: sort.admin,
     description: 'Client Permissions page',
   },
+  {
+    id: 'HnCMgsT54kcTRYlJGsOC2',
+    name: 'Database',
+    path: '/admin/database',
+    menu: 'admin',
+    sort: sort.admin,
+    description: 'Database page',
+  },
 ]
 
 const permissions = [
@@ -241,6 +249,28 @@ const permissions = [
     description: 'Upload',
     route: '/api/uploads',
     name: 'Upload',
+    method: 'POST',
+  },
+  //   Database
+  {
+    id: 'X26iEN1a-LBaC4HlPsRgh',
+    description: 'Download database',
+    route: '/api/databases/download',
+    name: 'Database',
+    method: 'POST',
+  },
+  {
+    id: 'X26iEN1a-LBaC4HlPPRgh',
+    description: 'Get databases',
+    route: '/api/databases',
+    name: 'Database',
+    method: 'GET',
+  },
+  {
+    id: 'HRu69jNpsj4pJXs_cjCQ5',
+    description: 'Database',
+    route: '/api/databases/backup',
+    name: 'Backup database',
     method: 'POST',
   },
 ]
