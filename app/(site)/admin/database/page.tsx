@@ -20,8 +20,9 @@ import { useRouter } from 'next/navigation'
 
 import JSZip from 'jszip'
 import useUserInfoStore from '@/zustand/userStore'
+import dynamic from 'next/dynamic'
 
-export default function Page() {
+function Page() {
   const path = useAuthorization()
   const router = useRouter()
 
@@ -138,3 +139,5 @@ export default function Page() {
     </div>
   )
 }
+
+export default dynamic(() => Promise.resolve(Page), { ssr: false })
