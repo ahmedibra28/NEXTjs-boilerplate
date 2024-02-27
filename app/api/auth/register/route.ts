@@ -5,12 +5,11 @@ import {
 } from '@/lib/helpers'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma.db'
-import axios from 'axios'
-import DeviceDetector from 'device-detector-js'
 import { handleEmailFire } from '@/lib/email-helper'
 import { render } from '@react-email/render'
 import VerifyAccount from '@/emails/VerifyAccount'
 import { roles } from '@/config/data'
+import { getDevice } from '@/lib/getDevice'
 
 export async function POST(req: Request) {
   try {
@@ -41,30 +40,22 @@ export async function POST(req: Request) {
       },
     })
 
-    const deviceDetector = new DeviceDetector()
-    const device = deviceDetector.parse(
-      req.headers.get('user-agent') || ''
-    ) as any
-
-    const {
-      client: { name: clientName },
-      os: { name: osName },
-    } = device
-
-    const {
-      data: { ip },
-    } = await axios.get('https://api.ipify.org/?format=json')
+    const device = await getDevice({
+      req,
+      hasIp: true,
+    })
 
     const result = await handleEmailFire({
       to: email,
       subject: 'Verify your email',
       html: render(
         VerifyAccount({
-          clientName,
-          osName,
+          clientName: device.clientName,
+          osName: device.osName,
           token: reset.resetToken,
           company: 'Ahmed Ibra',
-          ip,
+          ip: device.ip,
+          baseUrl: device.url,
         })
       ),
     })

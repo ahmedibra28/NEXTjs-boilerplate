@@ -17,12 +17,8 @@ interface VerifyAccountProps {
   clientName: string
   osName: string
   ip: string
+  baseUrl?: string
 }
-
-const baseUrl =
-  process.env.env === 'production'
-    ? `https://ahmedibra.com`
-    : 'http://localhost:3000'
 
 export const VerifyAccount = ({
   company,
@@ -30,6 +26,7 @@ export const VerifyAccount = ({
   clientName,
   osName,
   ip,
+  baseUrl,
 }: VerifyAccountProps) => (
   <Tailwind
     config={{

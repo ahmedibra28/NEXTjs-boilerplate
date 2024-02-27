@@ -1,11 +1,10 @@
-import DeviceDetector from 'device-detector-js'
 import { NextResponse } from 'next/server'
 import { getErrorResponse, getResetPasswordToken } from '@/lib/helpers'
 import { prisma } from '@/lib/prisma.db'
 import { render } from '@react-email/render'
 import { handleEmailFire } from '@/lib/email-helper'
 import ResetPassword from '@/emails/ResetPassword'
-import axios from 'axios'
+import { getDevice } from '@/lib/getDevice'
 
 export async function POST(req: NextApiRequestExtended) {
   try {
@@ -30,30 +29,22 @@ export async function POST(req: NextApiRequestExtended) {
       },
     })
 
-    const deviceDetector = new DeviceDetector()
-    const device = deviceDetector.parse(
-      req.headers.get('user-agent') || ''
-    ) as any
-
-    const {
-      client: { name: clientName },
-      os: { name: osName },
-    } = device
-
-    const {
-      data: { ip },
-    } = await axios.get('https://api.ipify.org/?format=json')
+    const device = await getDevice({
+      req,
+      hasIp: true,
+    })
 
     const result = await handleEmailFire({
       to: email,
       subject: 'Reset Password Request',
       html: render(
         ResetPassword({
-          clientName,
-          osName,
+          clientName: device.clientName,
+          osName: device.osName,
           token: reset.resetToken,
-          company: 'Ahmed Ibra',
-          ip,
+          company: 'Book Driving',
+          ip: device.ip,
+          baseUrl: device.url,
         })
       ),
     })
