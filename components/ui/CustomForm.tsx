@@ -26,6 +26,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/components/ui/command'
 import {
   Popover,
@@ -109,6 +110,7 @@ export default function CustomFormField({
   ...props
 }: FormProps) {
   const [search, setSearch] = React.useState('')
+  const [open, setOpen] = React.useState(false)
   const [data, setData] = React.useState(props?.data)
 
   const getData = useApi({
@@ -204,12 +206,13 @@ export default function CustomFormField({
             <FormLabel className='text-gray-700'>{label}</FormLabel>
 
             {props?.fieldType === 'command' ? (
-              <Popover>
+              <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
                       variant='outline'
                       role='combobox'
+                      aria-expanded={open}
                       className={cn(
                         'w-full justify-between',
                         !field.value && 'text-muted-foreground'
@@ -235,26 +238,29 @@ export default function CustomFormField({
                       {getData?.isFetching ? 'Loading...' : 'No item found.'}
                     </CommandEmpty>
                     <CommandGroup>
-                      {data?.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue(name, item.value)
-                          }}
-                        >
-                          {item.label}
+                      <CommandList>
+                        {data?.map((item) => (
+                          <CommandItem
+                            value={item.label}
+                            key={item.value}
+                            onSelect={() => {
+                              form.setValue(name, item.value)
+                              setOpen(false)
+                            }}
+                          >
+                            {item.label}
 
-                          <FaCheck
-                            className={cn(
-                              'ml-auto h-4 w-4',
-                              item.value === field.value
-                                ? 'opacity-100'
-                                : 'opacity-0'
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
+                            <FaCheck
+                              className={cn(
+                                'ml-auto h-4 w-4',
+                                item.value === field.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandList>
                     </CommandGroup>
                   </Command>
                 </PopoverContent>
@@ -512,24 +518,26 @@ export const MultiSelect = ({
           {open && selectables.length > 0 ? (
             <div className='absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in'>
               <CommandGroup className='h-full overflow-auto'>
-                {selectables.map((item) => {
-                  return (
-                    <CommandItem
-                      key={item.value}
-                      onMouseDown={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                      }}
-                      onSelect={(value) => {
-                        setInputValue('')
-                        setSelected((prev) => [...prev, item])
-                      }}
-                      className={'cursor-pointer'}
-                    >
-                      {item.label}
-                    </CommandItem>
-                  )
-                })}
+                <CommandList>
+                  {selectables.map((item) => {
+                    return (
+                      <CommandItem
+                        key={item.value}
+                        onMouseDown={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                        onSelect={(value) => {
+                          setInputValue('')
+                          setSelected((prev) => [...prev, item])
+                        }}
+                        className={'cursor-pointer'}
+                      >
+                        {item.label}
+                      </CommandItem>
+                    )
+                  })}
+                </CommandList>
               </CommandGroup>
             </div>
           ) : null}
