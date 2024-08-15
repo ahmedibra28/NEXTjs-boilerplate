@@ -22,8 +22,8 @@ export default function useInterval() {
   }
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (userInfo?.token) fetchData()
+    const intervalId = setInterval(async () => {
+      if (userInfo?.token) await fetchData()
     }, 18000) // check every 60 seconds
     return () => clearInterval(intervalId)
     // eslint-disable-next-line react-hooks/exhaustive-deps

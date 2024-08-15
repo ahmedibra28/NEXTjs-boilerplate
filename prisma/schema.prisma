@@ -16,8 +16,7 @@ model User {
   address             String?
   bio                 String?
   password            String
-  confirmed           Boolean  @default(false)
-  blocked             Boolean  @default(false)
+  status              Status   @default(PENDING_VERIFICATION)
   resetPasswordToken  String?
   resetPasswordExpire BigInt?
   createdAt           DateTime @default(now())
@@ -79,4 +78,10 @@ enum Method {
   POST
   PUT
   DELETE
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  PENDING_VERIFICATION
 }

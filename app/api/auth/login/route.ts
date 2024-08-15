@@ -21,9 +21,11 @@ export async function POST(req: Request) {
 
     if (!match) return getErrorResponse('Invalid email or password', 401)
 
-    if (user.blocked) return getErrorResponse('User is blocked', 401)
+    if (user.status === 'PENDING_VERIFICATION')
+      return getErrorResponse('Please verify your account', 403)
 
-    if (!user.confirmed) return getErrorResponse('User is not confirmed', 401)
+    if (user.status === 'INACTIVE')
+      return getErrorResponse('User is inactive', 403)
 
     const role =
       user.roleId &&
@@ -117,8 +119,7 @@ export async function POST(req: Request) {
       id: user.id,
       name: user.name,
       email: user.email,
-      blocked: user.blocked,
-      confirmed: user.confirmed,
+      status: user.status,
       image: user.image,
       role: role.type,
       routes,

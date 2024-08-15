@@ -32,7 +32,7 @@ export default function RootLayout({
             <div>
               <Link href='/' className='w-24 normal-case text-xl'>
                 <Image
-                  src='https://ahmedibra.com/logo.png'
+                  src='https://github.com/ahmedibra28.png'
                   width={40}
                   height={40}
                   alt='logo'

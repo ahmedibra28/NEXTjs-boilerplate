@@ -114,8 +114,7 @@ export async function PUT(req: Request, { params }: Params) {
   try {
     await isAuth(req, params)
 
-    const { name, confirmed, blocked, password, email, roleId } =
-      await req.json()
+    const { name, status, password, email, roleId } = await req.json()
 
     const role =
       roleId && (await prisma.role.findFirst({ where: { id: roleId } }))
@@ -134,8 +133,7 @@ export async function PUT(req: Request, { params }: Params) {
       data: {
         name,
         email: email.toLowerCase(),
-        confirmed,
-        blocked,
+        status,
         roleId: role.id,
         ...(password && { password: await encryptPassword(password) }),
       },

@@ -28,8 +28,7 @@ export async function GET(req: Request) {
           id: true,
           name: true,
           email: true,
-          confirmed: true,
-          blocked: true,
+          status: true,
           createdAt: true,
           role: {
             select: {
@@ -63,8 +62,7 @@ export async function POST(req: Request) {
   try {
     await isAuth(req)
 
-    const { name, email, password, confirmed, blocked, roleId } =
-      await req.json()
+    const { name, email, password, status, roleId } = await req.json()
 
     const role =
       roleId && (await prisma.role.findFirst({ where: { id: roleId } }))
@@ -81,8 +79,7 @@ export async function POST(req: Request) {
       data: {
         name,
         email: email.toLowerCase(),
-        confirmed,
-        blocked,
+        status,
         roleId: role.id,
         image: `https://ui-avatars.com/api/?uppercase=true&name=${name}&background=random&color=random&size=128`,
         password: await encryptPassword({ password }),

@@ -34,7 +34,7 @@ export async function POST(req: NextApiRequestExtended) {
       data: {
         resetPasswordToken: null,
         resetPasswordExpire: null,
-        confirmed: true,
+        status: 'ACTIVE',
       },
     })
 

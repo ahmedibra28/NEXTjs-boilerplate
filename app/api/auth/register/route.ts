@@ -18,25 +18,37 @@ export async function POST(req: Request) {
     const user =
       email &&
       (await prisma.user.findFirst({
-        where: { email: email.toLowerCase(), confirmed: true },
+        where: { email: email.toLowerCase() },
       }))
-    if (user) return getErrorResponse('User already exists', 409)
+    if (user) {
+      if (user.status === 'INACTIVE')
+        return getErrorResponse('User is inactive', 403)
+
+      if (user.status === 'ACTIVE')
+        return getErrorResponse('User is already active', 409)
+    }
 
     const reset = await getResetPasswordToken(4320)
 
     const roleId = roles.find((item) => item.type === 'AUTHENTICATED')?.id
 
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { email: email.toLowerCase() },
+      create: {
         name,
         email: email.toLowerCase(),
-        confirmed: false,
-        blocked: false,
+        status: 'PENDING_VERIFICATION',
         roleId: `${roleId}`,
         image: `https://ui-avatars.com/api/?uppercase=true&name=${name}&background=random&color=random&size=128`,
         password: await encryptPassword({ password }),
         resetPasswordToken: reset.resetPasswordToken,
         resetPasswordExpire: reset.resetPasswordExpire,
+      },
+      update: {
+        status: 'PENDING_VERIFICATION',
+        resetPasswordToken: reset.resetPasswordToken,
+        resetPasswordExpire: reset.resetPasswordExpire,
+        password: await encryptPassword({ password }),
       },
     })
 

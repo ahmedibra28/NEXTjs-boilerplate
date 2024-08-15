@@ -14,23 +14,14 @@ export const columns = ({ editHandler, isPending, deleteHandler }: Column) => {
     { header: 'Email', accessorKey: 'email', active: true },
     { header: 'Role', accessorKey: 'role.name', active: true },
     {
-      header: 'Confirmed',
-      accessorKey: 'confirmed',
+      header: 'Status',
+      accessorKey: 'status',
       active: true,
       cell: ({ row: { original } }: any) =>
-        original?.confirmed ? (
+        original?.status === 'ACTIVE' ? (
           <FaCircleCheck className='text-green-500' />
-        ) : (
-          <FaCircleXmark className='text-red-500' />
-        ),
-    },
-    {
-      header: 'Blocked',
-      accessorKey: 'blocked',
-      active: true,
-      cell: ({ row: { original } }: any) =>
-        !original?.blocked ? (
-          <FaCircleCheck className='text-green-500' />
+        ) : original?.status === 'PENDING_VERIFICATION' ? (
+          <FaCircleXmark className='text-yellow-500' />
         ) : (
           <FaCircleXmark className='text-red-500' />
         ),

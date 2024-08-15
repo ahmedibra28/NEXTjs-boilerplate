@@ -15,7 +15,7 @@ import RTable from '@/components/RTable'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
-import CustomFormField, { MultiSelect } from '@/components/ui/CustomForm'
+import CustomFormField from '@/components/ui/CustomForm'
 import { TopLoadingBar } from '@/components/TopLoadingBar'
 import { columns } from './columns'
 import useDataStore from '@/zustand/dataStore'
@@ -34,8 +34,9 @@ const FormSchema = z
     roleId: z.string().refine((value) => value !== '', {
       message: 'Role is required',
     }),
-    confirmed: z.boolean(),
-    blocked: z.boolean(),
+    status: z.string().refine((value) => value !== '', {
+      message: 'Status is required',
+    }),
     password: z.string().refine((val) => val.length === 0 || val.length > 6, {
       message: "Password can't be less than 6 characters",
     }),
@@ -100,8 +101,7 @@ const Page = () => {
       roleId: '',
       password: '',
       confirmPassword: '',
-      confirmed: false,
-      blocked: false,
+      status: '',
     },
   })
 
@@ -110,22 +110,22 @@ const Page = () => {
       getApi?.refetch()
       setDialogOpen(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
     getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [page])
 
   useEffect(() => {
     getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [limit])
 
   useEffect(() => {
     if (!q) getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [q])
 
   const searchHandler = (e: FormEvent) => {
@@ -137,8 +137,7 @@ const Page = () => {
   const editHandler = (item: IUser & { role: { id: string } }) => {
     setId(item.id!)
     setEdit(true)
-    form.setValue('blocked', Boolean(item?.blocked))
-    form.setValue('confirmed', Boolean(item?.confirmed))
+    form.setValue('status', item?.status)
     form.setValue('name', item?.name)
     form.setValue('email', item?.email)
     form.setValue('roleId', item?.role?.id!)
@@ -200,17 +199,24 @@ const Page = () => {
       />
       <CustomFormField
         form={form}
-        name='confirmed'
-        label='Confirmed'
-        placeholder='Confirmed'
-        fieldType='switch'
-      />
-      <CustomFormField
-        form={form}
-        name='blocked'
-        label='Blocked'
-        placeholder='Blocked'
-        fieldType='switch'
+        name='status'
+        label='Status'
+        placeholder='Status'
+        fieldType='select'
+        data={[
+          {
+            value: 'ACTIVE',
+            label: 'Active',
+          },
+          {
+            value: 'PENDING_VERIFICATION',
+            label: 'Pending Verification',
+          },
+          {
+            value: 'INACTIVE',
+            label: 'Inactive',
+          },
+        ]}
       />
     </Form>
   )
