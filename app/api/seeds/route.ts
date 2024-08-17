@@ -57,11 +57,13 @@ export async function GET(req: Request) {
         ...users,
         password: await encryptPassword({ password: users.password }),
         roleId: roles[0].id,
+        status: 'ACTIVE',
       },
       update: {
         ...users,
         roleId: roles[0].id,
         password: await encryptPassword({ password: users.password }),
+        status: 'ACTIVE',
       },
     })
 
