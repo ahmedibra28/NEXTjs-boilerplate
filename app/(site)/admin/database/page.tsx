@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect } from 'react'
-import useApi, { baseUrl } from '@/hooks/useApi'
 import {
   Table,
   TableBody,
@@ -10,10 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import Spinner from '@/components/Spinner'
-import Message from '@/components/Message'
-import { TopLoadingBar } from '@/components/TopLoadingBar'
-import { FormButton } from '@/components/ui/CustomForm'
+import Spinner from '@/components/spinner'
+import Message from '@/components/message'
+import { TopLoadingBar } from '@/components/top-loading-bar'
 import { FaDatabase } from 'react-icons/fa6'
 import useAuthorization from '@/hooks/useAuthorization'
 import { useRouter } from 'next/navigation'
@@ -21,6 +19,9 @@ import { useRouter } from 'next/navigation'
 import JSZip from 'jszip'
 import useUserInfoStore from '@/zustand/userStore'
 import dynamic from 'next/dynamic'
+import { FormButton } from '@/components/custom-form'
+import ApiCall from '@/services/api'
+import { baseUrl } from '@/lib/setting'
 
 function Page() {
   const path = useAuthorization()
@@ -38,13 +39,13 @@ function Page() {
 
   const zip = new JSZip()
 
-  const getApi = useApi({
+  const getApi = ApiCall({
     key: ['databases'],
     method: 'GET',
     url: `databases`,
   })?.get
 
-  const postApi = useApi({
+  const postApi = ApiCall({
     key: ['databases'],
     method: 'POST',
     url: `databases/backup`,
@@ -58,7 +59,7 @@ function Page() {
   }, [postApi?.isSuccess])
 
   const downloadDBHandler = async (db: string) => {
-    return fetch(baseUrl + '/databases/download', {
+    return fetch(baseUrl + '/api/databases/download', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/zip',

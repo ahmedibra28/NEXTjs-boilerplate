@@ -5,21 +5,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './form'
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { UseFormReturn } from 'react-hook-form'
 import { Button, ButtonProps } from '@/components/ui/button'
-import {
-  FaCheck,
-  FaEllipsis,
-  FaFilePen,
-  FaSort,
-  FaSpinner,
-  FaTrash,
-} from 'react-icons/fa6'
+import { FaCheck, FaSort, FaSpinner } from 'react-icons/fa6'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
-
 import {
   Command,
   CommandEmpty,
@@ -34,15 +26,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
-import useApi from '@/hooks/useApi'
-import { useDebounce } from 'use-debounce'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Select,
   SelectContent,
@@ -50,13 +34,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
-import ConfirmDialog from '../ConfirmDialog'
-import useDataStore from '@/zustand/dataStore'
 import { Command as CommandPrimitive } from 'cmdk'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { X } from 'lucide-react'
+import { useDebounce } from '@uidotdev/usehooks'
+import useDataStore from '@/zustand/dataStore'
+import ApiCall from '@/services/api'
 
 type Prop = Record<'value' | 'label', string>
 export interface FormInputProp {
@@ -92,9 +76,9 @@ export interface FormProps {
     label: string
     value: string
   }[]
-  key?: string
   url?: string
   items?: ListItem[]
+  hasLabel?: boolean
 }
 export interface FormButtonProp {
   label: string
@@ -107,14 +91,15 @@ export default function CustomFormField({
   form,
   name,
   label,
+  hasLabel = true,
   ...props
 }: FormProps) {
   const [search, setSearch] = React.useState('')
   const [open, setOpen] = React.useState(false)
-  const [data, setData] = React.useState(props?.data)
+  const [data, setData] = React.useState(props?.data || [])
 
-  const getData = useApi({
-    key: [props?.key!, props?.url!],
+  const getData = ApiCall({
+    key: [props?.url!],
     method: 'GET',
     url: props?.url + `&q=${search}`,
   })?.get
@@ -122,7 +107,10 @@ export default function CustomFormField({
   const [value] = useDebounce(search, 1000)
 
   React.useEffect(() => {
-    if (props?.data?.length === 0 && props?.fieldType !== 'multipleCheckbox') {
+    if (
+      (props?.fieldType && props?.fieldType === 'command') ||
+      (props?.data?.length === 0 && props?.fieldType !== 'multipleCheckbox')
+    ) {
       getData?.refetch()?.then((res) => {
         setData(
           res?.data?.data?.map((item: { name?: string; id?: string }) => ({
@@ -203,7 +191,9 @@ export default function CustomFormField({
           </FormItem>
         ) : (
           <FormItem className='mb-3 flex flex-col'>
-            <FormLabel className='text-gray-700'>{label}</FormLabel>
+            {hasLabel && (
+              <FormLabel className='text-gray-700'>{label}</FormLabel>
+            )}
 
             {props?.fieldType === 'command' ? (
               <Popover open={open} onOpenChange={setOpen}>
@@ -275,7 +265,7 @@ export default function CustomFormField({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {props?.data?.map((item) => (
+                  {data?.map((item) => (
                     <SelectItem key={item.value} value={item?.value}>
                       {item?.label}
                     </SelectItem>
@@ -325,87 +315,6 @@ export const FormButton = ({
 
       {label}
     </Button>
-  )
-}
-
-export const Upload = ({
-  multiple = false,
-  label,
-  setFileLink,
-  fileLink,
-  fileType,
-  showLabel = true,
-  ...props
-}: FormInputProp) => {
-  const [file, setFile] = React.useState<string[]>([])
-
-  const uploadApi = useApi({
-    key: ['upload'],
-    method: 'POST',
-    url: `uploads?type=${fileType}`,
-  })?.post
-
-  React.useEffect(() => {
-    if (file?.length > 0) {
-      const formData = new FormData()
-
-      for (let i = 0; i < file.length; i++) {
-        formData.append('file', file[i])
-      }
-
-      uploadApi
-        ?.mutateAsync(formData)
-        .then((res) => {
-          const urls = res.data?.map((item: any) => item.url)
-
-          if (multiple) {
-            setFileLink([...fileLink, ...urls])
-          } else {
-            setFileLink(urls)
-          }
-        })
-        .catch((err) => err)
-    }
-    // eslint-disable-next-line
-  }, [file])
-
-  return (
-    <div className='w-full'>
-      {label && showLabel && (
-        <Label className='label' htmlFor={label?.replace(/\s+/g, '-')}>
-          {label}
-        </Label>
-      )}
-
-      <Input
-        disabled={Boolean(uploadApi?.isPending)}
-        multiple={multiple}
-        type='file'
-        id='formFile'
-        onChange={(e: any) =>
-          setFile(multiple ? e.target.files : [e.target.files[0]])
-        }
-        {...props}
-      />
-      {uploadApi?.isPending && (
-        <div className='flex items-center justify-start'>
-          <span className='loading loading-spinner loading-sm'> </span>
-          <span className='ms-2 text-sm text-gray-500'>
-            {fileType} is uploading
-          </span>
-        </div>
-      )}
-      {uploadApi?.isError && (
-        <span className='mt-1 text-xs text-red-500'>
-          {`${uploadApi?.error}` || `${fileType} upload failed`}
-        </span>
-      )}
-      {uploadApi?.isSuccess && (
-        <span className='mt-1 text-xs text-green-500'>
-          {uploadApi?.data?.message}
-        </span>
-      )}
-    </div>
   )
 }
 
@@ -518,26 +427,24 @@ export const MultiSelect = ({
           {open && selectables.length > 0 ? (
             <div className='absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in'>
               <CommandGroup className='h-full overflow-auto'>
-                <CommandList>
-                  {selectables.map((item) => {
-                    return (
-                      <CommandItem
-                        key={item.value}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        onSelect={(value) => {
-                          setInputValue('')
-                          setSelected((prev) => [...prev, item])
-                        }}
-                        className={'cursor-pointer'}
-                      >
-                        {item.label}
-                      </CommandItem>
-                    )
-                  })}
-                </CommandList>
+                {selectables.map((item) => {
+                  return (
+                    <CommandItem
+                      key={item.value}
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                      }}
+                      onSelect={(value) => {
+                        setInputValue('')
+                        setSelected((prev) => [...prev, item])
+                      }}
+                      className={'cursor-pointer'}
+                    >
+                      {item.label}
+                    </CommandItem>
+                  )
+                })}
               </CommandGroup>
             </div>
           ) : null}
@@ -550,76 +457,83 @@ export const MultiSelect = ({
   )
 }
 
-export const ActionButton = ({
-  editHandler,
-  isPending,
-  deleteHandler,
-  original,
-  handleUpdate,
-  upgradeClass,
-  navigateToExam,
-  source,
-}: {
-  editHandler?: (item: any) => void
-  isPending?: boolean
-  deleteHandler?: (item: any) => void
-  modal?: string
-  original?: any
-  formChildren?: React.ReactNode
-  upgradeClass?: (id: string) => void
-  navigateToExam?: boolean
-  source?: string
-  handleUpdate?: ({
-    id,
-    status,
-  }: {
-    id: string
-    status: 'PAID' | 'UNPAID'
-  }) => void
-}) => {
-  const { setDialogOpen } = useDataStore((state) => state)
+export const Upload = ({
+  multiple = false,
+  label,
+  setFileLink,
+  fileLink,
+  fileType,
+  showLabel = true,
+  ...props
+}: FormInputProp) => {
+  const [file, setFile] = React.useState<string[]>([])
+
+  const uploadApi = ApiCall({
+    key: ['upload'],
+    method: 'POST',
+    url: `uploads?type=${fileType}`,
+  })?.post
+
+  React.useEffect(() => {
+    if (file?.length > 0) {
+      const formData = new FormData()
+
+      for (let i = 0; i < file.length; i++) {
+        formData.append('file', file[i])
+      }
+
+      uploadApi
+        ?.mutateAsync(formData)
+        .then((res) => {
+          const urls = res.data?.map((item: any) => item.url)
+
+          if (multiple) {
+            setFileLink([...fileLink, ...urls])
+          } else {
+            setFileLink(urls)
+          }
+        })
+        .catch((err) => err)
+    }
+    // eslint-disable-next-line
+  }, [file])
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='h-8 w-8 border-none p-0'>
-          <span className='sr-only'>Open menu</span>
-          <FaEllipsis className='h-4 w-4' />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align='end'>
-        {editHandler && (
-          <DropdownMenuItem
-            disabled={isPending}
-            onClick={() => {
-              editHandler(original)
-              setDialogOpen(true)
-            }}
-          >
-            <FaFilePen /> <span className='mx-1'> Edit</span>
-          </DropdownMenuItem>
-        )}
+    <div className='w-full'>
+      {label && showLabel && (
+        <Label className='label' htmlFor={label?.replace(/\s+/g, '-')}>
+          {label}
+        </Label>
+      )}
 
-        {deleteHandler && (
-          <AlertDialog>
-            <AlertDialogTrigger>
-              <div className='flex h-8 w-full min-w-32 items-center justify-start gap-x-1 rounded px-2 text-sm text-red-500 hover:bg-slate-100'>
-                {isPending ? (
-                  <>
-                    <FaSpinner className='mr-1 animate-spin' />
-                    Loading
-                  </>
-                ) : (
-                  <>
-                    <FaTrash /> Delete
-                  </>
-                )}
-              </div>
-            </AlertDialogTrigger>
-            <ConfirmDialog onClick={() => deleteHandler(original.id)} />
-          </AlertDialog>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <Input
+        disabled={Boolean(uploadApi?.isPending)}
+        multiple={multiple}
+        type='file'
+        id='formFile'
+        onChange={(e: any) =>
+          setFile(multiple ? e.target.files : [e.target.files[0]])
+        }
+        {...props}
+      />
+      {uploadApi?.isPending && (
+        <div className='flex items-center justify-start'>
+          <span className='loading loading-spinner loading-sm'> </span>
+          <span className='ms-2 text-sm text-gray-500'>
+            {fileType} is uploading
+          </span>
+        </div>
+      )}
+      {uploadApi?.isError && (
+        <span className='mt-1 text-xs text-red-500'>
+          {`${uploadApi?.error}` || `${fileType} upload failed`}
+        </span>
+      )}
+      {uploadApi?.isSuccess && (
+        <span className='mt-1 text-xs text-green-500'>
+          {uploadApi?.data?.message}
+        </span>
+      )}
+    </div>
   )
 }

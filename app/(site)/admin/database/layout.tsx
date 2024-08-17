@@ -1,13 +1,13 @@
-import React from 'react'
-import Meta from '@/components/Meta'
+import meta from '@/lib/meta'
+import { logo, siteName } from '@/lib/setting'
 
-export const metadata = {
-  ...Meta({
-    title: 'Database',
-  }),
-}
+export const metadata = meta({
+  title: 'Databases',
+  description: `List of databases at ${siteName}.`,
+  openGraphImage: logo,
+})
 
-export default function DatabaseLayout({
+export default function DatabasesLayout({
   children,
 }: {
   children: React.ReactNode

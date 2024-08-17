@@ -1,11 +1,11 @@
-import React from 'react'
-import Meta from '@/components/Meta'
+import meta from '@/lib/meta'
+import { logo, siteName } from '@/lib/setting'
 
-export const metadata = {
-  ...Meta({
-    title: 'Register',
-  }),
-}
+export const metadata = meta({
+  title: 'Register',
+  description: `Register at ${siteName}.`,
+  openGraphImage: logo,
+})
 
 export default function RegisterLayout({
   children,

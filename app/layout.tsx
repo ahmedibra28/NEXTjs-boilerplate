@@ -1,20 +1,23 @@
-import Meta from '@/components/Meta'
 import './globals.css'
 import { Roboto } from 'next/font/google'
-import Navigation from '@/components/Navigation'
+import Navigation from '@/components/navigation'
 import Providers from '@/lib/provider'
-import Footer from '@/components/Footer'
+import Footer from '@/components/footer'
 import Link from 'next/link'
 import Image from 'next/image'
+import meta from '@/lib/meta'
+import { logo, siteName } from '@/lib/setting'
 
 const roboto = Roboto({
   subsets: ['latin'],
   weight: ['100', '300', '500', '700', '900'],
 })
 
-export const metadata = {
-  ...Meta({}),
-}
+export const metadata = meta({
+  title: `${siteName} - Everything You Need & More!`,
+  description: `Find a vast selection of products across various categories at ${siteName}. From electronics and clothing to furniture and fresh produce, we offer everything you need for your home and lifestyle.`,
+  openGraphImage: logo,
+})
 
 export default function RootLayout({
   children,

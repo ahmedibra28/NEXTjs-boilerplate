@@ -1,11 +1,11 @@
-import React from 'react'
-import Meta from '@/components/Meta'
+import meta from '@/lib/meta'
+import { logo, siteName } from '@/lib/setting'
 
-export const metadata = {
-  ...Meta({
-    title: 'Client Permissions',
-  }),
-}
+export const metadata = meta({
+  title: 'Client Permissions',
+  description: `List of client permissions at ${siteName}.`,
+  openGraphImage: logo,
+})
 
 export default function ClientPermissionsLayout({
   children,

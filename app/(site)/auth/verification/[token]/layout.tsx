@@ -1,11 +1,11 @@
-import React from 'react'
-import Meta from '@/components/Meta'
+import meta from '@/lib/meta'
+import { logo, siteName } from '@/lib/setting'
 
-export const metadata = {
-  ...Meta({
-    title: 'Account Verification',
-  }),
-}
+export const metadata = meta({
+  title: 'Account verification',
+  description: `Account verification at ${siteName}.`,
+  openGraphImage: logo,
+})
 
 export default function AccountVerificationLayout({
   children,

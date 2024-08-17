@@ -2,14 +2,14 @@
 
 import useUserInfoStore from '@/zustand/userStore'
 import { useEffect } from 'react'
-import { baseUrl } from './useApi'
 import axios from 'axios'
+import { baseUrl } from '@/lib/setting'
 
 export default function useInterval() {
   const { userInfo, updateUserInfo } = useUserInfoStore((state) => state)
 
   const fetchData = async () => {
-    const { data } = await axios.get(`${baseUrl}/users/${userInfo?.id}`)
+    const { data } = await axios.get(`${baseUrl}/api/users/${userInfo?.id}`)
 
     if (data?.routes?.length > 0 && data?.menu?.length > 0) {
       updateUserInfo({

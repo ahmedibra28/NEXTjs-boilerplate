@@ -3,14 +3,14 @@ import React, { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import useUserInfoStore from '@/zustand/userStore'
-import useApi from '@/hooks/useApi'
-import FormContainer from '@/components/FormContainer'
-import Message from '@/components/Message'
+import FormContainer from '@/components/form-container'
+import Message from '@/components/message'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
-import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
+import CustomFormField, { FormButton } from '@/components/custom-form'
+import ApiCall from '@/services/api'
 
 const FormSchema = z
   .object({
@@ -36,7 +36,7 @@ const Page = () => {
 
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const postApi = useApi({
+  const postApi = ApiCall({
     key: ['register'],
     method: 'POST',
     url: `auth/register`,

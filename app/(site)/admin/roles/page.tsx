@@ -1,132 +1,148 @@
 'use client'
 
-import React, { useState, useEffect, FormEvent } from 'react'
-import dynamic from 'next/dynamic'
-import { useForm } from 'react-hook-form'
-import useApi from '@/hooks/useApi'
-import useAuthorization from '@/hooks/useAuthorization'
-import { useRouter } from 'next/navigation'
+import useDataStore from '@/zustand/dataStore'
+import React, { useEffect, useState } from 'react'
 import type {
   Permission as IPermission,
   ClientPermission as IClientPermission,
 } from '@prisma/client'
-import Message from '@/components/Message'
-import FormView from '@/components/FormView'
-import Spinner from '@/components/Spinner'
-import RTable from '@/components/RTable'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+import { FormSchema } from './components/schema'
+import CustomFormField from '@/components/custom-form'
 import { Form } from '@/components/ui/form'
-import CustomFormField from '@/components/ui/CustomForm'
-import { TopLoadingBar } from '@/components/TopLoadingBar'
-import useDataStore from '@/zustand/dataStore'
-import { columns } from './columns'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { useToast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
+import FormView from '@/components/form-view'
+import DataTable from '@/components/data-table'
+import { useColumns } from './components/columns'
+import { useDebounce } from '@uidotdev/usehooks'
+import { TopLoadingBar } from '@/components/top-loading-bar'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Skeleton from '@/components/skeleton'
+import ApiCall from '@/services/api'
 
-const FormSchema = z.object({
-  name: z.string().refine((value) => value !== '', {
-    message: 'Name is required',
-  }),
-  description: z.string().optional(),
-  permissions: z
-    .array(z.string())
-    .refine((value) => value.some((item) => item), {
-      message: 'You have to select at least one item.',
-    }),
-  clientPermissions: z
-    .array(z.string())
-    .refine((value) => value.some((item) => item), {
-      message: 'You have to select at least one item.',
-    }),
-})
-
-const Page = () => {
+export default function Page() {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
-  const [id, setId] = useState<string | null>(null)
+  const [id, setId] = useState<any>(null)
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
 
-  const { setData, dialogOpen, setDialogOpen } = useDataStore((state) => state)
+  const { toast } = useToast()
 
-  const path = useAuthorization()
-  const router = useRouter()
+  const { dialogOpen, setDialogOpen, setData } = useDataStore((state) => state)
 
-  useEffect(() => {
-    if (path) {
-      router.push(path)
-    }
-  }, [path, router])
-
-  const getApi = useApi({
+  const getApi = ApiCall({
     key: ['roles'],
     method: 'GET',
     url: `roles?page=${page}&q=${q}&limit=${limit}`,
   })?.get
 
-  const postApi = useApi({
+  const postApi = ApiCall({
     key: ['roles'],
     method: 'POST',
     url: `roles`,
   })?.post
 
-  const updateApi = useApi({
+  const updateApi = ApiCall({
     key: ['roles'],
     method: 'PUT',
     url: `roles`,
   })?.put
 
-  const deleteApi = useApi({
+  const deleteApi = ApiCall({
     key: ['roles'],
     method: 'DELETE',
     url: `roles`,
-  })?.deleteObj
+  })?.delete
 
-  const getClientPermissionsApi = useApi({
+  const getClientPermissionsApi = ApiCall({
     key: ['client-permissions'],
     method: 'GET',
     url: `client-permissions?page=${page}&q=${q}&limit=${250}`,
   })?.get
 
-  const getPermissionsApi = useApi({
+  const getPermissionsApi = ApiCall({
     key: ['permissions'],
     method: 'GET',
     url: `permissions?page=${page}&q=${q}&limit=${250}`,
   })?.get
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      permissions: [],
-      clientPermissions: [],
-    },
-  })
-
   useEffect(() => {
     if (postApi?.isSuccess || updateApi?.isSuccess || deleteApi?.isSuccess) {
       getApi?.refetch()
       setDialogOpen(false)
+      toast({
+        title: 'Success!',
+        description:
+          deleteApi?.data?.message ||
+          updateApi?.data?.message ||
+          postApi?.data?.message,
+        action: <ToastAction altText='Done'>Done</ToastAction>,
+        variant: 'default',
+      })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // eslint-disable-next-line
   }, [postApi?.isSuccess, updateApi?.isSuccess, deleteApi?.isSuccess])
 
   useEffect(() => {
+    if (
+      postApi?.isError ||
+      updateApi?.isError ||
+      deleteApi?.isError ||
+      getApi?.isError
+    ) {
+      toast({
+        title: 'Error!',
+        description:
+          deleteApi?.error ||
+          updateApi?.error ||
+          postApi?.error ||
+          getApi?.error,
+        action: <ToastAction altText='Done'>Done</ToastAction>,
+        variant: 'destructive',
+      })
+    }
+
+    // eslint-disable-next-line
+  }, [
+    postApi?.isError,
+    updateApi?.isError,
+    deleteApi?.isError,
+    getApi?.isError,
+  ])
+
+  useEffect(() => {
     getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [page])
 
   useEffect(() => {
-    if (!q) getApi?.refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q])
+    getApi?.refetch()
+    // eslint-disable-next-line
+  }, [limit])
 
-  const searchHandler = (e: FormEvent) => {
-    e.preventDefault()
+  const [search] = useDebounce(q, 2000)
+
+  useEffect(() => {
     getApi?.refetch()
     setPage(1)
-  }
+    // eslint-disable-next-line
+  }, [search])
+
+  useEffect(() => {
+    if (!dialogOpen) {
+      form.reset()
+      setEdit(false)
+      setId(null)
+      getClientPermissionsApi?.refetch()
+      getPermissionsApi?.refetch()
+    }
+    // eslint-disable-next-line
+  }, [dialogOpen])
 
   interface CheckboxListItem {
     label: string
@@ -188,6 +204,20 @@ const Page = () => {
       return acc
     }, [])
 
+  const deleteHandler = (id: any) => {
+    deleteApi?.mutateAsync(id)
+  }
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      permissions: [],
+      clientPermissions: [],
+    },
+  })
+
   const editHandler = (
     item: IClientPermission & {
       role: { id: string }
@@ -211,21 +241,16 @@ const Page = () => {
     )
   }
 
-  const deleteHandler = (id: any) => deleteApi?.mutateAsync(id)
+  const onSubmit = (values: z.infer<typeof FormSchema>) => {
+    edit
+      ? updateApi?.mutateAsync({
+          id: id,
+          ...values,
+        })
+      : postApi?.mutateAsync(values)
+  }
 
-  const label = 'Role'
-  const modal = 'role'
-
-  useEffect(() => {
-    if (!dialogOpen) {
-      form.reset()
-      setEdit(false)
-      setId(null)
-      getClientPermissionsApi?.refetch()
-      getPermissionsApi?.refetch()
-    }
-    // eslint-disable-next-line
-  }, [dialogOpen])
+  const { columns } = useColumns({ editHandler, deleteHandler })
 
   useEffect(() => {
     getClientPermissionsApi?.isSuccess &&
@@ -277,30 +302,8 @@ const Page = () => {
       />
     </Form>
   )
-
-  const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    edit
-      ? updateApi?.mutateAsync({
-          ...values,
-          id: id,
-        })
-      : postApi?.mutateAsync({
-          ...values,
-          id: id,
-        })
-  }
-
   return (
-    <>
-      {deleteApi?.isSuccess && (
-        <Message value={`${label} has been cancelled successfully.`} />
-      )}
-      {deleteApi?.isError && <Message value={deleteApi?.error} />}
-      {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
-      {updateApi?.isError && <Message value={updateApi?.error} />}
-      {postApi?.isSuccess && <Message value={postApi?.data?.message} />}
-      {postApi?.isError && <Message value={postApi?.error} />}
-
+    <div>
       <TopLoadingBar isFetching={getApi?.isFetching || getApi?.isPending} />
 
       <FormView
@@ -308,39 +311,36 @@ const Page = () => {
         loading={updateApi?.isPending || postApi?.isPending}
         handleSubmit={form.handleSubmit}
         submitHandler={onSubmit}
-        label={label}
-        height='h-[80vh]'
+        label='Role'
         edit={edit}
+        height='h-[80vh]'
       />
 
       {getApi?.isPending ? (
-        <Spinner />
-      ) : getApi?.isError ? (
-        <Message value={getApi?.error} />
+        <Skeleton />
       ) : (
-        <div className='overflow-x-auto bg-white p-3 mt-2'>
-          <RTable
-            data={getApi?.data}
-            columns={columns({
-              editHandler,
-              isPending: deleteApi?.isPending || false,
-              deleteHandler,
-            })}
-            setPage={setPage}
-            setLimit={setLimit}
-            limit={limit}
-            q={q}
-            setQ={setQ}
-            searchHandler={searchHandler}
-            modal={modal}
-            caption='Roles List'
-          />
-        </div>
+        <>
+          <Card className='mt-2'>
+            <CardHeader>
+              <CardTitle className='text-sm md:text-base'>
+                List of Roles
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                columns={columns}
+                data={(getApi?.data as any) || { data: [] }}
+                setLimit={setLimit}
+                limit={limit}
+                setPage={setPage}
+                setQ={setQ}
+                search='name'
+                isPending={getApi?.isPending}
+              />
+            </CardContent>
+          </Card>
+        </>
       )}
-    </>
+    </div>
   )
 }
-
-export default dynamic(() => Promise.resolve(Page), {
-  ssr: false,
-})

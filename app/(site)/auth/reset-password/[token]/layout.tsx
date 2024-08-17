@@ -1,11 +1,11 @@
-import React from 'react'
-import Meta from '@/components/Meta'
+import meta from '@/lib/meta'
+import { logo, siteName } from '@/lib/setting'
 
-export const metadata = {
-  ...Meta({
-    title: 'Reset Password',
-  }),
-}
+export const metadata = meta({
+  title: 'Reset password',
+  description: `Reset password at ${siteName}.`,
+  openGraphImage: logo,
+})
 
 export default function ResetPasswordLayout({
   children,

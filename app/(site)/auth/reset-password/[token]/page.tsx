@@ -3,15 +3,15 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import Head from 'next/head'
 import useUserInfoStore from '@/zustand/userStore'
-import useApi from '@/hooks/useApi'
-import FormContainer from '@/components/FormContainer'
-import Message from '@/components/Message'
+import FormContainer from '@/components/form-container'
+import Message from '@/components/message'
 import { useRouter } from 'next/navigation'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
-import CustomFormField, { FormButton } from '@/components/ui/CustomForm'
+import CustomFormField, { FormButton } from '@/components/custom-form'
+import ApiCall from '@/services/api'
 
 const Reset = ({
   params,
@@ -24,7 +24,7 @@ const Reset = ({
   const { token } = params
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const postApi = useApi({
+  const postApi = ApiCall({
     key: ['reset-password'],
     method: 'POST',
     url: `auth/reset-password`,

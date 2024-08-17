@@ -6,14 +6,14 @@ import dynamic from 'next/dynamic'
 import { useForm } from 'react-hook-form'
 
 import Image from 'next/image'
-import useApi from '@/hooks/useApi'
-import Message from '@/components/Message'
-import Spinner from '@/components/Spinner'
+import Message from '@/components/message'
+import Spinner from '@/components/spinner'
 import useUserInfoStore from '@/zustand/userStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
-import CustomFormField, { FormButton, Upload } from '@/components/ui/CustomForm'
+import CustomFormField, { FormButton, Upload } from '@/components/custom-form'
+import ApiCall from '@/services/api'
 
 const Profile = () => {
   const [fileLink, setFileLink] = React.useState<string[]>([])
@@ -29,12 +29,12 @@ const Profile = () => {
     }
   }, [path, router])
 
-  const getApi = useApi({
+  const getApi = ApiCall({
     key: ['profiles'],
     method: 'GET',
     url: `profile`,
   })?.get
-  const updateApi = useApi({
+  const updateApi = ApiCall({
     key: ['profiles'],
     method: 'PUT',
     url: `profile`,

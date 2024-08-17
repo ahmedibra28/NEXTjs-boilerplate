@@ -1,8 +1,8 @@
-import Skeleton from '@/components/Skeleton'
-import React from 'react'
+import Skeleton from "@/components/skeleton";
+import React from "react";
 
 const Loading = () => {
-  return <Skeleton />
-}
+  return <Skeleton />;
+};
 
-export default Loading
+export default Loading;

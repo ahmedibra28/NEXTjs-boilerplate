@@ -1,11 +1,11 @@
-import React from 'react'
-import Meta from '@/components/Meta'
+import meta from '@/lib/meta'
+import { logo, siteName } from '@/lib/setting'
 
-export const metadata = {
-  ...Meta({
-    title: 'Roles',
-  }),
-}
+export const metadata = meta({
+  title: 'Roles',
+  description: `List of roles at ${siteName}.`,
+  openGraphImage: logo,
+})
 
 export default function RolesLayout({
   children,
