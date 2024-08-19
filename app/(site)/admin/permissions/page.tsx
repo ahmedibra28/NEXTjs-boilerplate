@@ -19,6 +19,8 @@ import { TopLoadingBar } from '@/components/top-loading-bar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Skeleton from '@/components/skeleton'
 import ApiCall from '@/services/api'
+import { useRouter } from 'next/navigation'
+import useAuthorization from '@/hooks/useAuthorization'
 
 export default function Page() {
   const [page, setPage] = useState(1)
@@ -30,6 +32,14 @@ export default function Page() {
   const { toast } = useToast()
 
   const { dialogOpen, setDialogOpen } = useDataStore((state) => state)
+
+  const path = useAuthorization()
+  const router = useRouter()
+  useEffect(() => {
+    if (path) {
+      router.push(path)
+    }
+  }, [path, router])
 
   const getApi = ApiCall({
     key: ['permissions'],
