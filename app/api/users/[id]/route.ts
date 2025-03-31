@@ -4,12 +4,13 @@ import { prisma } from '@/lib/prisma.db'
 import { isAuth } from '@/lib/auth'
 
 interface Params {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export async function GET(req: Request, { params }: Params) {
+export async function GET(req: Request, props: Params) {
+  const params = await props.params;
   try {
     const role = await prisma.user.findUnique({
       where: {
@@ -110,7 +111,8 @@ export async function GET(req: Request, { params }: Params) {
   }
 }
 
-export async function PUT(req: Request, { params }: Params) {
+export async function PUT(req: Request, props: Params) {
+  const params = await props.params;
   try {
     await isAuth(req, params)
 
@@ -150,7 +152,8 @@ export async function PUT(req: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(req: Request, { params }: Params) {
+export async function DELETE(req: Request, props: Params) {
+  const params = await props.params;
   try {
     await isAuth(req, params)
 

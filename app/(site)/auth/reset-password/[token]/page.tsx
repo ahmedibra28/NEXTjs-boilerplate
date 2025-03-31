@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, use } from 'react';
 import { useForm } from 'react-hook-form'
 import Head from 'next/head'
 import useUserInfoStore from '@/zustand/userStore'
@@ -13,13 +13,14 @@ import { Form } from '@/components/ui/form'
 import CustomFormField, { FormButton } from '@/components/custom-form'
 import ApiCall from '@/services/api'
 
-const Reset = ({
-  params,
-}: {
-  params: {
-    token: string
+const Reset = (
+  props: {
+    params: Promise<{
+      token: string
+    }>
   }
-}) => {
+) => {
+  const params = use(props.params);
   const router = useRouter()
   const { token } = params
   const { userInfo } = useUserInfoStore((state) => state)
