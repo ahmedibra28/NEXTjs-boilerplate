@@ -25,7 +25,8 @@ export async function POST(req: Request) {
     return new Response(buffer, {
       headers,
     })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

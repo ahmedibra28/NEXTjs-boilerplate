@@ -12,5 +12,5 @@ export default function UsersLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <div>{children}</div>
+  return <div className='container px-2 mx-auto'>{children}</div>
 }

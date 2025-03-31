@@ -16,7 +16,8 @@ export async function GET(req: Request) {
     const databases = readdirSync(path)
 
     return NextResponse.json({ data: databases?.reverse() || [] })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

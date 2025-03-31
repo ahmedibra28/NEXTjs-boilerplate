@@ -127,7 +127,8 @@ export async function POST(req: Request) {
       token: await generateToken(user.id),
       message: 'User has been logged in successfully',
     })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

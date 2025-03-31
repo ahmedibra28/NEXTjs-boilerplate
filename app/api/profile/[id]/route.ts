@@ -10,7 +10,7 @@ interface Params {
 }
 
 export async function PUT(req: Request, props: Params) {
-  const params = await props.params;
+  const params = await props.params
   try {
     await isAuth(req, params)
 
@@ -51,7 +51,8 @@ export async function PUT(req: Request, props: Params) {
       mobile: result.mobile,
       message: 'Profile has been updated successfully',
     })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

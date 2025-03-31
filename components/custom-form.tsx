@@ -63,7 +63,7 @@ interface ListItem {
 }
 
 export interface FormProps {
-  form: UseFormReturn<any, any, undefined>
+  form: UseFormReturn<any, any, any>
   name: any
   label: string
   placeholder?: string
@@ -113,10 +113,21 @@ export default function CustomFormField({
     ) {
       getData?.refetch()?.then((res) => {
         setData(
-          res?.data?.data?.map((item: { name?: string; id?: string }) => ({
-            label: item?.name,
-            value: item?.id,
-          }))
+          res?.data?.data?.map(
+            (item: {
+              name?: string
+              id?: string
+              provider: any
+              category: any
+            }) => ({
+              label: props?.url?.includes('cat=b-c')
+                ? `${item?.provider?.name} - ${item?.name}`
+                : props?.url?.includes('bun=p-c-b')
+                  ? `${item?.category?.provider?.name} - ${item?.category?.name} - ${item?.name}`
+                  : item?.name,
+              value: item?.id,
+            })
+          )
         )
       })
     }
@@ -133,10 +144,10 @@ export default function CustomFormField({
       name={name}
       render={({ field }) =>
         props?.fieldType === 'multipleCheckbox' ? (
-          <FormItem className='mb-3 flex flex-col'>
+          <FormItem className='flex flex-col mb-3'>
             {items?.map((item, i) => (
-              <div key={i} className='mb-2 gap-y-2 bg-slate-100 p-3'>
-                <FormLabel className='mb-2 pb-3 font-bold text-gray-700'>
+              <div key={i} className='p-3 mb-2 gap-y-2 bg-slate-100'>
+                <FormLabel className='pb-3 mb-2 font-bold text-gray-700'>
                   {item.label}
                 </FormLabel>
                 {item?.children?.map((child, childId) => (
@@ -178,7 +189,7 @@ export default function CustomFormField({
             <FormMessage className='text-xs' />
           </FormItem>
         ) : props?.fieldType === 'checkbox' ? (
-          <FormItem className='mb-3 flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 '>
+          <FormItem className='flex flex-row items-start p-3 mb-3 space-x-3 space-y-0 border rounded-md '>
             <FormControl>
               <Checkbox
                 checked={field.value}
@@ -190,7 +201,7 @@ export default function CustomFormField({
             </div>
           </FormItem>
         ) : (
-          <FormItem className='mb-3 flex flex-col'>
+          <FormItem className='flex flex-col mb-3'>
             {hasLabel && (
               <FormLabel className='text-gray-700'>{label}</FormLabel>
             )}
@@ -212,7 +223,7 @@ export default function CustomFormField({
                         ? data?.find((item) => item.value === field.value)
                             ?.label
                         : 'Select item'}
-                      <FaSort className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                      <FaSort className='w-4 h-4 ml-2 opacity-50 shrink-0' />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -387,7 +398,7 @@ export const MultiSelect = ({
         onKeyDown={handleKeyDown}
         className='mb-2 overflow-visible bg-transparent'
       >
-        <div className='bg-whites group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
+        <div className='px-3 py-2 text-sm border rounded-md bg-whites group border-input ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
           <div className='flex flex-wrap gap-1'>
             {selected.map((item) => {
               return (
@@ -406,7 +417,7 @@ export const MultiSelect = ({
                     }}
                     onClick={() => handleUnselect(item)}
                   >
-                    <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
+                    <X className='w-3 h-3 text-muted-foreground hover:text-foreground' />
                   </button>
                 </Badge>
               )
@@ -419,13 +430,13 @@ export const MultiSelect = ({
               onBlur={() => setOpen(false)}
               onFocus={() => setOpen(true)}
               placeholder='Select items...'
-              className='ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground'
+              className='flex-1 ml-2 bg-transparent outline-none placeholder:text-muted-foreground'
             />
           </div>
         </div>
         <div className='relative mt-2'>
           {open && selectables.length > 0 ? (
-            <div className='absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in'>
+            <div className='absolute top-0 z-10 w-full border rounded-md shadow-md outline-none bg-popover text-popover-foreground animate-in'>
               <CommandGroup className='h-full overflow-auto'>
                 {selectables.map((item) => {
                   return (
@@ -450,7 +461,7 @@ export const MultiSelect = ({
           ) : null}
         </div>
       </Command>
-      <FormMessage className='-mt-2 mb-2 text-xs'>
+      <FormMessage className='mb-2 -mt-2 text-xs'>
         {form?.formState.errors?.[name]?.message as string}
       </FormMessage>
     </React.Fragment>
@@ -505,7 +516,6 @@ export const Upload = ({
           {label}
         </Label>
       )}
-
       <Input
         disabled={Boolean(uploadApi?.isPending)}
         multiple={multiple}
@@ -519,7 +529,7 @@ export const Upload = ({
       {uploadApi?.isPending && (
         <div className='flex items-center justify-start'>
           <span className='loading loading-spinner loading-sm'> </span>
-          <span className='ms-2 text-sm text-gray-500'>
+          <span className='text-sm text-gray-500 ms-2'>
             {fileType} is uploading
           </span>
         </div>

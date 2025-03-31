@@ -70,12 +70,17 @@ export async function POST(req: Request) {
     const promises = files.map(async (file) => {
       const ext = file.name.split('.').pop()?.toLowerCase()
       const fileName = `${file.name.split('.')[0]}-${Date.now()}.${ext}`
-      let buffer = Buffer.from(new Uint8Array(await file.arrayBuffer()))
+      let buffer = Buffer.from(
+        new Uint8Array(await file.arrayBuffer())
+      ) as Buffer<ArrayBufferLike>
 
       if (type === 'image') {
         const size = Buffer.byteLength(Buffer.from(buffer))
-        if (size > 200000) {
-          buffer = await sharp(buffer).resize(400).toBuffer()
+        if (size > 1024000) {
+          buffer = await sharp(buffer)
+            .resize(800, 800, { fit: 'inside' })
+            .webp({ quality: 50 })
+            .toBuffer()
         }
       }
 
@@ -93,7 +98,8 @@ export async function POST(req: Request) {
         )}`,
       })),
     })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

@@ -12,5 +12,5 @@ export default function ForgotPasswordLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <div>{children}</div>
+  return <div className='mx-auto px-2 container'>{children}</div>
 }

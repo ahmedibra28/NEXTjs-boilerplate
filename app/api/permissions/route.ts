@@ -39,8 +39,9 @@ export async function GET(req: Request) {
       total,
       data: result,
     })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }
 
@@ -74,7 +75,8 @@ export async function POST(req: Request) {
       ...permissionObj,
       message: 'Permission created successfully',
     })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

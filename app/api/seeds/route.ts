@@ -145,7 +145,8 @@ export async function GET(req: Request) {
       clientPermissions: await prisma.clientPermission.count({}),
       roles: await prisma.role.count({}),
     })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

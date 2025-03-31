@@ -53,7 +53,8 @@ export async function POST(req: NextApiRequestExtended) {
       return NextResponse.json({
         message: `An email has been sent to ${email} with further instructions.`,
       })
-  } catch ({ status = 500, message }: any) {
-    return getErrorResponse(message, status)
+  } catch (error: any) {
+    const { status = 500, message } = error
+    return getErrorResponse(message, status, error, req)
   }
 }

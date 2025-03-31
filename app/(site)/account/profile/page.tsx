@@ -106,7 +106,7 @@ const Profile = () => {
   }, [getApi?.isPending, form.setValue])
 
   return (
-    <div className='max-w-6xl mx-auto bg-white p-3 mt-2'>
+    <div className='max-w-6xl p-3 mx-auto mt-2 bg-white'>
       {updateApi?.isError && <Message value={updateApi?.error} />}
 
       {getApi?.isError && <Message value={getApi?.error} />}
@@ -114,10 +114,10 @@ const Profile = () => {
 
       {getApi?.isPending && <Spinner />}
 
-      <div className='bg-opacity-60 max-w-4xl mx-auto'>
-        <div className='text-3xl uppercase text-center'> {userInfo.name}</div>
-        <div className='text-center mb-10'>
-          <div className='bg-primary w-32 text-white rounded-full mx-auto'>
+      <div className='max-w-4xl mx-auto bg-opacity-60'>
+        <div className='text-3xl text-center uppercase'> {userInfo.name}</div>
+        <div className='mb-10 text-center'>
+          <div className='w-32 mx-auto text-white rounded-full bg-primary'>
             <span> {userInfo.role}</span>
           </div>
         </div>
@@ -125,7 +125,7 @@ const Profile = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             {getApi?.data?.image && (
-              <div className='avatar text-center flex justify-center'>
+              <div className='flex justify-center text-center avatar'>
                 <div className='w-32'>
                   <Image
                     src={getApi?.data?.image}
@@ -191,7 +191,7 @@ const Profile = () => {
                 />
 
                 {fileLink.length > 0 && (
-                  <div className='avatar text-center flex justify-center items-end mt-2'>
+                  <div className='flex items-end justify-center mt-2 text-center avatar'>
                     <div className='w-12 mask mask-squircle'>
                       <Image
                         src={fileLink?.[0]}
@@ -206,7 +206,7 @@ const Profile = () => {
                 )}
               </div>
 
-              <div className='flex justify-start flex-wrap flex-row w-full gap-2'>
+              <div className='flex flex-row flex-wrap justify-start w-full gap-2'>
                 <div className='w-full'>
                   <hr className='my-5' />
                 </div>

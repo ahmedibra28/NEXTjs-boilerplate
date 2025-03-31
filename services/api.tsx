@@ -11,7 +11,7 @@ import {
 import useUserInfoStore from '@/zustand/userStore'
 import { baseUrl } from '@/lib/setting'
 
-export const api = async (method: Method, url: string, obj = {}) => {
+export const api = async (method: Method, url: string, obj: any = {}) => {
   const logout = useUserInfoStore.getState().logout
 
   const token = useUserInfoStore.getState().userInfo.token
@@ -25,10 +25,6 @@ export const api = async (method: Method, url: string, obj = {}) => {
   try {
     let response
     let fullUrl = `${baseUrl}/api/${url}`
-
-    console.log(fullUrl)
-
-    console.log(fullUrl)
 
     switch (method) {
       case 'GET':
@@ -50,7 +46,12 @@ export const api = async (method: Method, url: string, obj = {}) => {
   } catch (error: any) {
     const err =
       error?.response?.data?.error || error?.message || 'Something went wrong'
-    const expectedErrors = ['invalid signature', 'jwt expired', 'Unauthorized']
+    const expectedErrors = [
+      'invalid signature',
+      'jwt expired',
+      'Unauthorized',
+      'jwt malformed',
+    ]
     if (expectedErrors.includes(err)) {
       logout()
     }
