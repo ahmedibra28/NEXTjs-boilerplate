@@ -22,12 +22,12 @@ import { TopLoadingBar } from '@/components/top-loading-bar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Skeleton from '@/components/skeleton'
 import ApiCall from '@/services/api'
-import { useRouter } from 'next/navigation'
 import useAuthorization from '@/hooks/useAuthorization'
+import { useRouter } from 'next/navigation'
 
 export default function Page() {
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(50)
+  const [limit, setLimit] = useState(10)
   const [id, setId] = useState<any>(null)
   const [edit, setEdit] = useState(false)
   const [q, setQ] = useState('')
@@ -71,13 +71,13 @@ export default function Page() {
   const getClientPermissionsApi = ApiCall({
     key: ['client-permissions'],
     method: 'GET',
-    url: `client-permissions?page=${page}&q=${q}&limit=${250}`,
+    url: `client-permissions?page=${page}&q=${q}&limit=${300}`,
   })?.get
 
   const getPermissionsApi = ApiCall({
     key: ['permissions'],
     method: 'GET',
-    url: `permissions?page=${page}&q=${q}&limit=${250}`,
+    url: `permissions?page=${page}&q=${q}&limit=${300}`,
   })?.get
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export default function Page() {
     // eslint-disable-next-line
   }, [limit])
 
-  const [search] = useDebounce(q, 2000)
+  const search = useDebounce(q, 2000)
 
   useEffect(() => {
     getApi?.refetch()
@@ -237,6 +237,7 @@ export default function Page() {
   ) => {
     setId(item.id!)
     setEdit(true)
+    setDialogOpen(true)
 
     form.setValue('name', item?.name)
     form.setValue('description', item?.description || '')
@@ -344,7 +345,7 @@ export default function Page() {
                 limit={limit}
                 setPage={setPage}
                 setQ={setQ}
-                search='name'
+                q={q}
                 isPending={getApi?.isPending}
               />
             </CardContent>

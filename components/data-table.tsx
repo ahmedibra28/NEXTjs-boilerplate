@@ -55,6 +55,7 @@ export default function DataTable({
   setLimit,
   limit,
   setQ,
+  q,
   isPending,
   search,
   importExcelHandler,
@@ -64,6 +65,7 @@ export default function DataTable({
 }: {
   columns: ColumnDef<any>[]
   setQ?: (q: string) => void
+  q?: string
   setPage?: (page: number) => void
   setLimit?: (limit: number) => void
   isPending?: boolean
@@ -134,24 +136,31 @@ export default function DataTable({
 
   return (
     <div className='w-full'>
-      <div className='flex flex-col items-center justify-between gap-y-2 py-4 md:flex-row'>
-        {setQ && search && (
+      <div className='flex flex-col items-center justify-between py-4 gap-y-2 md:flex-row'>
+        {setQ && (
           <Input
             placeholder='Filter...'
-            value={(table.getColumn(search)?.getFilterValue() as string) ?? ''}
+            value={
+              q
+                ? q
+                : ((search &&
+                    (table.getColumn(search)?.getFilterValue() as string)) ??
+                  '')
+            }
             onChange={(event) => {
-              table.getColumn(search)?.setFilterValue(event.target.value)
+              search &&
+                table.getColumn(search)?.setFilterValue(event.target.value)
               setQ(event.target.value)
             }}
             className='max-w-sm'
           />
         )}
-        <div className='flex w-full items-center gap-x-2 md:w-auto'>
+        <div className='flex items-center w-full gap-x-2 md:w-auto'>
           {importExcelHandler && (
             <>
               <label
                 htmlFor='uploadFile'
-                className='hidden h-10 min-w-32 items-center gap-x-2 rounded border border-input bg-background p-2 hover:bg-accent hover:text-accent-foreground md:flex'
+                className='items-center hidden h-10 p-2 border rounded min-w-32 gap-x-2 border-input bg-background hover:bg-accent hover:text-accent-foreground md:flex'
               >
                 <CloudUploadIcon className='size-5' />
                 Upload
@@ -180,7 +189,7 @@ export default function DataTable({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>
-                Columns <FaChevronDown className='ml-2 h-4 w-4' />
+                Columns <FaChevronDown className='w-4 h-4 ml-2' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
@@ -205,7 +214,7 @@ export default function DataTable({
           </DropdownMenu>
         </div>
       </div>
-      <div className='relative overflow-x-auto rounded-md border'>
+      <div className='relative overflow-x-auto border rounded-md'>
         <Table className='text-xs md:text-sm'>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -259,10 +268,10 @@ export default function DataTable({
         </Table>
       </div>
 
-      <div className='my-3 flex flex-col items-center justify-between gap-2 sm:flex-row'>
+      <div className='flex flex-col items-center justify-between gap-2 my-3 sm:flex-row'>
         {setLimit && limit && (
           <div className='flex items-center justify-start gap-x-1'>
-            <span className='flex h-10 items-center justify-center rounded-md border px-2 font-sans text-sm text-gray-700'>
+            <span className='flex items-center justify-center h-10 px-2 font-sans text-sm text-gray-700 border rounded-md'>
               Rows per page
             </span>
             <Select
@@ -285,7 +294,7 @@ export default function DataTable({
         {setPage && data?.page && data?.pages ? (
           <div className='flex gap-x-1'>
             <Button
-              className='rounded-br-none rounded-tr-none'
+              className='rounded-tr-none rounded-br-none'
               variant='outline'
               onClick={() => setPage(1)}
             >
@@ -315,7 +324,7 @@ export default function DataTable({
               <FaChevronRight />
             </Button>
             <Button
-              className='rounded-bl-none rounded-tl-none'
+              className='rounded-tl-none rounded-bl-none'
               variant='outline'
               onClick={() => setPage(Number(data?.pages))}
             >
