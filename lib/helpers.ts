@@ -3,6 +3,7 @@ import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { Prisma } from '@prisma/client'
+import { join } from 'path'
 
 export function getEnvVariable(key: string): string {
   const value = process.env[key]
@@ -139,4 +140,15 @@ export async function generateToken(id: string) {
   return jwt.sign({ id }, JWT_SECRET, {
     expiresIn: '1d',
   })
+}
+
+export function getBackupDirectory(): string {
+  const backupPath = process.env.BACKUP_PATH
+  if (!backupPath) {
+    console.warn(
+      'BACKUP_PATH environment variable not set. Using default ./db_backups'
+    )
+    return join(process.cwd(), 'db_backups') // Fallback, less ideal in Docker
+  }
+  return backupPath // e.g., /app/db_backups (inside container)
 }

@@ -115,6 +115,16 @@ export async function POST(req: Request) {
       })
     }
 
+    const accessToken = await generateToken(user.id)
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        accessToken,
+      },
+    })
+
     return NextResponse.json({
       id: user.id,
       name: user.name,
@@ -124,7 +134,7 @@ export async function POST(req: Request) {
       role: role.type,
       routes,
       menu: sortMenu(formatRoutes(routes) as any[]),
-      token: await generateToken(user.id),
+      token: accessToken,
       message: 'User has been logged in successfully',
     })
   } catch (error: any) {

@@ -51,8 +51,10 @@ export const api = async (method: Method, url: string, obj: any = {}) => {
       'jwt expired',
       'Unauthorized',
       'jwt malformed',
+      'revoked',
     ]
-    if (expectedErrors.includes(err)) {
+
+    if (expectedErrors.includes(err) || err.includes('has been revoked')) {
       logout()
     }
     throw err

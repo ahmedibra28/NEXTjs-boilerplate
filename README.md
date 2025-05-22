@@ -1,6 +1,6 @@
 # NEXTjs Boilerplate
 
-This is a boilerplate project for a Next.js 14 app using TypeScript, Tailwind CSS, Shadcn UI, Prisma, and Postgres, React Table, React Query. It includes features such as login, user management, user roles, user permissions, user profile, forgot password, reset password, nodemailer and more.
+This is a boilerplate project for a Next.js 15 app using TypeScript, Tailwind CSS, Shadcn UI, Prisma, and Postgres, React Table, React Query. It includes features such as login, user management, user roles, user permissions, user profile, forgot password, reset password, nodemailer and more.
 
 ## Getting started
 

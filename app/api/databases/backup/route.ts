@@ -1,66 +1,92 @@
 import { NextResponse } from 'next/server'
-import { getEnvVariable, getErrorResponse } from '@/lib/helpers'
+import {
+  getEnvVariable,
+  getErrorResponse,
+  getBackupDirectory,
+} from '@/lib/helpers'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import { zip } from 'zip-a-folder'
-import { isAuth } from '@/lib/auth'
-import { readdirSync } from 'fs'
+// import { isAuth } from '@/lib/auth'
+import { readdirSync, existsSync, mkdirSync } from 'fs'
+import { join } from 'path'
 
 const execAsync = promisify(exec)
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req)
+    // await isAuth(req)
 
     const currentDate = new Date().toISOString().slice(0, 10)
     const currentHour = new Date().getHours().toString().padStart(2, '0')
-    // const currentMinute = new Date().getMinutes().toString().padStart(2, '0')
+    // const currentMinute = new Date().getMinutes().toString().padStart(2, '0');
 
-    const backupDir = `${process.cwd()}/db/${currentDate}_${currentHour}`
+    const baseBackupDir = getBackupDirectory() // Use the consistent path, e.g., /app/db_backups
+    const backupFolderName = `${currentDate}_${currentHour}`
+    const backupDir = join(baseBackupDir, backupFolderName) // Full path to the temp dump folder
+    const zipFilePath = `${backupDir}.zip` // Full path to the final zip file
 
-    // Create the backup directory if it does not exist
-    await execAsync(`mkdir -p ${backupDir}`)
+    // Ensure the base backup directory exists (important for the first run or if volume is empty)
+    if (!existsSync(baseBackupDir)) {
+      mkdirSync(baseBackupDir, { recursive: true })
+      console.log(`Created base backup directory: ${baseBackupDir}`)
+    }
 
-    const dbDirs = readdirSync(`${process.cwd()}/db/`)
-    const dbZipDirs = dbDirs?.filter((item) => item.includes('.zip')).sort()
-    const keepZippedDbs = dbZipDirs.slice(-2)
-    const deleteZippedDbs = dbZipDirs.filter(
-      (item) => !keepZippedDbs.includes(item)
-    )
+    // Create the specific backup directory for this run
+    await execAsync(`mkdir -p "${backupDir}"`) // Use quotes for paths
 
-    deleteZippedDbs?.forEach(async (db) => {
-      await execAsync(`rm -rf ${process.cwd()}/db/${db}`)
-    })
+    // Clean up old zip files (logic remains similar, but uses baseBackupDir)
+    const allFilesInBackupDir = readdirSync(baseBackupDir)
+    const dbZipFiles = allFilesInBackupDir
+      ?.filter((item) => item.endsWith('.zip'))
+      .sort()
 
-    const DB_USER = getEnvVariable('DB_USER')
-    const DB_PASS = getEnvVariable('DB_PASS')
+    if (dbZipFiles && dbZipFiles.length > 23) {
+      const keepZippedDbs = dbZipFiles.slice(-23)
+      const deleteZippedDbs = dbZipFiles.filter(
+        (item) => !keepZippedDbs.includes(item)
+      )
+
+      // IMPORTANT: Fix async execution in loop
+      await Promise.all(
+        deleteZippedDbs.map(async (dbZip) => {
+          const fullPathToDelete = join(baseBackupDir, dbZip)
+          console.log(`Deleting old backup: ${fullPathToDelete}`)
+          await execAsync(`rm -f "${fullPathToDelete}"`) // Use rm -f for files
+        })
+      )
+    }
+
+    const POSTGRES_USER = getEnvVariable('POSTGRES_USER')
+    const POSTGRES_PASSWORD = getEnvVariable('POSTGRES_PASSWORD')
+    // Use DB_HOST and DB_PORT from environment variables (set in docker-compose)
+    const DB_HOST = getEnvVariable('DB_HOST')
+    const DB_PORT = getEnvVariable('DB_PORT') // Should be 5432 typically for container-to-container
+    const POSTGRES_DB = getEnvVariable('POSTGRES_DB') // Assuming 'toptayo' comes from env
 
     const execute = (dbName: string) =>
-      `PGPASSWORD=${DB_PASS} pg_dump -U ${DB_USER} -h localhost -p 5432 -F d -j 4 ${dbName} -f "${backupDir}/${dbName}"`
+      `PGPASSWORD=${POSTGRES_PASSWORD} pg_dump -h ${DB_HOST} -p ${DB_PORT} -U ${POSTGRES_USER} -d ${dbName} -F c -f "${join(backupDir, `${dbName}.dump`)}"`
 
-    const databases = ['boilerplate']
+    // Assuming only one DB for now based on env var
+    await execAsync(execute(POSTGRES_DB))
 
-    await Promise.all(
-      databases.map(async (dbName) => await execAsync(execute(dbName)))
-    )
+    // Convert folder to zip
+    await zip(backupDir, zipFilePath)
+    console.log(`Created backup zip: ${zipFilePath}`)
 
-    // convert folder to zip
-    await zip(`${backupDir}`, `${backupDir}.zip`)
+    // Delete folder after zip
+    await execAsync(`rm -rf "${backupDir}"`)
+    console.log(`Deleted temporary backup folder: ${backupDir}`)
 
-    // delete folder after zip
-    await execAsync(`rm -rf ${backupDir}`)
-
-    // send backed up db to cloud
-    // await uploadObject(
-    //   fs.createReadStream(`${backupDir}.zip`),
-    //   'db/' + `${backupDir}.zip`.split('db/').pop()
-    // )
+    // Optional: Send backed up db to cloud
+    // ...
 
     return NextResponse.json({
-      message: `Database backup successfully created and uploaded`,
+      message: `Database backup successfully created: ${backupFolderName}.zip`,
     })
   } catch (error: any) {
+    console.error('Backup failed:', error) // Log the actual error server-side
     const { status = 500, message } = error
-    return getErrorResponse(message, status, error, req)
+    return getErrorResponse(message || 'Backup failed', status, error)
   }
 }

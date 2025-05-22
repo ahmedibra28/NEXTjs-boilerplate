@@ -10,6 +10,14 @@ interface JwtPayload {
 }
 
 export const isAuth = async (req: any, params?: { id: string }) => {
+  const { searchParams } = new URL(req.url)
+  const pageSize = parseInt(searchParams.get('limit') as string) || 25
+  if (pageSize > 300)
+    throw {
+      message: 'Page limit should be less than or equal to 300',
+      status: 400,
+    }
+
   let token: string = ''
 
   if (req.headers.get('Authorization')?.startsWith('Bearer')) {
@@ -38,6 +46,15 @@ export const isAuth = async (req: any, params?: { id: string }) => {
           },
         },
       })
+
+      const accessToken = userRole?.accessToken
+      if (!accessToken || accessToken !== token) {
+        throw {
+          message:
+            'Your session token is either invalid or has been revoked. Please log in again to continue',
+          status: 401,
+        }
+      }
 
       req.user = {
         id: userRole?.id,
