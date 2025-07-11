@@ -147,7 +147,7 @@ export default function CustomFormField({
           <FormItem className='flex flex-col mb-3'>
             {items?.map((item, i) => (
               <div key={i} className='p-3 mb-2 gap-y-2 bg-slate-100'>
-                <FormLabel className='pb-3 mb-2 font-bold text-gray-700'>
+                <FormLabel className='pb-3 mb-2 font-bold text-gray-700 capitalize'>
                   {item.label}
                 </FormLabel>
                 {item?.children?.map((child, childId) => (

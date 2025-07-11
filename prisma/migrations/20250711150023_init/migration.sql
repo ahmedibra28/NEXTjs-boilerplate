@@ -1,26 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
-CREATE OR REPLACE FUNCTION nanoid(size int DEFAULT 21)
-RETURNS text AS $$
-DECLARE
-  id text := '';
-  i int := 0;
-  urlAlphabet char(64) := 'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';
-  bytes bytea := gen_random_bytes(size);
-  byte int;
-  pos int;
-BEGIN
-  WHILE i < size LOOP
-    byte := get_byte(bytes, i);
-    pos := (byte & 63) + 1; -- + 1 because substr starts at 1 for some reason
-    id := id || substr(urlAlphabet, pos, 1);
-    i = i + 1;
-  END LOOP;
-  RETURN id;
-END
-$$ LANGUAGE PLPGSQL STABLE;
-
-
 -- CreateEnum
 CREATE TYPE "Method" AS ENUM ('GET', 'POST', 'PUT', 'DELETE');
 
@@ -29,7 +6,7 @@ CREATE TYPE "Status" AS ENUM ('ACTIVE', 'INACTIVE', 'PENDING_VERIFICATION');
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
+    "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "image" TEXT,
@@ -40,6 +17,7 @@ CREATE TABLE "users" (
     "status" "Status" NOT NULL DEFAULT 'PENDING_VERIFICATION',
     "resetPasswordToken" TEXT,
     "resetPasswordExpire" BIGINT,
+    "accessToken" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "roleId" TEXT NOT NULL,
@@ -49,7 +27,7 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "roles" (
-    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "description" TEXT,
@@ -61,7 +39,7 @@ CREATE TABLE "roles" (
 
 -- CreateTable
 CREATE TABLE "permissions" (
-    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "method" "Method" NOT NULL,
     "route" TEXT NOT NULL,
@@ -74,7 +52,7 @@ CREATE TABLE "permissions" (
 
 -- CreateTable
 CREATE TABLE "client_permissions" (
-    "id" VARCHAR(21) NOT NULL DEFAULT nanoid(),
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "sort" INTEGER NOT NULL,
     "menu" TEXT NOT NULL,
@@ -88,16 +66,16 @@ CREATE TABLE "client_permissions" (
 
 -- CreateTable
 CREATE TABLE "_PermissionToRole" (
-    "A" VARCHAR(21) NOT NULL,
-    "B" VARCHAR(21) NOT NULL,
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
 
     CONSTRAINT "_PermissionToRole_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
 CREATE TABLE "_ClientPermissionToRole" (
-    "A" VARCHAR(21) NOT NULL,
-    "B" VARCHAR(21) NOT NULL,
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
 
     CONSTRAINT "_ClientPermissionToRole_AB_pkey" PRIMARY KEY ("A","B")
 );

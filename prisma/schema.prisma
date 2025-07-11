@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
+  id                  String   @id @default(nanoid(21))
   email               String   @unique
   name                String
   image               String?
@@ -30,7 +30,7 @@ model User {
 }
 
 model Role {
-  id          String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
+  id          String   @id @default(nanoid(21))
   name        String   @unique
   type        String   @unique
   description String?
@@ -45,7 +45,7 @@ model Role {
 }
 
 model Permission {
-  id          String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
+  id          String   @id @default(nanoid(21))
   name        String
   method      Method
   route       String
@@ -60,7 +60,7 @@ model Permission {
 }
 
 model ClientPermission {
-  id          String   @id @default(dbgenerated("nanoid()")) @db.VarChar(21)
+  id          String   @id @default(nanoid(21))
   name        String   @unique
   sort        Int
   menu        String

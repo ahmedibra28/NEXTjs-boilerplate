@@ -36,7 +36,7 @@ export default function RootLayout({
             <div>
               <Link href='/' className='w-24 text-xl normal-case'>
                 <Image
-                  src='https://github.com/ahmedibra28.png'
+                  src='/logo.png'
                   width={40}
                   height={40}
                   alt='logo'
@@ -46,7 +46,7 @@ export default function RootLayout({
             </div>
             <Navigation />
           </div>
-          <div className=''>
+          <div className='mb-2'>
             <main className='flex min-h-[85.5vh] flex-col'>{children}</main>
             <Toaster />
           </div>

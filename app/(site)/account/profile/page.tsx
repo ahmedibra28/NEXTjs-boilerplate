@@ -14,6 +14,7 @@ import * as z from 'zod'
 import { Form } from '@/components/ui/form'
 import CustomFormField, { FormButton, Upload } from '@/components/custom-form'
 import ApiCall from '@/services/api'
+import { LockIcon, MapPinIcon, PencilIcon, UserIcon } from 'lucide-react'
 
 const Profile = () => {
   const [fileLink, setFileLink] = React.useState<string[]>([])
@@ -106,140 +107,176 @@ const Profile = () => {
   }, [getApi?.isPending, form.setValue])
 
   return (
-    <div className='max-w-6xl p-3 mx-auto mt-2 bg-white'>
-      {updateApi?.isError && <Message value={updateApi?.error} />}
-
-      {getApi?.isError && <Message value={getApi?.error} />}
-      {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
+    <div className='max-w-4xl mx-auto'>
+      {/* Status Messages */}
+      <div className='mb-6 space-y-3'>
+        {updateApi?.isError && <Message value={updateApi?.error} />}
+        {getApi?.isError && <Message value={getApi?.error} />}
+        {updateApi?.isSuccess && <Message value={updateApi?.data?.message} />}
+      </div>
 
       {getApi?.isPending && <Spinner />}
 
-      <div className='max-w-4xl mx-auto bg-opacity-60'>
-        <div className='text-3xl text-center uppercase'> {userInfo.name}</div>
-        <div className='mb-10 text-center'>
-          <div className='w-32 mx-auto text-white rounded-full bg-primary'>
-            <span> {userInfo.role}</span>
+      {/* Profile Card */}
+      <div className='bg-white rounded-2xl shadow-md overflow-hidden'>
+        {/* Profile Header with Cover Photo */}
+        <div className='relative bg-gradient-to-r from-blue-500 to-indigo-600 h-32'>
+          <div className='absolute -bottom-16 left-6'>
+            <div className='relative'>
+              {getApi?.data?.image ? (
+                <div className='w-32 h-32 rounded-xl border-4 border-white shadow-md overflow-hidden'>
+                  <Image
+                    src={getApi.data.image}
+                    alt='avatar'
+                    width={128}
+                    height={128}
+                    className='object-cover w-full h-full'
+                  />
+                </div>
+              ) : (
+                <div className='w-32 h-32 rounded-xl border-4 border-white bg-gray-200 shadow-md flex items-center justify-center'>
+                  <span className='text-4xl text-gray-600 font-bold'>
+                    {userInfo.name.charAt(0)}
+                  </span>
+                </div>
+              )}
+              <span className='absolute -bottom-2 -right-2 px-3 py-1 text-xs font-bold rounded-full bg-indigo-600 text-white shadow-sm'>
+                {userInfo.role}
+              </span>
+            </div>
           </div>
         </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            {getApi?.data?.image && (
-              <div className='flex justify-center text-center avatar'>
-                <div className='w-32'>
-                  <Image
-                    src={getApi?.data?.image}
-                    alt='avatar'
-                    width={100}
-                    height={100}
-                    style={{ objectFit: 'cover' }}
-                    className='rounded-full'
+        {/* Profile Content */}
+        <div className='pt-20 px-6 pb-6'>
+          <div className='flex justify-between items-start mb-6'>
+            <div>
+              <h1 className='text-2xl font-bold text-gray-800'>
+                {userInfo.name}
+              </h1>
+              <p className='text-gray-500'>
+                Member since {new Date().getFullYear()}
+              </p>
+            </div>
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+              {/* Personal Info Section */}
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div className='space-y-6'>
+                  <h3 className='text-lg font-semibold text-gray-700 flex items-center'>
+                    <UserIcon className='w-5 h-5 mr-2 text-indigo-500' />
+                    Basic Information
+                  </h3>
+                  <CustomFormField
+                    form={form}
+                    name='name'
+                    label='Full Name'
+                    placeholder='Your full name'
+                    type='text'
+                  />
+                  <CustomFormField
+                    form={form}
+                    name='mobile'
+                    label='Phone Number'
+                    placeholder='+1 (___) ___-____'
+                    type='tel'
                   />
                 </div>
-              </div>
-            )}
 
-            <div className='flex flex-row flex-wrap gap-2'>
-              <div className='w-full md:w-[48%] lg:w-[32%]'>
-                <CustomFormField
-                  form={form}
-                  name='name'
-                  label='Name'
-                  placeholder='Enter name'
-                  type='text'
-                />
-              </div>
-              <div className='w-full md:w-[48%] lg:w-[32%]'>
-                <CustomFormField
-                  form={form}
-                  name='address'
-                  label='Address'
-                  placeholder='Enter address'
-                  type='text'
-                />
+                <div className='space-y-6'>
+                  <h3 className='text-lg font-semibold text-gray-700 flex items-center'>
+                    <MapPinIcon className='w-5 h-5 mr-2 text-indigo-500' />
+                    Contact Information
+                  </h3>
+                  <CustomFormField
+                    form={form}
+                    name='address'
+                    label='Address'
+                    placeholder='Your current address'
+                    type='text'
+                  />
+                  <div className='space-y-2'>
+                    <label className='block text-sm font-medium text-gray-700'>
+                      Profile Photo
+                    </label>
+                    <Upload
+                      setFileLink={setFileLink}
+                      fileLink={fileLink}
+                      fileType='image'
+                    />
+                    {fileLink.length > 0 && (
+                      <div className='flex items-center mt-2'>
+                        <div className='w-10 h-10 rounded-md overflow-hidden mr-2'>
+                          <Image
+                            src={fileLink[0]}
+                            alt='preview'
+                            width={40}
+                            height={40}
+                            className='object-cover w-full h-full'
+                          />
+                        </div>
+                        <span className='text-sm text-gray-500'>
+                          New photo selected
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div className='w-full md:w-[48%] lg:w-[32%]'>
-                <CustomFormField
-                  form={form}
-                  name='mobile'
-                  label='Mobile'
-                  placeholder='Enter mobile'
-                  type='number'
-                  step='0.01'
-                />
-              </div>
-
-              <div className='w-full md:w-[48%] lg:w-[32%]'>
+              {/* Bio Section */}
+              <div>
+                <h3 className='text-lg font-semibold text-gray-700 flex items-center mb-4'>
+                  <PencilIcon className='w-5 h-5 mr-2 text-indigo-500' />
+                  About You
+                </h3>
                 <CustomFormField
                   form={form}
                   name='bio'
                   label='Bio'
-                  placeholder='Tell us about yourself'
-                  type='text'
-                  cols={30}
-                  rows={5}
+                  placeholder='Tell us about yourself...'
+                  type='textarea'
+                  rows={3}
                 />
               </div>
 
-              <div className='w-full md:w-[48%] lg:w-[32%]'>
-                <Upload
-                  label='Image'
-                  setFileLink={setFileLink}
-                  fileLink={fileLink}
-                  fileType='image'
-                />
-
-                {fileLink.length > 0 && (
-                  <div className='flex items-end justify-center mt-2 text-center avatar'>
-                    <div className='w-12 mask mask-squircle'>
-                      <Image
-                        src={fileLink?.[0]}
-                        alt='avatar'
-                        width={50}
-                        height={50}
-                        style={{ objectFit: 'cover' }}
-                        className='rounded-full'
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className='flex flex-row flex-wrap justify-start w-full gap-2'>
-                <div className='w-full'>
-                  <hr className='my-5' />
-                </div>
-                <div className='w-full md:w-[48%] lg:w-[32%]'>
+              {/* Password Section */}
+              <div className='bg-gray-50 p-5 rounded-lg'>
+                <h3 className='text-lg font-semibold text-gray-700 flex items-center mb-4'>
+                  <LockIcon className='w-5 h-5 mr-2 text-indigo-500' />
+                  Change Password
+                </h3>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <CustomFormField
                     form={form}
                     name='password'
-                    label='Password'
-                    placeholder="Leave blank if you don't want to change"
+                    label='New Password'
+                    placeholder='••••••••'
                     type='password'
                   />
-                </div>
-                <div className='w-full md:w-[48%] lg:w-[32%]'>
                   <CustomFormField
                     form={form}
                     name='confirmPassword'
                     label='Confirm Password'
-                    placeholder='Confirm Password'
+                    placeholder='••••••••'
                     type='password'
                   />
                 </div>
               </div>
-            </div>
 
-            <div className='w-full md:w-[48%] lg:w-[32%] pt-3'>
-              <FormButton
-                loading={updateApi?.isPending}
-                label='Update Profile'
-                className='w-full'
-              />
-            </div>
-          </form>
-        </Form>
+              {/* Submit Button */}
+              <div className='flex justify-end pt-2'>
+                <FormButton
+                  loading={updateApi?.isPending}
+                  label='Save Changes'
+                  className='px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors shadow-sm'
+                />
+              </div>
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   )
