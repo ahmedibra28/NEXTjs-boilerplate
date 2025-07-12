@@ -265,4 +265,4 @@ const permissions = [
   },
 ]
 
-export { roles, users, profile, permissions, clientPermissions }
+export { roles, users, permissions, clientPermissions }
