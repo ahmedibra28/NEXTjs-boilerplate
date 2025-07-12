@@ -44,8 +44,7 @@ const Profile = () => {
   const FormSchema = z
     .object({
       name: z.string(),
-      address: z.string(),
-      mobile: z.number(),
+      mobile: z.string(),
       bio: z.string(),
       password: z.string().refine((val) => val.length === 0 || val.length > 6, {
         message: "Password can't be less than 6 characters",
@@ -55,6 +54,12 @@ const Profile = () => {
         .refine((val) => val.length === 0 || val.length > 6, {
           message: "Confirm password can't be less than 6 characters",
         }),
+      // Address fields
+      street: z.string(),
+      city: z.string(),
+      state: z.string().optional(),
+      zipCode: z.string().optional(),
+      country: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: 'Password do not match',
@@ -65,19 +70,32 @@ const Profile = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
-      address: '',
-      mobile: 0,
+      mobile: '',
       bio: '',
       password: '',
       confirmPassword: '',
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: '',
     },
   })
 
   function onSubmit(values: z.infer<typeof FormSchema>) {
+    const { street, city, state, zipCode, country, ...userData } = values
+
     updateApi?.mutateAsync({
-      ...values,
+      ...userData,
       id: getApi?.data?.id,
       image: fileLink ? fileLink[0] : getApi?.data?.image,
+      address: {
+        street,
+        city,
+        state,
+        zipCode,
+        country,
+      },
     })
   }
 
@@ -99,9 +117,18 @@ const Profile = () => {
 
   useEffect(() => {
     form.setValue('name', !getApi?.isPending ? getApi?.data?.name : '')
-    form.setValue('address', !getApi?.isPending ? getApi?.data?.address : '')
     form.setValue('mobile', !getApi?.isPending ? getApi?.data?.mobile : '')
     form.setValue('bio', !getApi?.isPending ? getApi?.data?.bio : '')
+
+    // Set address values if they exist
+    if (!getApi?.isPending && getApi?.data?.address) {
+      form.setValue('street', getApi.data.address.street || '')
+      form.setValue('city', getApi.data.address.city || '')
+      form.setValue('state', getApi.data.address.state || '')
+      form.setValue('zipCode', getApi.data.address.zipCode || '')
+      form.setValue('country', getApi.data.address.country || '')
+    }
+
     setFileLink(!getApi?.isPending ? [getApi?.data?.image] : [])
     // eslint-disable-next-line
   }, [getApi?.isPending, form.setValue])
@@ -188,15 +215,8 @@ const Profile = () => {
                 <div className='space-y-6'>
                   <h3 className='text-lg font-semibold text-gray-700 flex items-center'>
                     <MapPinIcon className='w-5 h-5 mr-2 text-indigo-500' />
-                    Contact Information
+                    Profile Image
                   </h3>
-                  <CustomFormField
-                    form={form}
-                    name='address'
-                    label='Address'
-                    placeholder='Your current address'
-                    type='text'
-                  />
                   <div className='space-y-2'>
                     <label className='block text-sm font-medium text-gray-700'>
                       Profile Photo
@@ -240,6 +260,51 @@ const Profile = () => {
                   type='textarea'
                   rows={3}
                 />
+              </div>
+
+              {/* Address Section */}
+              <div className='bg-gray-50 p-5 rounded-lg'>
+                <h3 className='text-lg font-semibold text-gray-700 flex items-center mb-4'>
+                  <MapPinIcon className='w-5 h-5 mr-2 text-indigo-500' />
+                  Address Information
+                </h3>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  <CustomFormField
+                    form={form}
+                    name='street'
+                    label='Street Address'
+                    placeholder='123 Main St'
+                    type='text'
+                  />
+                  <CustomFormField
+                    form={form}
+                    name='city'
+                    label='City'
+                    placeholder='Mogadishu'
+                    type='text'
+                  />
+                  <CustomFormField
+                    form={form}
+                    name='state'
+                    label='State/Province'
+                    placeholder='BN'
+                    type='text'
+                  />
+                  <CustomFormField
+                    form={form}
+                    name='zipCode'
+                    label='Zip/Postal Code'
+                    placeholder='02010'
+                    type='text'
+                  />
+                  <CustomFormField
+                    form={form}
+                    name='country'
+                    label='Country'
+                    placeholder='Somalia'
+                    type='text'
+                  />
+                </div>
               </div>
 
               {/* Password Section */}

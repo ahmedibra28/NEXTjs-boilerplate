@@ -12,8 +12,8 @@ model User {
   email               String   @unique
   name                String
   image               String?
-  mobile              Int?
-  address             String?
+  mobile              String?
+  address             Address?
   bio                 String?
   password            String
   status              Status   @default(PENDING_VERIFICATION)
@@ -72,6 +72,23 @@ model ClientPermission {
   role Role[]
 
   @@map("client_permissions")
+}
+
+model Address {
+  id      String  @id @default(nanoid(21))
+  street  String
+  city    String
+  state   String?
+  zipCode String?
+  country String
+  userId  String  @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("addresses")
 }
 
 enum Method {
