@@ -1,7 +1,8 @@
 import { isAuth } from '@/lib/auth'
 import { getErrorResponse } from '@/lib/helpers'
 import { NextResponse } from 'next/server'
-import { QueryMode, prisma } from '@/lib/prisma.db'
+import { prisma, Prisma } from '@/lib/prisma.db'
+const { QueryMode } = Prisma
 
 interface Params {
   params: Promise<{

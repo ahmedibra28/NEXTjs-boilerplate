@@ -51,3 +51,4 @@ next-env.d.ts
 /db/*.zip
 
 *.md
+prisma/generated
