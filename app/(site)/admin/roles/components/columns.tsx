@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { ClientPermission, Permission, Role } from '@prisma/client'
+import { ClientPermission, Permission, Role } from '@/prisma/generated/client'
 import DateTime from '@/lib/dateTime'
 import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { PencilIcon, XIcon } from 'lucide-react'

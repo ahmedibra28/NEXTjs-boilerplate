@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/prisma/generated/client'
 import { join } from 'path'
 
 export function getEnvVariable(key: string): string {

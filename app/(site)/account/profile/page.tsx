@@ -12,9 +12,10 @@ import useUserInfoStore from '@/zustand/userStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
-import CustomFormField, { FormButton, Upload } from '@/components/custom-form'
+import CustomFormField, { FormButton } from '@/components/custom-form'
 import ApiCall from '@/services/api'
 import { LockIcon, MapPinIcon, PencilIcon, UserIcon } from 'lucide-react'
+import { DragDropUpload } from '@/components/drag-drop-upload'
 
 const Profile = () => {
   const [fileLink, setFileLink] = React.useState<string[]>([])
@@ -221,10 +222,10 @@ const Profile = () => {
                     <label className='block text-sm font-medium text-gray-700'>
                       Profile Photo
                     </label>
-                    <Upload
-                      setFileLink={setFileLink}
-                      fileLink={fileLink}
+                    <DragDropUpload
                       fileType='image'
+                      onUploadSuccess={setFileLink}
+                      multiple={false}
                     />
                     {fileLink.length > 0 && (
                       <div className='flex items-center mt-2'>

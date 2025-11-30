@@ -53,6 +53,7 @@
     "cors": "^2.8.5",
     "dayjs": "^1.11.19",
     "device-detector-js": "^3.0.3",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.5",
     "express": "^5.1.0",

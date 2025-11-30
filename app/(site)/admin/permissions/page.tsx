@@ -2,7 +2,7 @@
 
 import useDataStore from '@/zustand/dataStore'
 import React, { useEffect, useState } from 'react'
-import type { Permission as IPermission } from '@prisma/client'
+import type { Permission as IPermission } from '@/prisma/generated/client'
 import { FormSchema } from './components/schema'
 import CustomFormField from '@/components/custom-form'
 import { Form } from '@/components/ui/form'

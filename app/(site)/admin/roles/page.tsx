@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import type {
   Permission as IPermission,
   ClientPermission as IClientPermission,
-} from '@prisma/client'
+} from '@/prisma/generated/client'
 import { FormSchema } from './components/schema'
 import CustomFormField from '@/components/custom-form'
 import { Form } from '@/components/ui/form'
