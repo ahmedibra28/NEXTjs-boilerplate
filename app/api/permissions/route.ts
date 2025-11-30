@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import { prisma, Prisma } from '@/lib/prisma.db'
 const { QueryMode } = Prisma
 
-export async function GET(req: Request) {
+export async function GET(req: AuthenticatedRequest) {
   try {
     await isAuth(req)
 

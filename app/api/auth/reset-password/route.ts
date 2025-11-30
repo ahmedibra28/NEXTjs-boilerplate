@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import { encryptPassword, getErrorResponse } from '@/lib/helpers'
 import { prisma } from '@/lib/prisma.db'
 
-export async function POST(req: NextApiRequestExtended) {
+export async function POST(req: Request) {
   try {
     const { password, resetToken } = await req.json()
 

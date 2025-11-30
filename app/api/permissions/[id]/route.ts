@@ -9,7 +9,7 @@ interface Params {
   }>
 }
 
-export async function PUT(req: Request, props: Params) {
+export async function PUT(req: AuthenticatedRequest, props: Params) {
   const params = await props.params
   try {
     await isAuth(req, params)

@@ -6,7 +6,7 @@ import { handleEmailFire } from '@/lib/email-helper'
 import ResetPassword from '@/emails/ResetPassword'
 import { getDevice } from '@/lib/getDevice'
 
-export async function POST(req: NextApiRequestExtended) {
+export async function POST(req: Request) {
   try {
     const { email } = await req.json()
 

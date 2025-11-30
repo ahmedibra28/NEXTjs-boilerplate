@@ -4,12 +4,11 @@ import { NextRequest } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 declare global {
-  var mongoose: any
   var prisma: PrismaClient
   namespace NodeJS {
     interface ProcessEnv {
       NODE_ENV: string
-      MONGO_URI: string
+      DATABASE_URI: string
       JWT_SECRET: string
       SMTP_SERVER: string
       SMTP_PORT: number
@@ -18,7 +17,7 @@ declare global {
     }
   }
   interface NextApiRequestExtended extends Request {
-    user: {
+    user?: {
       id: string
       name: string
       email: string
@@ -38,5 +37,14 @@ declare global {
   }
   interface NextApiResponseExtended extends NextRequest {
     Data: any
+  }
+
+  type AuthenticatedRequest = Request & {
+    user?: {
+      id: string
+      name: string
+      email: string
+      role: string
+    }
   }
 }

@@ -3,12 +3,12 @@ import { getErrorResponse } from '@/lib/helpers'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma.db'
 
-export async function GET(req: NextApiRequestExtended) {
+export async function GET(req: AuthenticatedRequest) {
   try {
     await isAuth(req)
 
     const userObj = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: `${req.user?.id}` },
       select: {
         id: true,
         name: true,
