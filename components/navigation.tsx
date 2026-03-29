@@ -1,4 +1,5 @@
 'use client'
+import { authClient } from '@/lib/auth-client'
 import useUserInfoStore from '@/zustand/userStore'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
@@ -31,6 +32,7 @@ const Navigation = () => {
   const [menu, setMenu] = React.useState<any>(userInfo.menu)
 
   const handleLogout = () => {
+    authClient.signOut()
     useUserInfoStore.getState().logout()
   }
 

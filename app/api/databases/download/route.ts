@@ -5,7 +5,7 @@ import { isAuth } from '@/lib/auth'
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req, 'databases.download')
+    await isAuth(req, 'database.download')
 
     const { db: requestedFileName } = await req.json()
 

@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { ClientPermission } from '@/prisma/generated/client'
 import DateTime from '@/lib/dateTime'
 import { AlertDialog, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { PencilIcon, XIcon } from 'lucide-react'
@@ -24,10 +23,19 @@ export const useColumns = ({
   editHandler,
   deleteHandler,
 }: {
-  editHandler: (data: ClientPermission) => void
+  editHandler: (data: {
+    id: string
+    name: string
+    key: string
+    menu: string
+    sort: number
+    path: string
+    description?: string
+    createdAt?: string
+  }) => void
   deleteHandler: (id: any) => void
 }) => {
-  const columns: ColumnDef<ClientPermission>[] = [
+  const columns: ColumnDef<any>[] = [
     {
       accessorKey: 'name',
       cell: ({ row }) => <span>{row.getValue('name')}</span>,

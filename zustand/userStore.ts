@@ -5,9 +5,10 @@ export type UserInfo = {
   readonly id?: string
   name: string
   email: string
-  token: null
+  token: string | null
   role: string
-  mobile: number
+  mobile: string | null
+  permissions?: { key: string; name: string; description?: string | null }[]
   routes: any[]
   menu: any[]
   image?: string
@@ -28,7 +29,8 @@ const useUserInfoStore = create(
         email: '',
         token: null,
         role: '',
-        mobile: 0,
+        mobile: null,
+        permissions: [],
         routes: [],
         menu: [],
         image: '',
@@ -50,7 +52,8 @@ const useUserInfoStore = create(
             email: '',
             token: null,
             role: '',
-            mobile: 0,
+            mobile: null,
+            permissions: [],
             routes: [],
             menu: [],
             image: '',

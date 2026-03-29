@@ -1,48 +1,98 @@
 import { isAuth } from '@/lib/auth'
+import { slugifyRoleType } from '@/lib/access-control'
 import { getErrorResponse } from '@/lib/helpers'
-import { NextResponse } from 'next/server'
 import { prisma, Prisma } from '@/lib/prisma.db'
+import { NextResponse } from 'next/server'
+
 const { QueryMode } = Prisma
+
+const roleInclude = {
+  permissions: {
+    select: {
+      id: true,
+      key: true,
+      name: true,
+      description: true,
+    },
+    orderBy: {
+      name: 'asc' as const,
+    },
+  },
+  clientPermissions: {
+    select: {
+      id: true,
+      key: true,
+      name: true,
+      description: true,
+      path: true,
+      menu: true,
+      sort: true,
+    },
+    orderBy: {
+      sort: 'asc' as const,
+    },
+  },
+}
+
+function formatRole(role: {
+  id: string
+  name: string
+  type: string
+  description: string | null
+  createdAt: Date
+  permissions: any[]
+  clientPermissions: any[]
+}) {
+  return {
+    id: role.id,
+    name: role.name,
+    type: role.type,
+    description: role.description,
+    createdAt: role.createdAt,
+    permissions: role.permissions,
+    clientPermissions: role.clientPermissions,
+  }
+}
 
 export async function GET(req: Request) {
   try {
-    await isAuth(req, 'roles.read')
+    await isAuth(req, 'access.reference.read')
 
     const { searchParams } = new URL(req.url)
-    const q = searchParams.get('q')
-
-    const query = q
-      ? { name: { contains: q, mode: QueryMode.insensitive } }
-      : {}
-
+    const q = searchParams.get('q') || ''
     const page = parseInt(searchParams.get('page') as string) || 1
     const pageSize = parseInt(searchParams.get('limit') as string) || 25
     const skip = (page - 1) * pageSize
 
-    const [result, total] = await Promise.all([
+    const where = q
+      ? {
+          OR: [
+            { name: { contains: q, mode: QueryMode.insensitive } },
+            { type: { contains: q, mode: QueryMode.insensitive } },
+            { description: { contains: q, mode: QueryMode.insensitive } },
+          ],
+        }
+      : {}
+
+    const [roles, total] = await Promise.all([
       prisma.role.findMany({
-        where: query,
-        include: {
-          permissions: true,
-          clientPermissions: true,
-        },
+        where,
+        include: roleInclude,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ isSystem: 'desc' }, { createdAt: 'desc' }],
       }),
-      prisma.role.count({ where: query }),
+      prisma.role.count({ where }),
     ])
 
-    const pages = Math.ceil(total / pageSize)
-
     return NextResponse.json({
-      startIndex: skip + 1,
-      endIndex: skip + result.length,
-      count: result.length,
+      startIndex: total === 0 ? 0 : skip + 1,
+      endIndex: skip + roles.length,
+      count: roles.length,
       page,
-      pages,
+      pages: Math.ceil(total / pageSize),
       total,
-      data: result,
+      data: roles.map(formatRole),
     })
   } catch (error: any) {
     const { status = 500, message } = error
@@ -52,63 +102,55 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req, 'roles.create')
+    await isAuth(req, 'access.reference.read')
 
-    const {
-      name,
-      description,
-      permissions: permissionRequest,
-      clientPermissions: clientPermissionRequest,
-    } = await req.json()
+    const { name, description, permissions, clientPermissions } = await req.json()
+    const type = slugifyRoleType(name || '')
 
-    let type
-    let permission = []
-    let clientPermission = []
-    if (name) type = name.toUpperCase().trim().replace(/\s+/g, '_')
+    if (!name?.trim()) return getErrorResponse('Name is required', 400)
+    if (!type) return getErrorResponse('Invalid role name', 400)
 
-    if (permissionRequest) {
-      if (Array.isArray(permissionRequest)) {
-        permission = permissionRequest
-      } else {
-        permission = [permissionRequest]
-      }
+    const existingRole = await prisma.role.findUnique({
+      where: { type },
+      select: { id: true },
+    })
+    if (existingRole) {
+      return getErrorResponse('A role with this name already exists', 409)
     }
 
-    if (clientPermissionRequest) {
-      if (Array.isArray(clientPermissionRequest)) {
-        clientPermission = clientPermissionRequest
-      } else {
-        clientPermission = [clientPermissionRequest]
-      }
-    }
+    const [permissionRecords, clientPermissionRecords] = await Promise.all([
+      prisma.permission.findMany({
+        where: { id: { in: permissions || [] } },
+        select: { id: true },
+      }),
+      prisma.clientPermission.findMany({
+        where: { id: { in: clientPermissions || [] } },
+        select: { id: true },
+      }),
+    ])
 
-    permission = permission?.filter((per) => per)
-    clientPermission = clientPermission?.filter((client) => client)
-
-    const checkExistence =
-      name &&
-      (await prisma.role.findFirst({
-        where: { name: { equals: name, mode: QueryMode.insensitive } },
-      }))
-    if (checkExistence) return getErrorResponse('Role already exist')
-
-    const object = await prisma.role.create({
+    const role = await prisma.role.create({
       data: {
-        name,
-        description,
+        name: name.trim(),
         type,
+        description: description?.trim() || null,
         permissions: {
-          connect: permission?.map((pre) => ({ id: pre })),
+          connect: permissionRecords.map((permission) => ({
+            id: permission.id,
+          })),
         },
         clientPermissions: {
-          connect: clientPermission?.map((client) => ({ id: client })),
+          connect: clientPermissionRecords.map((clientPermission) => ({
+            id: clientPermission.id,
+          })),
         },
       },
+      include: roleInclude,
     })
 
     return NextResponse.json({
-      ...object,
-      message: 'Role created successfully',
+      role: formatRole(role),
+      message: 'Role has been created successfully',
     })
   } catch (error: any) {
     const { status = 500, message } = error

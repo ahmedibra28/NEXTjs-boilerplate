@@ -100,18 +100,21 @@ export default function CustomFormField({
   const [open, setOpen] = React.useState(false)
   const [data, setData] = React.useState(props?.data || [])
 
-  const getData = ApiCall({
-    key: [props?.url!],
-    method: 'GET',
-    url: props?.url + `&q=${search}`,
-  })?.get
+  const getData = props?.url
+    ? ApiCall({
+        key: [props.url, search],
+        method: 'GET',
+        url: `${props.url}&q=${search}`,
+      })?.get
+    : undefined
 
   const [value] = useDebounce(search, 1000)
 
   React.useEffect(() => {
     if (
-      (props?.fieldType && props?.fieldType === 'command') ||
-      (props?.data?.length === 0 && props?.fieldType !== 'multipleCheckbox')
+      props?.url &&
+      ((props?.fieldType && props?.fieldType === 'command') ||
+        (props?.data?.length === 0 && props?.fieldType !== 'multipleCheckbox'))
     ) {
       getData?.refetch()?.then((res) => {
         setData(

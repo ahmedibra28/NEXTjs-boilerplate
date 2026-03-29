@@ -5,7 +5,7 @@ import { isAuth } from '@/lib/auth'
 
 export async function GET(req: Request) {
   try {
-    await isAuth(req, 'databases.read')
+    await isAuth(req, 'database.read')
 
     const backupDirPath = getBackupDirectory() // Get the consistent path
 

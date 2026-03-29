@@ -1,49 +1,48 @@
 import { isAuth } from '@/lib/auth'
 import { getErrorResponse } from '@/lib/helpers'
-import { NextResponse } from 'next/server'
 import { prisma, Prisma } from '@/lib/prisma.db'
+import { NextResponse } from 'next/server'
+
 const { QueryMode } = Prisma
 
 export async function GET(req: AuthenticatedRequest) {
   try {
-    await isAuth(req, 'permissions.read')
+    await isAuth(req, 'access.reference.read')
 
     const { searchParams } = new URL(req.url)
-    const q = searchParams.get('q')
-
-    const query = q
-      ? {
-          OR: [
-            { name: { contains: q, mode: QueryMode.insensitive } },
-            { key: { contains: q, mode: QueryMode.insensitive } },
-          ],
-        }
-      : {}
-
+    const q = searchParams.get('q') || ''
     const page = parseInt(searchParams.get('page') as string) || 1
     const pageSize = parseInt(searchParams.get('limit') as string) || 25
     const skip = (page - 1) * pageSize
 
-    const [result, total] = await Promise.all([
+    const where = q
+      ? {
+          OR: [
+            { name: { contains: q, mode: QueryMode.insensitive } },
+            { key: { contains: q, mode: QueryMode.insensitive } },
+            { description: { contains: q, mode: QueryMode.insensitive } },
+          ],
+        }
+      : {}
+
+    const [permissions, total] = await Promise.all([
       prisma.permission.findMany({
-        where: query,
+        where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ isSystem: 'desc' }, { createdAt: 'desc' }],
       }),
-      prisma.permission.count({ where: query }),
+      prisma.permission.count({ where }),
     ])
 
-    const pages = Math.ceil(total / pageSize)
-
     return NextResponse.json({
-      startIndex: skip + 1,
-      endIndex: skip + result.length,
-      count: result.length,
+      startIndex: total === 0 ? 0 : skip + 1,
+      endIndex: skip + permissions.length,
+      count: permissions.length,
       page,
-      pages,
+      pages: Math.ceil(total / pageSize),
       total,
-      data: result,
+      data: permissions,
     })
   } catch (error: any) {
     const { status = 500, message } = error
@@ -53,33 +52,30 @@ export async function GET(req: AuthenticatedRequest) {
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req, 'permissions.create')
+    await isAuth(req, 'access.reference.read')
 
     const { name, key, description } = await req.json()
-    const normalizedKey = key?.trim()?.toLowerCase()
-    if (!normalizedKey)
-      return getErrorResponse('Permission key is required', 400)
 
-    const checkExistence =
-      normalizedKey &&
-      (await prisma.permission.findFirst({
-        where: {
-          key: normalizedKey,
-        },
-      }))
-    if (checkExistence) return getErrorResponse('Permission already exist')
+    if (!name?.trim()) return getErrorResponse('Name is required', 400)
+    if (!key?.trim()) return getErrorResponse('Key is required', 400)
 
-    const permissionObj = await prisma.permission.create({
+    const exists = await prisma.permission.findUnique({
+      where: { key: key.trim() },
+      select: { id: true },
+    })
+    if (exists) return getErrorResponse('Permission key already exists', 409)
+
+    const permission = await prisma.permission.create({
       data: {
-        name,
-        key: normalizedKey,
-        description,
+        name: name.trim(),
+        key: key.trim(),
+        description: description?.trim() || null,
       },
     })
 
     return NextResponse.json({
-      ...permissionObj,
-      message: 'Permission created successfully',
+      permission,
+      message: 'Permission has been created successfully',
     })
   } catch (error: any) {
     const { status = 500, message } = error

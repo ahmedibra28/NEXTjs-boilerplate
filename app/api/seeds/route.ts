@@ -1,8 +1,8 @@
-import { clientPermissions, permissions, roles, users } from '@/config/data'
-
+import { seedUser } from '@/config/seed'
 import { encryptPassword, getErrorResponse } from '@/lib/helpers'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma.db'
+import { syncSystemAccessControl } from '@/lib/access-control'
 
 export async function GET(req: Request) {
   try {
@@ -10,147 +10,82 @@ export async function GET(req: Request) {
     const secret = searchParams.get('secret')
     const option = searchParams.get('option')
 
-    if (!secret || secret !== 'ts')
+    if (!secret || secret !== 'ts') {
       return getErrorResponse('Invalid secret', 401)
+    }
 
-    // Check duplicate permissions
-    permissions.map((p) => {
-      if (p.key) {
-        const duplicate = permissions.filter((p2) => p2.key === p.key)
-        if (duplicate.length > 1) {
-          return getErrorResponse(`Duplicate permission key: ${p.key}`, 500)
-        }
-      }
-    })
-
-    clientPermissions.map((p) => {
-      if (p.key) {
-        const duplicate = clientPermissions.filter((p2) => p2.key === p.key)
-        if (duplicate.length > 1) {
-          return getErrorResponse(
-            `Duplicate client permission key: ${p.key}`,
-            500
-          )
-        }
-      }
-    })
-
-    // Delete all existing data if option is reset
     if (option === 'reset') {
+      await prisma.session.deleteMany({})
+      await prisma.account.deleteMany({})
+      await prisma.address.deleteMany({})
       await prisma.user.deleteMany({})
       await prisma.permission.deleteMany({})
       await prisma.clientPermission.deleteMany({})
       await prisma.role.deleteMany({})
     }
 
-    // Create roles or update if exists
-    await prisma.$transaction(async (prisma) => {
-      await Promise.all(
-        roles?.map(
-          async (obj) =>
-            await prisma.role.upsert({
-              where: { id: obj.id },
-              update: obj,
-              create: obj,
-            })
-        )
-      )
+    await syncSystemAccessControl()
+
+    const ownerRole = await prisma.role.findUnique({
+      where: { type: seedUser.roleType },
+      select: { id: true },
     })
 
-    // Create users or update if exists
+    if (!ownerRole) {
+      return getErrorResponse('Owner role is not configured', 500)
+    }
+
     await prisma.user.upsert({
-      where: { id: users.id },
+      where: { id: seedUser.id },
       create: {
-        ...users,
-        password: await encryptPassword({ password: users.password }),
-        roleId: roles[0].id,
-        status: 'ACTIVE',
+        id: seedUser.id,
+        name: seedUser.name,
+        email: seedUser.email,
+        emailVerified: true,
+        roleId: ownerRole.id,
+        status: seedUser.status,
+        mobile: seedUser.mobile,
+        image: seedUser.image,
+        bio: seedUser.bio,
       },
       update: {
-        ...users,
-        roleId: roles[0].id,
-        password: await encryptPassword({ password: users.password }),
-        status: 'ACTIVE',
+        name: seedUser.name,
+        email: seedUser.email,
+        emailVerified: true,
+        roleId: ownerRole.id,
+        status: seedUser.status,
+        mobile: seedUser.mobile,
+        image: seedUser.image,
+        bio: seedUser.bio,
       },
     })
 
-    await prisma.user.update({
-      data: {
-        roleId: roles[0].id,
+    await prisma.account.upsert({
+      where: {
+        providerId_accountId: {
+          providerId: 'credential',
+          accountId: seedUser.id,
+        },
       },
-      where: { id: users.id },
+      create: {
+        userId: seedUser.id,
+        accountId: seedUser.id,
+        providerId: 'credential',
+        password: await encryptPassword({ password: seedUser.password }),
+      },
+      update: {
+        password: await encryptPassword({ password: seedUser.password }),
+      },
     })
-
-    // Create permissions
-    await Promise.all(
-      permissions?.map(
-        async (obj) =>
-          await prisma.permission.upsert({
-            where: { id: obj.id },
-            update: obj as any,
-            create: obj as any,
-          })
-      )
-    )
-
-    // Create client permissions
-    await Promise.all(
-      clientPermissions?.map(
-        async (obj) =>
-          await prisma.clientPermission.upsert({
-            where: { id: obj.id },
-            update: obj,
-            create: obj,
-          })
-      )
-    )
-
-    // Create roles or update if exists
-    await Promise.all(
-      roles?.map(
-        async (obj) =>
-          await prisma.role.upsert({
-            where: { id: obj.id },
-            update: {
-              ...obj,
-              ...(obj.type === 'SUPER_ADMIN' && {
-                permissions: {
-                  connect: permissions.map((p) => ({ id: p.id })),
-                },
-              }),
-              ...(obj.type === 'SUPER_ADMIN' && {
-                clientPermissions: {
-                  connect: clientPermissions.map((p) => ({
-                    id: p.id,
-                  })),
-                },
-              }),
-            },
-            create: {
-              ...obj,
-              ...(obj.type === 'SUPER_ADMIN' && {
-                permissions: {
-                  connect: permissions.map((p) => ({ id: p.id })),
-                },
-              }),
-              ...(obj.type === 'SUPER_ADMIN' && {
-                clientPermissions: {
-                  connect: clientPermissions.map((p) => ({
-                    id: p.id,
-                  })),
-                },
-              }),
-            },
-          })
-      )
-    )
 
     return NextResponse.json({
       message: 'Database seeded successfully',
       users: await prisma.user.count({}),
+      roles: await prisma.role.count({}),
       permissions: await prisma.permission.count({}),
       clientPermissions: await prisma.clientPermission.count({}),
-      roles: await prisma.role.count({}),
+      accounts: await prisma.account.count({}),
+      sessions: await prisma.session.count({}),
     })
   } catch (error: any) {
     const { status = 500, message } = error

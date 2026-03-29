@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
 import CustomFormField, { FormButton } from '@/components/custom-form'
-import ApiCall from '@/services/api'
+import { authClient } from '@/lib/auth-client'
 
 const FormSchema = z
   .object({
@@ -18,11 +18,11 @@ const FormSchema = z
       message: 'Name is required',
     }),
     email: z.string().email(),
-    password: z.string().refine((val) => val.length > 6, {
-      message: "Password can't be less than 6 characters",
+    password: z.string().refine((val) => val.length > 7, {
+      message: "Password can't be less than 8 characters",
     }),
-    confirmPassword: z.string().refine((val) => val.length > 6, {
-      message: "Confirm password can't be less than 6 characters",
+    confirmPassword: z.string().refine((val) => val.length > 7, {
+      message: "Confirm password can't be less than 8 characters",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -36,23 +36,14 @@ const Page = () => {
 
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const postApi = ApiCall({
-    key: ['register'],
-    method: 'POST',
-    url: `auth/register`,
-  })?.post
+  const [message, setMessage] = React.useState('')
+  const [success, setSuccess] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
 
   useEffect(() => {
     userInfo.id && router.push((params as string) || '/')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, userInfo.id])
-
-  useEffect(() => {
-    if (postApi?.isSuccess) {
-      form.reset()
-    }
-    // eslint-disable-next-line
-  }, [postApi?.isSuccess, router])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -64,13 +55,32 @@ const Page = () => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof FormSchema>) {
-    postApi?.mutateAsync(values)
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
+    setLoading(true)
+    setMessage('')
+    setSuccess(false)
+
+    const result = await authClient.signUp.email({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      callbackURL: `${window.location.origin}/auth/verification`,
+    })
+
+    if (result.error) {
+      setLoading(false)
+      setMessage(result.error.message || 'Unable to sign up')
+      return
+    }
+
+    form.reset()
+    setSuccess(true)
+    setLoading(false)
   }
 
   return (
     <FormContainer title='Sign Up'>
-      {postApi?.isError && <Message value={postApi?.error} />}
+      {message && <Message value={message} />}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
@@ -103,7 +113,7 @@ const Page = () => {
           />
 
           <FormButton
-            loading={postApi?.isPending}
+            loading={loading}
             label='Sign Up'
             className='w-full'
           />
@@ -117,7 +127,7 @@ const Page = () => {
         </form>
       </Form>
 
-      {postApi?.isSuccess && (
+      {success && (
         <div className='text-green-500 text-center mt-5'>
           Please check your email to verify your account
         </div>

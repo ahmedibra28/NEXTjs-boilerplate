@@ -17,7 +17,7 @@ const useAuthorization = (requiredPermission?: string) => {
     return '/'
   }
 
-  if (!userInfo.token) {
+  if (!userInfo.id) {
     return `/auth/login?next=${pathname}`
   }
 }

@@ -15,7 +15,7 @@ const execAsync = promisify(exec)
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req, 'databases.backup')
+    await isAuth(req, 'database.backup')
 
     const currentDate = new Date().toISOString().slice(0, 10)
     const currentHour = new Date().getHours().toString().padStart(2, '0')

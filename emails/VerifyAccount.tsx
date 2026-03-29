@@ -13,20 +13,18 @@ import * as React from 'react'
 
 interface VerifyAccountProps {
   company: string
-  token: string
+  url: string
   clientName: string
   osName: string
   ip: string
-  baseUrl?: string
 }
 
 export const VerifyAccount = ({
   company,
-  token,
+  url,
   clientName,
   osName,
   ip,
-  baseUrl,
 }: VerifyAccountProps) => (
   <Tailwind
     config={{
@@ -58,7 +56,7 @@ export const VerifyAccount = ({
           </Text>
 
           <a
-            href={baseUrl + '/auth/verification/' + token}
+            href={url}
             target='_blank'
             className='bg-blue-500 text-white font-bold py-2 px-4 rounded cursor-pointer no-underline'
           >
@@ -99,9 +97,7 @@ export const VerifyAccount = ({
           <Text className='text-gray-400 text-xs mt-3 mb-6'>
             If you’re having trouble with the button above, copy and paste the
             URL below into your web browser. <br />
-            <a href={baseUrl + '/auth/verification/' + token}>
-              {baseUrl}/auth/verification/{token}
-            </a>
+            <a href={url}>{url}</a>
           </Text>
         </Container>
       </Body>

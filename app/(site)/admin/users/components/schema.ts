@@ -17,13 +17,13 @@ export const FormSchema = z
     status: z.string().refine((value) => value !== '', {
       message: 'Status is required',
     }),
-    password: z.string().refine((val) => val.length === 0 || val.length > 6, {
-      message: "Password can't be less than 6 characters",
+    password: z.string().refine((val) => val.length === 0 || val.length > 7, {
+      message: "Password can't be less than 8 characters",
     }),
     confirmPassword: z
       .string()
-      .refine((val) => val.length === 0 || val.length > 6, {
-        message: "Confirm password can't be less than 6 characters",
+      .refine((val) => val.length === 0 || val.length > 7, {
+        message: "Confirm password can't be less than 8 characters",
       }),
   })
   .refine((data) => data.password === data.confirmPassword, {

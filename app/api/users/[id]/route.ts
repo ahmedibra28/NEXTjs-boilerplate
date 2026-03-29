@@ -1,7 +1,12 @@
-import { encryptPassword, getErrorResponse } from '@/lib/helpers'
+import {
+  encryptPassword,
+  getErrorResponse,
+  validatePasswordStrength,
+} from '@/lib/helpers'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma.db'
 import { isAuth } from '@/lib/auth'
+import { buildClientAccess } from '@/lib/access-control'
 
 interface Params {
   params: Promise<{
@@ -28,94 +33,22 @@ export async function GET(req: Request, props: Params) {
                 sort: true,
                 path: true,
                 name: true,
+                description: true,
               },
             },
           },
         },
-      } as any,
+      },
     })
 
-    if (!role) return getErrorResponse('Role not found', 404)
+    if (!role?.role) return getErrorResponse('Role not found', 404)
 
-    const routes = (role as any).role.clientPermissions
-
-    interface Route {
-      key?: string
-      menu?: string
-      name?: string
-      path?: string
-      open?: boolean
-      sort?: number
-    }
-    interface RouteChildren extends Route {
-      children?: { menu?: string; name?: string; path?: string }[] | any
-    }
-    const formatRoutes = (routes: Route[]) => {
-      const formattedRoutes: RouteChildren[] = []
-
-      routes.forEach((route) => {
-        if (route.menu === 'hidden') return null
-        if (route.menu === 'profile') return null
-
-        if (route.menu === 'normal') {
-          formattedRoutes.push({
-            key: route.key,
-            name: route.name,
-            path: route.path,
-            sort: route.sort,
-          })
-        } else {
-          const found = formattedRoutes.find((r) => r.name === route.menu)
-          if (found) {
-            found.children.push({
-              key: route.key,
-              name: route.name,
-              path: route.path,
-            })
-          } else {
-            formattedRoutes.push({
-              name: route.menu,
-              sort: route.sort,
-              open: false,
-              children: [
-                { key: route.key, name: route.name, path: route.path },
-              ],
-            })
-          }
-        }
-      })
-
-      return formattedRoutes
-    }
-
-    const sortMenu: any = (menu: any[]) => {
-      const sortedMenu = menu.sort((a, b) => {
-        if (a.sort === b.sort) {
-          if (a.name < b.name) {
-            return -1
-          } else {
-            return 1
-          }
-        } else {
-          return a.sort - b.sort
-        }
-      })
-
-      return sortedMenu.map((m) => {
-        if (m.children) {
-          return {
-            ...m,
-            children: sortMenu(m.children),
-          }
-        } else {
-          return m
-        }
-      })
-    }
+    const routes = role.role.clientPermissions
+    const access = buildClientAccess(routes)
 
     return NextResponse.json({
-      routes,
-      menu: sortMenu(formatRoutes(routes) as any[]),
+      routes: access.routes,
+      menu: access.menu,
     })
   } catch (error: any) {
     const { status = 500, message } = error
@@ -129,9 +62,22 @@ export async function PUT(req: Request, props: Params) {
     await isAuth(req, 'users.update')
 
     const { name, status, password, email, roleId } = await req.json()
+    if (password) validatePasswordStrength(password)
 
-    const role =
-      roleId && (await prisma.role.findFirst({ where: { id: roleId } }))
+    const existingUser = await prisma.user.findUnique({
+      where: { id: params.id },
+      select: {
+        id: true,
+        roleId: true,
+        status: true,
+      },
+    })
+    if (!existingUser) return getErrorResponse('User not found', 404)
+
+    const role = await prisma.role.findUnique({
+      where: { id: roleId || existingUser.roleId || '' },
+      select: { id: true },
+    })
     if (!role) return getErrorResponse('Role not found', 404)
 
     const user =
@@ -142,16 +88,47 @@ export async function PUT(req: Request, props: Params) {
       }))
     if (user) return getErrorResponse('User already exists', 409)
 
+    const shouldRevokeSession =
+      Boolean(password) ||
+      existingUser.roleId !== role.id ||
+      (status && existingUser.status !== status)
+
     const userObj = await prisma.user.update({
       where: { id: params.id },
       data: {
         name,
         email: email.toLowerCase(),
-        status,
+        emailVerified: status ? status !== 'PENDING_VERIFICATION' : undefined,
         roleId: role.id,
-        ...(password && { password: await encryptPassword(password) }),
+        status,
       },
     })
+
+    if (password) {
+      await prisma.account.upsert({
+        where: {
+          providerId_accountId: {
+            providerId: 'credential',
+            accountId: params.id,
+          },
+        },
+        update: {
+          password: await encryptPassword({ password }),
+        },
+        create: {
+          userId: params.id,
+          accountId: params.id,
+          providerId: 'credential',
+          password: await encryptPassword({ password }),
+        },
+      })
+    }
+
+    if (shouldRevokeSession) {
+      await prisma.session.deleteMany({
+        where: { userId: params.id },
+      })
+    }
 
     if (!userObj) return getErrorResponse('User not found', 404)
 
@@ -175,17 +152,17 @@ export async function DELETE(req: Request, props: Params) {
       (await prisma.user.findFirst({
         where: { id: params.id },
         include: {
-          role: {
-            select: {
-              type: true,
-            },
-          },
+          role: true,
         },
       }))
     if (!userObj) return getErrorResponse('User not found', 404)
 
-    if (userObj.role.type === 'SUPER_ADMIN')
+    if (userObj.role?.type === 'owner')
       return getErrorResponse('You cannot delete a super admin', 403)
+
+    await prisma.session.deleteMany({
+      where: { userId: userObj.id },
+    })
 
     const userRemove = await prisma.user.delete({
       where: {
@@ -196,8 +173,6 @@ export async function DELETE(req: Request, props: Params) {
     if (!userRemove) {
       return getErrorResponse('User not removed', 404)
     }
-
-    userObj.password = undefined as any
 
     return NextResponse.json({
       ...userObj,

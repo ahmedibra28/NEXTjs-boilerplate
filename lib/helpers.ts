@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
-import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 import { Prisma } from '@/prisma/generated/client'
 import { join } from 'path'
 
@@ -122,24 +120,17 @@ export async function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, salt)
 }
 
-export async function getResetPasswordToken(minutes = 10) {
-  const resetToken = crypto.randomBytes(20).toString('hex')
+export function validatePasswordStrength(password: string) {
+  const regex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
-  return {
-    resetToken,
-    resetPasswordToken: crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex'),
-    resetPasswordExpire: Date.now() + minutes * (60 * 1000), // Ten Minutes
+  if (!regex.test(password)) {
+    throw {
+      message:
+        'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number and one special character',
+      status: 400,
+    }
   }
-}
-
-export async function generateToken(id: string) {
-  const JWT_SECRET = getEnvVariable('JWT_SECRET')
-  return jwt.sign({ id }, JWT_SECRET, {
-    expiresIn: '1d',
-  })
 }
 
 export function getBackupDirectory(): string {

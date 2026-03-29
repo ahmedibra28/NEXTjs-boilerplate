@@ -2,7 +2,6 @@
 
 import useDataStore from '@/zustand/dataStore'
 import React, { useEffect, useState } from 'react'
-import type { ClientPermission as IClientPermission } from '@/prisma/generated/client'
 import { FormSchema } from './components/schema'
 import CustomFormField from '@/components/custom-form'
 import { Form } from '@/components/ui/form'
@@ -22,7 +21,16 @@ import ApiCall from '@/services/api'
 import { useRouter } from 'next/navigation'
 import useAuthorization from '@/hooks/useAuthorization'
 
-type ClientPermissionWithKey = IClientPermission & { key: string }
+type ClientPermissionWithKey = {
+  id: string
+  name: string
+  key: string
+  menu: string
+  sort: number
+  path: string
+  description?: string
+  createdAt?: string
+}
 
 export default function Page() {
   const [page, setPage] = useState(1)

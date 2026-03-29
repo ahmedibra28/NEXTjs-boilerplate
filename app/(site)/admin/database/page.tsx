@@ -27,10 +27,6 @@ function Page() {
   const path = useAuthorization('database.page')
   const router = useRouter()
 
-  const {
-    userInfo: { token },
-  } = useUserInfoStore((state) => state)
-
   useEffect(() => {
     if (path) {
       router.push(path)
@@ -61,9 +57,9 @@ function Page() {
   const downloadDBHandler = async (db: string) => {
     return fetch(baseUrl + '/api/databases/download', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/zip',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ db }),
     })

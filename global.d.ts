@@ -1,7 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { IUser } from './models/User'
 import { NextRequest } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from './prisma/generated/client'
 
 declare global {
   var prisma: PrismaClient
@@ -9,7 +7,8 @@ declare global {
     interface ProcessEnv {
       NODE_ENV: string
       DATABASE_URI: string
-      JWT_SECRET: string
+      BETTER_AUTH_SECRET: string
+      BETTER_AUTH_URL: string
       SMTP_SERVER: string
       SMTP_PORT: number
       SMTP_USER: string
@@ -21,7 +20,10 @@ declare global {
       id: string
       name: string
       email: string
+      mobile: string | null
       role: string
+      permissions: string[]
+      clientPermissions: string[]
     }
     url: string
     method: 'GET' | 'POST' | 'DELETE' | 'PUT'
@@ -44,7 +46,10 @@ declare global {
       id: string
       name: string
       email: string
+      mobile: string | null
       role: string
+      permissions: string[]
+      clientPermissions: string[]
     }
   }
 }

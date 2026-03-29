@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Form } from '@/components/ui/form'
 import CustomFormField, { FormButton } from '@/components/custom-form'
-import ApiCall from '@/services/api'
+import { authClient } from '@/lib/auth-client'
 
 const Page = () => {
   const router = useRouter()
@@ -19,30 +19,8 @@ const Page = () => {
 
   const { userInfo, updateUserInfo } = useUserInfoStore((state) => state)
 
-  const postApi = ApiCall({
-    key: ['login'],
-    method: 'POST',
-    url: `auth/login`,
-  })?.post
-
-  useEffect(() => {
-    if (postApi?.isSuccess) {
-      const { id, email, menu, routes, token, name, mobile, role, image } =
-        postApi.data
-      updateUserInfo({
-        id,
-        email,
-        menu,
-        routes,
-        token,
-        name,
-        mobile,
-        role,
-        image,
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postApi?.isSuccess])
+  const [message, setMessage] = React.useState('')
+  const [loading, setLoading] = React.useState(false)
 
   useEffect(() => {
     userInfo.id && router.push((params as string) || '/')
@@ -51,7 +29,7 @@ const Page = () => {
 
   const FormSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(6),
+    password: z.string().min(8),
   })
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -62,13 +40,49 @@ const Page = () => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof FormSchema>) {
-    postApi?.mutateAsync(values)
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
+    setLoading(true)
+    setMessage('')
+
+    const result = await authClient.signIn.email(values)
+
+    if (result.error) {
+      setLoading(false)
+      setMessage(result.error.message || 'Unable to sign in')
+      return
+    }
+
+    const session = await authClient.getSession()
+
+    if (session.data?.user) {
+      const { user, session: currentSession } = session.data
+      const sessionUser = user as typeof user & {
+        menu?: any[]
+        routes?: any[]
+        mobile?: string | null
+        role?: string
+        permissions?: { key: string; name: string; description?: string | null }[]
+      }
+      updateUserInfo({
+        id: sessionUser.id,
+        email: sessionUser.email,
+        menu: sessionUser.menu || [],
+        routes: sessionUser.routes || [],
+        token: currentSession?.token || null,
+        name: sessionUser.name,
+        mobile: sessionUser.mobile || null,
+        role: sessionUser.role || '',
+        permissions: sessionUser.permissions || [],
+        image: sessionUser.image || '',
+      })
+    }
+
+    setLoading(false)
   }
 
   return (
     <FormContainer title='Sign In'>
-      {postApi?.isError && <Message value={postApi?.error} />}
+      {message && <Message value={message} />}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
@@ -87,7 +101,7 @@ const Page = () => {
           />
 
           <FormButton
-            loading={postApi?.isPending}
+            loading={loading}
             label='Sign In'
             className='w-full'
           />

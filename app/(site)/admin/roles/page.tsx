@@ -2,10 +2,6 @@
 
 import useDataStore from '@/zustand/dataStore'
 import React, { useEffect, useState } from 'react'
-import type {
-  Permission as IPermission,
-  ClientPermission as IClientPermission,
-} from '@/prisma/generated/client'
 import { FormSchema } from './components/schema'
 import CustomFormField from '@/components/custom-form'
 import { Form } from '@/components/ui/form'
@@ -25,6 +21,33 @@ import ApiCall from '@/services/api'
 import useAuthorization from '@/hooks/useAuthorization'
 import { useRouter } from 'next/navigation'
 
+type IPermission = {
+  id: string
+  key: string
+  name: string
+  description?: string
+}
+
+type IClientPermission = {
+  id: string
+  key: string
+  name: string
+  description?: string
+  path: string
+  menu: string
+  sort: number
+}
+
+type IRoleRow = {
+  id: string
+  name: string
+  type: string
+  description?: string
+  createdAt: string
+  permissions: IPermission[]
+  clientPermissions: IClientPermission[]
+}
+
 export default function Page() {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -36,7 +59,7 @@ export default function Page() {
 
   const { dialogOpen, setDialogOpen, setData } = useDataStore((state) => state)
 
-  const path = useAuthorization()
+  const path = useAuthorization('roles.page')
   const router = useRouter()
   useEffect(() => {
     if (path) {
@@ -230,13 +253,7 @@ export default function Page() {
     },
   })
 
-  const editHandler = (
-    item: IClientPermission & {
-      role: { id: string }
-      permissions: IPermission[]
-      clientPermissions: IClientPermission[]
-    },
-  ) => {
+  const editHandler = (item: IRoleRow) => {
     setId(item.id!)
     setEdit(true)
     setDialogOpen(true)

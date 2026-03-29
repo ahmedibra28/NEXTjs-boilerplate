@@ -47,13 +47,13 @@ const Profile = () => {
       name: z.string(),
       mobile: z.string(),
       bio: z.string(),
-      password: z.string().refine((val) => val.length === 0 || val.length > 6, {
-        message: "Password can't be less than 6 characters",
+      password: z.string().refine((val) => val.length === 0 || val.length > 7, {
+        message: "Password can't be less than 8 characters",
       }),
       confirmPassword: z
         .string()
-        .refine((val) => val.length === 0 || val.length > 6, {
-          message: "Confirm password can't be less than 6 characters",
+        .refine((val) => val.length === 0 || val.length > 7, {
+          message: "Confirm password can't be less than 8 characters",
         }),
       // Address fields
       street: z.string(),

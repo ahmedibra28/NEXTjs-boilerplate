@@ -2,7 +2,6 @@
 
 import useDataStore from '@/zustand/dataStore'
 import React, { useEffect, useState } from 'react'
-import type { User as IUser } from '@/prisma/generated/client'
 import { FormSchema } from './components/schema'
 import CustomFormField from '@/components/custom-form'
 import { Form } from '@/components/ui/form'
@@ -21,6 +20,15 @@ import Skeleton from '@/components/skeleton'
 import ApiCall from '@/services/api'
 import { useRouter } from 'next/navigation'
 import useAuthorization from '@/hooks/useAuthorization'
+
+type IUserRow = {
+  id: string
+  name: string
+  email: string
+  status: string
+  createdAt: string
+  role: { id: string; type: string; name: string } | null
+}
 
 export default function Page() {
   const [page, setPage] = useState(1)
@@ -153,14 +161,14 @@ export default function Page() {
     },
   })
 
-  const editHandler = (item: IUser & { role: { id: string } }) => {
+  const editHandler = (item: IUserRow) => {
     setId(item.id!)
     setEdit(true)
     setDialogOpen(true)
     form.setValue('status', item?.status)
     form.setValue('name', item?.name)
     form.setValue('email', item?.email)
-    form.setValue('roleId', item?.role?.id!)
+    form.setValue('roleId', item?.role?.id || '')
   }
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {

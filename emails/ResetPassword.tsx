@@ -13,20 +13,18 @@ import * as React from 'react'
 
 interface ResetPasswordProps {
   company: string
-  token: string
+  url: string
   clientName: string
   osName: string
   ip: string
-  baseUrl?: string
 }
 
 export const ResetPassword = ({
   company,
-  token,
+  url,
   clientName,
   osName,
   ip,
-  baseUrl,
 }: ResetPasswordProps) => (
   <Tailwind
     config={{
@@ -57,7 +55,7 @@ export const ResetPassword = ({
           </Text>
 
           <a
-            href={baseUrl + '/auth/reset-password/' + token}
+            href={url}
             target='_blank'
             className='bg-blue-500 text-white font-bold py-2 px-4 rounded cursor-pointer no-underline'
           >
@@ -92,9 +90,7 @@ export const ResetPassword = ({
           <Text className='text-gray-400 text-xs mt-3 mb-6'>
             If you’re having trouble with the button above, copy and paste the
             URL below into your web browser. <br />
-            <a href={baseUrl + '/auth/reset-password/' + token}>
-              {baseUrl}/auth/reset-password/{token}
-            </a>
+            <a href={url}>{url}</a>
           </Text>
         </Container>
       </Body>

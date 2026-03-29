@@ -13,13 +13,8 @@ import { baseUrl } from '@/lib/setting'
 
 export const api = async (method: Method, url: string, obj: any = {}) => {
   const logout = useUserInfoStore.getState().logout
-
-  const token = useUserInfoStore.getState().userInfo.token
-
   const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    withCredentials: true,
   }
 
   try {
@@ -46,15 +41,17 @@ export const api = async (method: Method, url: string, obj: any = {}) => {
   } catch (error: any) {
     const err =
       error?.response?.data?.error || error?.message || 'Something went wrong'
+    const normalizedError = String(err).toLowerCase()
     const expectedErrors = [
-      'invalid signature',
-      'jwt expired',
-      'Unauthorized',
-      'jwt malformed',
-      'revoked',
+      'unauthorized',
+      'not authorized',
+      'user is inactive',
     ]
 
-    if (expectedErrors.includes(err) || err.includes('has been revoked')) {
+    if (
+      expectedErrors.some((message) => normalizedError.includes(message)) ||
+      normalizedError.includes('forbidden')
+    ) {
       logout()
     }
     throw err

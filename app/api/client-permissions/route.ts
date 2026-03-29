@@ -1,50 +1,49 @@
 import { isAuth } from '@/lib/auth'
 import { getErrorResponse } from '@/lib/helpers'
-import { NextResponse } from 'next/server'
 import { prisma, Prisma } from '@/lib/prisma.db'
+import { NextResponse } from 'next/server'
+
 const { QueryMode } = Prisma
 
 export async function GET(req: AuthenticatedRequest) {
   try {
-    await isAuth(req, 'client-permissions.read')
+    await isAuth(req, 'access.reference.read')
 
     const { searchParams } = new URL(req.url)
-    const q = searchParams.get('q')
+    const q = searchParams.get('q') || ''
+    const page = parseInt(searchParams.get('page') as string) || 1
+    const pageSize = parseInt(searchParams.get('limit') as string) || 25
+    const skip = (page - 1) * pageSize
 
-    const query = q
+    const where = q
       ? {
           OR: [
             { name: { contains: q, mode: QueryMode.insensitive } },
             { key: { contains: q, mode: QueryMode.insensitive } },
             { path: { contains: q, mode: QueryMode.insensitive } },
+            { description: { contains: q, mode: QueryMode.insensitive } },
           ],
         }
       : {}
 
-    const page = parseInt(searchParams.get('page') as string) || 1
-    const pageSize = parseInt(searchParams.get('limit') as string) || 25
-    const skip = (page - 1) * pageSize
-
-    const [result, total] = await Promise.all([
+    const [clientPermissions, total] = await Promise.all([
       prisma.clientPermission.findMany({
-        where: query,
+        where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ isSystem: 'desc' }, { sort: 'asc' }, { createdAt: 'desc' }],
       }),
-      prisma.clientPermission.count({ where: query }),
+      prisma.clientPermission.count({ where }),
     ])
 
-    const pages = Math.ceil(total / pageSize)
-
     return NextResponse.json({
-      startIndex: skip + 1,
-      endIndex: skip + result.length,
-      count: result.length,
+      startIndex: total === 0 ? 0 : skip + 1,
+      endIndex: skip + clientPermissions.length,
+      count: clientPermissions.length,
       page,
-      pages,
+      pages: Math.ceil(total / pageSize),
       total,
-      data: result,
+      data: clientPermissions,
     })
   } catch (error: any) {
     const { status = 500, message } = error
@@ -54,37 +53,34 @@ export async function GET(req: AuthenticatedRequest) {
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req, 'client-permissions.create')
+    await isAuth(req, 'access.reference.read')
 
-    const { name, key, sort, menu, path, description } = await req.json()
-    const normalizedKey = key?.trim()?.toLowerCase()
-    if (!normalizedKey)
-      return getErrorResponse('Client permission key is required', 400)
+    const { name, key, menu, sort, path, description } = await req.json()
 
-    const checkExistence =
-      normalizedKey &&
-      (await prisma.clientPermission.findFirst({
-        where: {
-          OR: [{ key: normalizedKey }, { path: path.toLowerCase() }],
-        } as any,
-      }))
-    if (checkExistence)
-      return getErrorResponse('Client permission already exist')
+    if (!name?.trim()) return getErrorResponse('Name is required', 400)
+    if (!key?.trim()) return getErrorResponse('Key is required', 400)
+    if (!path?.trim()) return getErrorResponse('Path is required', 400)
 
-    const clientPermissionObj = await prisma.clientPermission.create({
+    const exists = await prisma.clientPermission.findUnique({
+      where: { key: key.trim() },
+      select: { id: true },
+    })
+    if (exists) return getErrorResponse('Navigation key already exists', 409)
+
+    const clientPermission = await prisma.clientPermission.create({
       data: {
-        name,
-        key: normalizedKey,
-        description,
-        sort: Number(sort),
-        menu,
-        path: path.toLowerCase(),
-      } as any,
+        name: name.trim(),
+        key: key.trim(),
+        menu: menu?.trim() || 'normal',
+        sort: parseInt(sort, 10) || 0,
+        path: path.trim(),
+        description: description?.trim() || null,
+      },
     })
 
     return NextResponse.json({
-      ...clientPermissionObj,
-      message: 'Client permission created successfully',
+      clientPermission,
+      message: 'Client permission has been created successfully',
     })
   } catch (error: any) {
     const { status = 500, message } = error

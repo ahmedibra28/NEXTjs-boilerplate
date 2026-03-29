@@ -2,7 +2,6 @@
 
 import useDataStore from '@/zustand/dataStore'
 import React, { useEffect, useState } from 'react'
-import type { Permission as IPermission } from '@/prisma/generated/client'
 import { FormSchema } from './components/schema'
 import CustomFormField from '@/components/custom-form'
 import { Form } from '@/components/ui/form'
@@ -21,6 +20,14 @@ import Skeleton from '@/components/skeleton'
 import ApiCall from '@/services/api'
 import { useRouter } from 'next/navigation'
 import useAuthorization from '@/hooks/useAuthorization'
+
+type IPermission = {
+  id: string
+  name: string
+  key: string
+  description?: string
+  createdAt?: string
+}
 
 export default function Page() {
   const [page, setPage] = useState(1)

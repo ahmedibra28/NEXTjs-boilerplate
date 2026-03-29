@@ -8,69 +8,68 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(nanoid())
-  email               String   @unique
-  name                String
-  image               String?
-  mobile              String?
-  address             Address?
-  bio                 String?
-  password            String
-  status              Status   @default(PENDING_VERIFICATION)
-  resetPasswordToken  String?
-  resetPasswordExpire BigInt?
-  accessToken         String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
-  roleId String
+  id            String    @id @default(nanoid())
+  email         String    @unique
+  name          String
+  emailVerified Boolean   @default(false)
+  image         String?
+  mobile        String?
+  roleId        String?
+  address       Address?
+  bio           String?
+  status        Status    @default(PENDING_VERIFICATION)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          Role?     @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  sessions      Session[]
+  accounts      Account[]
 
   @@map("users")
 }
 
-model Role {
-  id          String   @id @default(nanoid())
-  name        String   @unique
-  type        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Session {
+  id        String   @id @default(nanoid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  users             User[]
-  permissions       Permission[]
-  clientPermissions ClientPermission[]
-
-  @@map("roles")
+  @@map("session")
 }
 
-model Permission {
-  id          String   @id @default(nanoid())
-  name        String
-  key         String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Account {
+  id                    String    @id @default(nanoid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  role Role[]
-
-  @@map("permissions")
+  @@unique([providerId, accountId])
+  @@map("account")
 }
 
-model ClientPermission {
-  id          String   @id @default(nanoid())
-  name        String   @unique
-  key         String   @unique
-  sort        Int
-  menu        String
-  path        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Verification {
+  id         String    @id @default(nanoid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 
-  role Role[]
-
-  @@map("client_permissions")
+  @@map("verification")
 }
 
 model Address {
@@ -88,6 +87,50 @@ model Address {
   updatedAt DateTime @updatedAt
 
   @@map("addresses")
+}
+
+model Role {
+  id                String             @id @default(nanoid())
+  name              String
+  type              String             @unique
+  description       String?
+  isSystem          Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  users             User[]
+  permissions       Permission[]
+  clientPermissions ClientPermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(nanoid())
+  key         String   @unique
+  name        String
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  roles       Role[]
+
+  @@map("permissions")
+}
+
+model ClientPermission {
+  id          String   @id @default(nanoid())
+  key         String   @unique
+  name        String
+  menu        String
+  sort        Int
+  path        String
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  roles       Role[]
+
+  @@map("client-permissions")
 }
 
 enum Status {

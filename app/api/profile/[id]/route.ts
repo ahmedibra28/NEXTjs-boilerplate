@@ -1,5 +1,9 @@
 import { isAuth } from '@/lib/auth'
-import { encryptPassword, getErrorResponse } from '@/lib/helpers'
+import {
+  encryptPassword,
+  getErrorResponse,
+  validatePasswordStrength,
+} from '@/lib/helpers'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma.db'
 
@@ -32,14 +36,7 @@ export async function PUT(req: Request, props: Params) {
 
     // Validate password if provided
     if (password) {
-      const regex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-      if (!regex.test(password)) {
-        return getErrorResponse(
-          'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number and one special character',
-          400,
-        )
-      }
+      validatePasswordStrength(password)
     }
 
     // Validate required address fields
@@ -52,7 +49,6 @@ export async function PUT(req: Request, props: Params) {
       prisma.user.update({
         where: { id: params.id },
         data: {
-          ...(password && { password: await encryptPassword({ password }) }),
           name: name ?? object.name,
           mobile: mobile ?? object.mobile,
           image: image ?? object.image,
@@ -78,6 +74,30 @@ export async function PUT(req: Request, props: Params) {
         },
       }),
     ])
+
+    if (password) {
+      await prisma.account.upsert({
+        where: {
+          providerId_accountId: {
+            providerId: 'credential',
+            accountId: params.id,
+          },
+        },
+        update: {
+          password: await encryptPassword({ password }),
+        },
+        create: {
+          userId: params.id,
+          accountId: params.id,
+          providerId: 'credential',
+          password: await encryptPassword({ password }),
+        },
+      })
+
+      await prisma.session.deleteMany({
+        where: { userId: params.id },
+      })
+    }
 
     return NextResponse.json({
       ...user,

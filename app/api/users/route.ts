@@ -1,5 +1,9 @@
 import { isAuth } from '@/lib/auth'
-import { encryptPassword, getErrorResponse } from '@/lib/helpers'
+import {
+  encryptPassword,
+  getErrorResponse,
+  validatePasswordStrength,
+} from '@/lib/helpers'
 import { NextResponse } from 'next/server'
 import { prisma, Prisma } from '@/lib/prisma.db'
 const { QueryMode } = Prisma
@@ -30,6 +34,7 @@ export async function GET(req: Request) {
           name: true,
           email: true,
           status: true,
+          emailVerified: true,
           createdAt: true,
           role: {
             select: {
@@ -52,7 +57,15 @@ export async function GET(req: Request) {
       page,
       pages,
       total,
-      data: result,
+      data: result.map((user) => ({
+        ...user,
+        status:
+          user.status === 'INACTIVE'
+            ? 'INACTIVE'
+            : user.emailVerified
+              ? 'ACTIVE'
+              : 'PENDING_VERIFICATION',
+      })),
     })
   } catch (error: any) {
     const { status = 500, message } = error
@@ -65,9 +78,11 @@ export async function POST(req: Request) {
     await isAuth(req, 'users.create')
 
     const { name, email, password, status, roleId } = await req.json()
-
-    const role =
-      roleId && (await prisma.role.findFirst({ where: { id: roleId } }))
+    validatePasswordStrength(password)
+    const role = await prisma.role.findUnique({
+      where: { id: roleId },
+      select: { id: true },
+    })
     if (!role) return getErrorResponse('Role not found', 404)
 
     const user =
@@ -81,14 +96,21 @@ export async function POST(req: Request) {
       data: {
         name,
         email: email.toLowerCase(),
-        status,
+        emailVerified: status !== 'PENDING_VERIFICATION',
         roleId: role.id,
+        status,
         image: `https://ui-avatars.com/api/?uppercase=true&name=${name}&background=random&color=random&size=128`,
-        password: await encryptPassword({ password }),
       },
     })
 
-    userObj.password = undefined as any
+    await prisma.account.create({
+      data: {
+        userId: userObj.id,
+        accountId: userObj.id,
+        providerId: 'credential',
+        password: await encryptPassword({ password }),
+      },
+    })
 
     return NextResponse.json({
       userObj,
