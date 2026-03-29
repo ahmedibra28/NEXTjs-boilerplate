@@ -12,6 +12,8 @@ interface Params {
 export async function GET(req: Request, props: Params) {
   const params = await props.params
   try {
+    await isAuth(req, 'users.access.read')
+
     const role = await prisma.user.findUnique({
       where: {
         id: params.id,
@@ -21,6 +23,7 @@ export async function GET(req: Request, props: Params) {
           select: {
             clientPermissions: {
               select: {
+                key: true,
                 menu: true,
                 sort: true,
                 path: true,
@@ -29,14 +32,15 @@ export async function GET(req: Request, props: Params) {
             },
           },
         },
-      },
+      } as any,
     })
 
     if (!role) return getErrorResponse('Role not found', 404)
 
-    const routes = role.role.clientPermissions
+    const routes = (role as any).role.clientPermissions
 
     interface Route {
+      key?: string
       menu?: string
       name?: string
       path?: string
@@ -55,6 +59,7 @@ export async function GET(req: Request, props: Params) {
 
         if (route.menu === 'normal') {
           formattedRoutes.push({
+            key: route.key,
             name: route.name,
             path: route.path,
             sort: route.sort,
@@ -62,13 +67,19 @@ export async function GET(req: Request, props: Params) {
         } else {
           const found = formattedRoutes.find((r) => r.name === route.menu)
           if (found) {
-            found.children.push({ name: route.name, path: route.path })
+            found.children.push({
+              key: route.key,
+              name: route.name,
+              path: route.path,
+            })
           } else {
             formattedRoutes.push({
               name: route.menu,
               sort: route.sort,
               open: false,
-              children: [{ name: route.name, path: route.path }],
+              children: [
+                { key: route.key, name: route.name, path: route.path },
+              ],
             })
           }
         }
@@ -115,7 +126,7 @@ export async function GET(req: Request, props: Params) {
 export async function PUT(req: Request, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'users.update')
 
     const { name, status, password, email, roleId } = await req.json()
 
@@ -157,7 +168,7 @@ export async function PUT(req: Request, props: Params) {
 export async function DELETE(req: Request, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'users.delete')
 
     const userObj =
       params.id &&

@@ -1,27 +1,18 @@
 'use client'
 import useUserInfoStore from '@/zustand/userStore'
-import { usePathname, useParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
-const useAuthorization = () => {
+const useAuthorization = (requiredPermission?: string) => {
   const pathname = usePathname()
-  const params = useParams()
 
   const { userInfo } = useUserInfoStore((state) => state)
 
-  const param = () => {
-    const keys = Object.keys(params)
-    const values = Object.values(params)
-    let param = pathname
-    keys.forEach((k, i) => {
-      // @ts-ignore
-      param = param.replace(values[i], `[${k}]`)
-    })
-    return param
-  }
-
   if (
     userInfo.id &&
-    !userInfo?.routes?.map((g: { path: string }) => g.path).includes(param())
+    requiredPermission &&
+    !userInfo?.routes
+      ?.map((g: { key: string }) => g.key)
+      .includes(requiredPermission)
   ) {
     return '/'
   }

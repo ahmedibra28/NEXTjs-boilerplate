@@ -57,7 +57,7 @@ interface ListItem {
   children: Array<{
     id: string
     label: string
-    method?: string
+    key?: string
     path?: string
   }>
 }
@@ -79,6 +79,7 @@ export interface FormProps {
   url?: string
   items?: ListItem[]
   hasLabel?: boolean
+  createLabel?: (item: any) => string
 }
 export interface FormButtonProp {
   label: string
@@ -92,6 +93,7 @@ export default function CustomFormField({
   name,
   label,
   hasLabel = true,
+  createLabel,
   ...props
 }: FormProps) {
   const [search, setSearch] = React.useState('')
@@ -120,14 +122,10 @@ export default function CustomFormField({
               provider: any
               category: any
             }) => ({
-              label: props?.url?.includes('cat=b-c')
-                ? `${item?.provider?.name} - ${item?.name}`
-                : props?.url?.includes('bun=p-c-b')
-                  ? `${item?.category?.provider?.name} - ${item?.category?.name} - ${item?.name}`
-                  : item?.name,
+              label: createLabel ? createLabel(item) : item?.name,
               value: item?.id,
-            })
-          )
+            }),
+          ),
         )
       })
     }
@@ -135,7 +133,7 @@ export default function CustomFormField({
   }, [value])
 
   const items = useDataStore((state) => state)?.data.find(
-    (item) => item.id === name
+    (item) => item.id === name,
   )?.data as ListItem[]
 
   return (
@@ -147,7 +145,7 @@ export default function CustomFormField({
           <FormItem className='flex flex-col mb-3'>
             {items?.map((item, i) => (
               <div key={i} className='p-3 mb-2 gap-y-2 bg-slate-100'>
-                <FormLabel className='pb-3 mb-2 font-bold text-gray-700 capitalize'>
+                <FormLabel className='pb-3 mb-2 font-bold text-gray-700'>
                   {item.label}
                 </FormLabel>
                 {item?.children?.map((child, childId) => (
@@ -169,14 +167,14 @@ export default function CustomFormField({
                                   ? field.onChange([...field.value, child.id])
                                   : field.onChange(
                                       field.value?.filter(
-                                        (value: string) => value !== child.id
-                                      )
+                                        (value: string) => value !== child.id,
+                                      ),
                                     )
                               }}
                             />
                           </FormControl>
                           <FormLabel className='text-sm font-normal'>
-                            {child?.method || child?.path} {child.label}
+                            {child?.key}
                           </FormLabel>
                         </FormItem>
                       )
@@ -216,7 +214,7 @@ export default function CustomFormField({
                       aria-expanded={open}
                       className={cn(
                         'w-full justify-between',
-                        !field.value && 'text-muted-foreground'
+                        !field.value && 'text-muted-foreground',
                       )}
                     >
                       {field.value
@@ -256,7 +254,7 @@ export default function CustomFormField({
                                 'ml-auto h-4 w-4',
                                 item.value === field.value
                                   ? 'opacity-100'
-                                  : 'opacity-0'
+                                  : 'opacity-0',
                               )}
                             />
                           </CommandItem>
@@ -375,7 +373,7 @@ export const MultiSelect = ({
       }
     },
     // eslint-disable-next-line
-    []
+    [],
   )
 
   const selectables = data?.filter((item) => !selected.includes(item))
@@ -384,7 +382,7 @@ export const MultiSelect = ({
     if (form) {
       form.setValue(
         name,
-        selected.map((item) => item.value)
+        selected.map((item) => item.value),
       )
     }
     // eslint-disable-next-line
@@ -465,85 +463,5 @@ export const MultiSelect = ({
         {form?.formState.errors?.[name]?.message as string}
       </FormMessage>
     </React.Fragment>
-  )
-}
-
-export const Upload = ({
-  multiple = false,
-  label,
-  setFileLink,
-  fileLink,
-  fileType,
-  showLabel = true,
-  ...props
-}: FormInputProp) => {
-  const [file, setFile] = React.useState<string[]>([])
-
-  const uploadApi = ApiCall({
-    key: ['upload'],
-    method: 'POST',
-    url: `uploads?type=${fileType}`,
-  })?.post
-
-  React.useEffect(() => {
-    if (file?.length > 0) {
-      const formData = new FormData()
-
-      for (let i = 0; i < file.length; i++) {
-        formData.append('file', file[i])
-      }
-
-      uploadApi
-        ?.mutateAsync(formData)
-        .then((res) => {
-          const urls = res.data?.map((item: any) => item.url)
-
-          if (multiple) {
-            setFileLink([...fileLink, ...urls])
-          } else {
-            setFileLink(urls)
-          }
-        })
-        .catch((err) => err)
-    }
-    // eslint-disable-next-line
-  }, [file])
-
-  return (
-    <div className='w-full'>
-      {label && showLabel && (
-        <Label className='label' htmlFor={label?.replace(/\s+/g, '-')}>
-          {label}
-        </Label>
-      )}
-      <Input
-        disabled={Boolean(uploadApi?.isPending)}
-        multiple={multiple}
-        type='file'
-        id='formFile'
-        onChange={(e: any) =>
-          setFile(multiple ? e.target.files : [e.target.files[0]])
-        }
-        {...props}
-      />
-      {uploadApi?.isPending && (
-        <div className='flex items-center justify-start'>
-          <span className='loading loading-spinner loading-sm'> </span>
-          <span className='text-sm text-gray-500 ms-2'>
-            {fileType} is uploading
-          </span>
-        </div>
-      )}
-      {uploadApi?.isError && (
-        <span className='mt-1 text-xs text-red-500'>
-          {`${uploadApi?.error}` || `${fileType} upload failed`}
-        </span>
-      )}
-      {uploadApi?.isSuccess && (
-        <span className='mt-1 text-xs text-green-500'>
-          {uploadApi?.data?.message}
-        </span>
-      )}
-    </div>
   )
 }

@@ -71,13 +71,13 @@ export default function Page() {
   const getClientPermissionsApi = ApiCall({
     key: ['client-permissions'],
     method: 'GET',
-    url: `client-permissions?page=${page}&q=${q}&limit=${300}`,
+    url: `client-permissions?page=${page}&q=${q}&limit=${500}`,
   })?.get
 
   const getPermissionsApi = ApiCall({
     key: ['permissions'],
     method: 'GET',
-    url: `permissions?page=${page}&q=${q}&limit=${300}`,
+    url: `permissions?page=${page}&q=${q}&limit=${500}`,
   })?.get
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export default function Page() {
     children: Array<{
       id: string
       label: string
-      method?: string
+      key?: string
       path?: string
     }>
   }
@@ -171,7 +171,7 @@ export default function Page() {
         found.children.push({
           id: curr.id,
           label: curr.description || '',
-          method: curr.method,
+          key: curr.key,
         })
       } else {
         acc.push({
@@ -180,7 +180,7 @@ export default function Page() {
             {
               id: curr.id,
               label: curr.description || '',
-              method: curr.method,
+              key: curr.key,
             },
           ],
         })
@@ -189,7 +189,7 @@ export default function Page() {
     }, [])
 
   const clientPermissionsList = (
-    items: IClientPermission[]
+    items: IClientPermission[],
   ): CheckboxListItem[] =>
     items?.reduce((acc: CheckboxListItem[], curr: IClientPermission) => {
       const found = acc.find((item) => item.label === curr.menu)
@@ -197,6 +197,7 @@ export default function Page() {
         found.children.push({
           id: curr.id,
           label: curr.description || '',
+          key: curr.key,
           path: curr.path,
         })
       } else {
@@ -206,6 +207,7 @@ export default function Page() {
             {
               id: curr.id,
               label: curr.description || '',
+              key: curr.key,
               path: curr.path,
             },
           ],
@@ -233,7 +235,7 @@ export default function Page() {
       role: { id: string }
       permissions: IPermission[]
       clientPermissions: IClientPermission[]
-    }
+    },
   ) => {
     setId(item.id!)
     setEdit(true)
@@ -244,11 +246,11 @@ export default function Page() {
 
     form.setValue(
       'permissions',
-      item?.permissions?.map((item) => item?.id)
+      item?.permissions?.map((item) => item?.id),
     )
     form.setValue(
       'clientPermissions',
-      item?.clientPermissions?.map((item) => item?.id)
+      item?.clientPermissions?.map((item) => item?.id),
     )
   }
 
@@ -331,7 +333,7 @@ export default function Page() {
         <Skeleton />
       ) : (
         <>
-          <Card className='mt-2'>
+          <Card className='mt-2 bg-white'>
             <CardHeader>
               <CardTitle className='text-sm md:text-base'>
                 List of Roles

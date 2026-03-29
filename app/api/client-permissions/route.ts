@@ -6,13 +6,19 @@ const { QueryMode } = Prisma
 
 export async function GET(req: AuthenticatedRequest) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'client-permissions.read')
 
     const { searchParams } = new URL(req.url)
     const q = searchParams.get('q')
 
     const query = q
-      ? { name: { contains: q, mode: QueryMode.insensitive } }
+      ? {
+          OR: [
+            { name: { contains: q, mode: QueryMode.insensitive } },
+            { key: { contains: q, mode: QueryMode.insensitive } },
+            { path: { contains: q, mode: QueryMode.insensitive } },
+          ],
+        }
       : {}
 
     const page = parseInt(searchParams.get('page') as string) || 1
@@ -48,14 +54,19 @@ export async function GET(req: AuthenticatedRequest) {
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'client-permissions.create')
 
-    const { name, sort, menu, path, description } = await req.json()
+    const { name, key, sort, menu, path, description } = await req.json()
+    const normalizedKey = key?.trim()?.toLowerCase()
+    if (!normalizedKey)
+      return getErrorResponse('Client permission key is required', 400)
 
     const checkExistence =
-      path &&
+      normalizedKey &&
       (await prisma.clientPermission.findFirst({
-        where: { path: path.toLowerCase() },
+        where: {
+          OR: [{ key: normalizedKey }, { path: path.toLowerCase() }],
+        } as any,
       }))
     if (checkExistence)
       return getErrorResponse('Client permission already exist')
@@ -63,11 +74,12 @@ export async function POST(req: Request) {
     const clientPermissionObj = await prisma.clientPermission.create({
       data: {
         name,
+        key: normalizedKey,
         description,
         sort: Number(sort),
         menu,
         path: path.toLowerCase(),
-      },
+      } as any,
     })
 
     return NextResponse.json({

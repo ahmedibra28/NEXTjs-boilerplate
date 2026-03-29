@@ -44,7 +44,7 @@ const uploadObject = async (fileName: string, data: any, bucket: string) => {
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'uploads.create')
 
     const { searchParams } = new URL(req.url)
     const type = searchParams.get('type')
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
       const ext = file.name.split('.').pop()?.toLowerCase()
       const fileName = `${file.name.split('.')[0]}-${Date.now()}.${ext}`
       let buffer = Buffer.from(
-        new Uint8Array(await file.arrayBuffer())
+        new Uint8Array(await file.arrayBuffer()),
       ) as Buffer<ArrayBufferLike>
 
       if (type === 'image') {
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
       data: fileUrls?.map((url) => ({
         url: `https://farshaxan.blr1.cdn.digitaloceanspaces.com/eballan/${url.replace(
           /\s/g,
-          '%20'
+          '%20',
         )}`,
       })),
     })

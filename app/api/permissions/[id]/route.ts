@@ -12,9 +12,12 @@ interface Params {
 export async function PUT(req: AuthenticatedRequest, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'permissions.update')
 
-    const { name, method, route, description } = await req.json()
+    const { name, key, description } = await req.json()
+    const normalizedKey = key?.trim()?.toLowerCase()
+    if (!normalizedKey)
+      return getErrorResponse('Permission key is required', 400)
 
     const permissionObj = await prisma.permission.findUnique({
       where: { id: params.id },
@@ -23,13 +26,11 @@ export async function PUT(req: AuthenticatedRequest, props: Params) {
     if (!permissionObj) return getErrorResponse('Permission not found', 404)
 
     const checkExistence =
-      method &&
-      route &&
+      normalizedKey &&
       params.id &&
       (await prisma.permission.findFirst({
         where: {
-          method: method.toUpperCase(),
-          route: route.toLowerCase(),
+          key: normalizedKey,
           id: { not: params.id },
         },
       }))
@@ -39,9 +40,8 @@ export async function PUT(req: AuthenticatedRequest, props: Params) {
       where: { id: params.id },
       data: {
         name,
-        method: method.toUpperCase(),
+        key: normalizedKey,
         description,
-        route: route.toLowerCase(),
       },
     })
 
@@ -58,7 +58,7 @@ export async function PUT(req: AuthenticatedRequest, props: Params) {
 export async function DELETE(req: Request, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'permissions.delete')
 
     const permissionObj = await prisma.permission.delete({
       where: { id: params.id },

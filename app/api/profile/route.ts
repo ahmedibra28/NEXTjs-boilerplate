@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma.db'
 
 export async function GET(req: AuthenticatedRequest) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'profile.read')
 
     const userObj = await prisma.user.findUnique({
       where: { id: `${req.user?.id}` },

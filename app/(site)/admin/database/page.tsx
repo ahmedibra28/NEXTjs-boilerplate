@@ -24,7 +24,7 @@ import ApiCall from '@/services/api'
 import { baseUrl } from '@/lib/setting'
 
 function Page() {
-  const path = useAuthorization()
+  const path = useAuthorization('database.page')
   const router = useRouter()
 
   const {

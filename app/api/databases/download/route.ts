@@ -5,7 +5,7 @@ import { isAuth } from '@/lib/auth'
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'databases.download')
 
     const { db: requestedFileName } = await req.json()
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     const headers = new Headers()
     headers.append(
       'Content-Disposition',
-      `attachment; filename="${requestedFileName}"`
+      `attachment; filename="${requestedFileName}"`,
     ) // Quote filename
     headers.append('Content-Type', 'application/zip')
     headers.append('Content-Length', buffer.length.toString()) // Good practice to add length

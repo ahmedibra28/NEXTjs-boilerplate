@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(nanoid(21))
+  id                  String   @id @default(nanoid())
   email               String   @unique
   name                String
   image               String?
@@ -30,7 +30,7 @@ model User {
 }
 
 model Role {
-  id          String   @id @default(nanoid(21))
+  id          String   @id @default(nanoid())
   name        String   @unique
   type        String   @unique
   description String?
@@ -45,23 +45,22 @@ model Role {
 }
 
 model Permission {
-  id          String   @id @default(nanoid(21))
+  id          String   @id @default(nanoid())
   name        String
-  method      Method
-  route       String
+  key         String   @unique
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   role Role[]
 
-  @@unique([method, route])
   @@map("permissions")
 }
 
 model ClientPermission {
-  id          String   @id @default(nanoid(21))
+  id          String   @id @default(nanoid())
   name        String   @unique
+  key         String   @unique
   sort        Int
   menu        String
   path        String   @unique
@@ -75,7 +74,7 @@ model ClientPermission {
 }
 
 model Address {
-  id      String  @id @default(nanoid(21))
+  id      String  @id @default(nanoid())
   street  String
   city    String
   state   String?
@@ -89,13 +88,6 @@ model Address {
   updatedAt DateTime @updatedAt
 
   @@map("addresses")
-}
-
-enum Method {
-  GET
-  POST
-  PUT
-  DELETE
 }
 
 enum Status {

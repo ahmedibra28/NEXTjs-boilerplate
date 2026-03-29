@@ -44,21 +44,8 @@ export const useColumns = ({
         )
       },
     },
-    {
-      accessorKey: 'method',
-      header: 'Method',
-      cell: ({ row: { original } }: any) =>
-        original?.method === 'GET' ? (
-          <span className='text-green-500'>{original?.method}</span>
-        ) : original?.method === 'POST' ? (
-          <span className='text-blue-500'>{original?.method}</span>
-        ) : original?.method === 'PUT' ? (
-          <span className='text-yellow-500'>{original?.method}</span>
-        ) : (
-          <span className='text-red-500'>{original?.method}</span>
-        ),
-    },
-    { header: 'Route', accessorKey: 'route' },
+    { header: 'Key', accessorKey: 'key' },
+    { header: 'Description', accessorKey: 'description' },
     {
       accessorKey: 'createdAt',
       header: 'DateTime',

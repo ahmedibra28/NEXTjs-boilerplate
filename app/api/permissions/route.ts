@@ -6,13 +6,18 @@ const { QueryMode } = Prisma
 
 export async function GET(req: AuthenticatedRequest) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'permissions.read')
 
     const { searchParams } = new URL(req.url)
     const q = searchParams.get('q')
 
     const query = q
-      ? { name: { contains: q, mode: QueryMode.insensitive } }
+      ? {
+          OR: [
+            { name: { contains: q, mode: QueryMode.insensitive } },
+            { key: { contains: q, mode: QueryMode.insensitive } },
+          ],
+        }
       : {}
 
     const page = parseInt(searchParams.get('page') as string) || 1
@@ -48,17 +53,18 @@ export async function GET(req: AuthenticatedRequest) {
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'permissions.create')
 
-    const { name, method, route, description } = await req.json()
+    const { name, key, description } = await req.json()
+    const normalizedKey = key?.trim()?.toLowerCase()
+    if (!normalizedKey)
+      return getErrorResponse('Permission key is required', 400)
 
     const checkExistence =
-      method &&
-      route &&
+      normalizedKey &&
       (await prisma.permission.findFirst({
         where: {
-          method: method.toUpperCase(),
-          route: route.toLowerCase(),
+          key: normalizedKey,
         },
       }))
     if (checkExistence) return getErrorResponse('Permission already exist')
@@ -66,8 +72,7 @@ export async function POST(req: Request) {
     const permissionObj = await prisma.permission.create({
       data: {
         name,
-        method: method.toUpperCase(),
-        route: route.toLowerCase(),
+        key: normalizedKey,
         description,
       },
     })

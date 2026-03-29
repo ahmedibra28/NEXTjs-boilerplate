@@ -9,10 +9,14 @@ interface JwtPayload {
   exp: number
 }
 
-export const isAuth = async (req: any, params?: { id: string }) => {
+export const isAuth = async (req: any, permissionKey?: string) => {
   const { searchParams } = new URL(req.url)
+
+  const allowedUrls = ['client-permissions', 'permissions']
+  const shortUrl = req.url?.split('?page')?.[0]?.split('/api/')?.[1]
+
   const pageSize = parseInt(searchParams.get('limit') as string) || 25
-  if (pageSize > 300)
+  if (pageSize > 300 && !allowedUrls.includes(shortUrl))
     throw {
       message: 'Page limit should be less than or equal to 300',
       status: 400,
@@ -38,8 +42,7 @@ export const isAuth = async (req: any, params?: { id: string }) => {
               type: true,
               permissions: {
                 select: {
-                  method: true,
-                  route: true,
+                  key: true,
                 },
               },
             },
@@ -66,32 +69,19 @@ export const isAuth = async (req: any, params?: { id: string }) => {
 
       const permissions = userRole?.role?.permissions
 
-      let { url, method } = req
-      url = `/api/${url.split('/api/')[1]}`
-
-      if (params?.id) {
-        // api/path/:id
-        const removedIDFromURL = url.replace(params?.id, ':id')
-        url = removedIDFromURL.split('?')?.[0]
+      if (!permissionKey) {
+        throw {
+          message: 'Permission key is required',
+          status: 500,
+        }
       }
 
-      if (url.includes('?')) {
-        // api/path
-        url = url.split('?')?.[0]
-      }
-
-      if (
-        permissions?.find(
-          (permission) =>
-            permission.route === url && permission.method === method
-        )
-      ) {
-        url = req.url
+      if (permissions?.find((permission) => permission.key === permissionKey)) {
         return NextResponse.next()
       }
 
       throw {
-        message: 'You do not have permission to access this route',
+        message: 'You do not have permission to access this action',
         status: 403,
       }
     } catch ({ message }: any) {

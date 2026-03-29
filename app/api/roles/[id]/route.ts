@@ -13,7 +13,7 @@ interface Params {
 export async function PUT(req: Request, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'roles.update')
 
     const {
       name,
@@ -107,7 +107,7 @@ export async function PUT(req: Request, props: Params) {
 export async function DELETE(req: Request, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'roles.delete')
 
     const checkIfSuperAdmin = await prisma.role.findUnique({
       where: { id: params.id },

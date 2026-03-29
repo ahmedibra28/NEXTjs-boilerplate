@@ -15,13 +15,20 @@ export async function GET(req: Request) {
 
     // Check duplicate permissions
     permissions.map((p) => {
-      if (p.method && p.route) {
-        const duplicate = permissions.filter(
-          (p2) => p2.method === p.method && p2.route === p.route
-        )
+      if (p.key) {
+        const duplicate = permissions.filter((p2) => p2.key === p.key)
+        if (duplicate.length > 1) {
+          return getErrorResponse(`Duplicate permission key: ${p.key}`, 500)
+        }
+      }
+    })
+
+    clientPermissions.map((p) => {
+      if (p.key) {
+        const duplicate = clientPermissions.filter((p2) => p2.key === p.key)
         if (duplicate.length > 1) {
           return getErrorResponse(
-            `Duplicate permission: ${p.method} ${p.route}`,
+            `Duplicate client permission key: ${p.key}`,
             500
           )
         }

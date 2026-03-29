@@ -33,7 +33,7 @@ export default function Page() {
 
   const { dialogOpen, setDialogOpen } = useDataStore((state) => state)
 
-  const path = useAuthorization()
+  const path = useAuthorization('permissions.page')
   const router = useRouter()
   useEffect(() => {
     if (path) {
@@ -141,19 +141,11 @@ export default function Page() {
     deleteApi?.mutateAsync(id)
   }
 
-  const methods = [
-    { label: 'GET', value: 'GET' },
-    { label: 'POST', value: 'POST' },
-    { label: 'PUT', value: 'PUT' },
-    { label: 'DELETE', value: 'DELETE' },
-  ]
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
-      method: '',
-      route: '',
+      key: '',
       description: '',
     },
   })
@@ -164,8 +156,7 @@ export default function Page() {
     setDialogOpen(true)
     form.setValue('name', item?.name)
     form.setValue('description', item?.description || '')
-    form.setValue('method', item?.method)
-    form.setValue('route', item?.route)
+    form.setValue('key', item?.key)
   }
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
@@ -190,17 +181,9 @@ export default function Page() {
       />
       <CustomFormField
         form={form}
-        name='method'
-        label='Method'
-        placeholder='Method'
-        fieldType='select'
-        data={methods}
-      />
-      <CustomFormField
-        form={form}
-        name='route'
-        label='Route'
-        placeholder='Route'
+        name='key'
+        label='Key'
+        placeholder='users.read'
         type='text'
       />
       <CustomFormField

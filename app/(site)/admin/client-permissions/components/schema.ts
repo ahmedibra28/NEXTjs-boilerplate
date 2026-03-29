@@ -4,6 +4,9 @@ export const FormSchema = z.object({
   name: z.string().refine((value) => value !== '', {
     message: 'Name is required',
   }),
+  key: z.string().refine((value) => value.trim() !== '', {
+    message: 'Key is required',
+  }),
   menu: z.string().refine((value) => value !== '', {
     message: 'Menu is required',
   }),

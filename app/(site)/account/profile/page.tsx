@@ -20,7 +20,7 @@ import { DragDropUpload } from '@/components/drag-drop-upload'
 const Profile = () => {
   const [fileLink, setFileLink] = React.useState<string[]>([])
 
-  const path = useAuthorization()
+  const path = useAuthorization('profile.page')
   const router = useRouter()
 
   const { userInfo, updateUserInfo } = useUserInfoStore((state) => state)

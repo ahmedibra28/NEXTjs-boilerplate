@@ -7,7 +7,7 @@ import {
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import { zip } from 'zip-a-folder'
-// import { isAuth } from '@/lib/auth'
+import { isAuth } from '@/lib/auth'
 import { readdirSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 
@@ -15,7 +15,7 @@ const execAsync = promisify(exec)
 
 export async function POST(req: Request) {
   try {
-    // await isAuth(req)
+    await isAuth(req, 'databases.backup')
 
     const currentDate = new Date().toISOString().slice(0, 10)
     const currentHour = new Date().getHours().toString().padStart(2, '0')
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     if (dbZipFiles && dbZipFiles.length > 23) {
       const keepZippedDbs = dbZipFiles.slice(-23)
       const deleteZippedDbs = dbZipFiles.filter(
-        (item) => !keepZippedDbs.includes(item)
+        (item) => !keepZippedDbs.includes(item),
       )
 
       // IMPORTANT: Fix async execution in loop
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
           const fullPathToDelete = join(baseBackupDir, dbZip)
           console.log(`Deleting old backup: ${fullPathToDelete}`)
           await execAsync(`rm -f "${fullPathToDelete}"`) // Use rm -f for files
-        })
+        }),
       )
     }
 

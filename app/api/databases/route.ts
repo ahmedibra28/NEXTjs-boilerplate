@@ -5,7 +5,7 @@ import { isAuth } from '@/lib/auth'
 
 export async function GET(req: Request) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'databases.read')
 
     const backupDirPath = getBackupDirectory() // Get the consistent path
 
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
 
     // Read only .zip files
     const databases = readdirSync(backupDirPath).filter((file) =>
-      file.endsWith('.zip')
+      file.endsWith('.zip'),
     )
 
     return NextResponse.json({ data: databases?.reverse() || [] })

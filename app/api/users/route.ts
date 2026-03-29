@@ -6,7 +6,7 @@ const { QueryMode } = Prisma
 
 export async function GET(req: Request) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'users.read')
 
     const { searchParams } = new URL(req.url)
     const q = searchParams.get('q')
@@ -62,7 +62,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    await isAuth(req)
+    await isAuth(req, 'users.create')
 
     const { name, email, password, status, roleId } = await req.json()
 

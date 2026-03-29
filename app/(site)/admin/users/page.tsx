@@ -33,7 +33,7 @@ export default function Page() {
 
   const { dialogOpen, setDialogOpen } = useDataStore((state) => state)
 
-  const path = useAuthorization()
+  const path = useAuthorization('users.page')
   const router = useRouter()
   useEffect(() => {
     if (path) {

@@ -22,6 +22,8 @@ import ApiCall from '@/services/api'
 import { useRouter } from 'next/navigation'
 import useAuthorization from '@/hooks/useAuthorization'
 
+type ClientPermissionWithKey = IClientPermission & { key: string }
+
 export default function Page() {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
@@ -33,7 +35,7 @@ export default function Page() {
 
   const { dialogOpen, setDialogOpen } = useDataStore((state) => state)
 
-  const path = useAuthorization()
+  const path = useAuthorization('client-permissions.page')
   const router = useRouter()
   useEffect(() => {
     if (path) {
@@ -145,6 +147,7 @@ export default function Page() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
+      key: '',
       menu: '',
       sort: '',
       path: '',
@@ -152,11 +155,12 @@ export default function Page() {
     },
   })
 
-  const editHandler = (item: IClientPermission) => {
+  const editHandler = (item: ClientPermissionWithKey) => {
     setId(item.id!)
     setEdit(true)
     setDialogOpen(true)
     form.setValue('name', item?.name)
+    form.setValue('key', item?.key)
     form.setValue('description', item?.description || '')
     form.setValue('menu', item?.menu)
     form.setValue('path', item?.path)
@@ -181,6 +185,13 @@ export default function Page() {
         name='name'
         label='Name'
         placeholder='Name'
+        type='text'
+      />
+      <CustomFormField
+        form={form}
+        name='key'
+        label='Key'
+        placeholder='users.page'
         type='text'
       />
       <CustomFormField

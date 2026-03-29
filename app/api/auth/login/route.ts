@@ -36,20 +36,22 @@ export async function POST(req: Request) {
         include: {
           clientPermissions: {
             select: {
+              key: true,
               menu: true,
               sort: true,
               path: true,
               name: true,
             },
           },
-        },
+        } as any,
       }))
 
     if (!role) return getErrorResponse('Role not found', 404)
 
-    const routes = role.clientPermissions
+    const routes = (role as any).clientPermissions
 
     interface Route {
+      key?: string
       menu?: string
       name?: string
       path?: string
@@ -68,6 +70,7 @@ export async function POST(req: Request) {
 
         if (route.menu === 'normal') {
           formattedRoutes.push({
+            key: route.key,
             name: route.name,
             path: route.path,
             sort: route.sort,
@@ -75,13 +78,17 @@ export async function POST(req: Request) {
         } else {
           const found = formattedRoutes.find((r) => r.name === route.menu)
           if (found) {
-            found.children.push({ name: route.name, path: route.path })
+            found.children.push({
+              key: route.key,
+              name: route.name,
+              path: route.path,
+            })
           } else {
             formattedRoutes.push({
               name: route.menu,
               sort: route.sort,
               open: false,
-              children: [{ name: route.name, path: route.path }],
+              children: [{ key: route.key, name: route.name, path: route.path }],
             })
           }
         }

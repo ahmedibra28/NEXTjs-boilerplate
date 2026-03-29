@@ -44,6 +44,7 @@ export const useColumns = ({
         )
       },
     },
+    { header: 'Key', accessorKey: 'key' },
     { header: 'Menu', accessorKey: 'menu' },
     { header: 'Sort', accessorKey: 'sort' },
     { header: 'Path', accessorKey: 'path' },

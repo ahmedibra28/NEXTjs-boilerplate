@@ -12,9 +12,12 @@ interface Params {
 export async function PUT(req: AuthenticatedRequest, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'client-permissions.update')
 
-    const { name, sort, menu, path, description } = await req.json()
+    const { name, key, sort, menu, path, description } = await req.json()
+    const normalizedKey = key?.trim()?.toLowerCase()
+    if (!normalizedKey)
+      return getErrorResponse('Client permission key is required', 400)
 
     const clientPermissionObj = await prisma.clientPermission.findUnique({
       where: { id: params.id },
@@ -23,13 +26,13 @@ export async function PUT(req: AuthenticatedRequest, props: Params) {
       return getErrorResponse('Client permission not found', 404)
 
     const checkExistence =
-      path &&
+      normalizedKey &&
       params.id &&
       (await prisma.clientPermission.findFirst({
         where: {
-          path: path.toLowerCase(),
+          OR: [{ key: normalizedKey }, { path: path.toLowerCase() }],
           id: { not: params.id },
-        },
+        } as any,
       }))
     if (checkExistence)
       return getErrorResponse('Client permission already exist')
@@ -38,11 +41,12 @@ export async function PUT(req: AuthenticatedRequest, props: Params) {
       where: { id: params.id },
       data: {
         name,
+        key: normalizedKey,
         sort: Number(sort),
         menu,
         description,
         path: path.toLowerCase(),
-      },
+      } as any,
     })
 
     return NextResponse.json({
@@ -58,7 +62,7 @@ export async function PUT(req: AuthenticatedRequest, props: Params) {
 export async function DELETE(req: Request, props: Params) {
   const params = await props.params
   try {
-    await isAuth(req, params)
+    await isAuth(req, 'client-permissions.delete')
 
     const clientPermissionObj = await prisma.clientPermission.delete({
       where: { id: params.id },

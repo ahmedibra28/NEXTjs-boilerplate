@@ -12,7 +12,7 @@ interface Params {
 export async function PUT(req: Request, props: Params) {
   try {
     const params = await props.params
-    await isAuth(req, params)
+    await isAuth(req, 'profile.update')
 
     const {
       name,
@@ -37,7 +37,7 @@ export async function PUT(req: Request, props: Params) {
       if (!regex.test(password)) {
         return getErrorResponse(
           'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number and one special character',
-          400
+          400,
         )
       }
     }
